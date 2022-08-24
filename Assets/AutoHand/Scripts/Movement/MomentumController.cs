@@ -40,15 +40,13 @@ public class MomentumController : MonoBehaviour
             if (Vector3.Dot(dir, move) > 0 && counter < 900) {
                 counter += 1;
             } else {
-                counter = 0;
-                player.maxMoveSpeed = startSpeed;
-                player.moveAcceleration = startMomentum;
+                counter -= 4;
             }
         } else {
-            counter = 0;
-            player.maxMoveSpeed = startSpeed;
-            player.moveAcceleration = startMomentum;
+            counter -= 2;
         }
+        if (counter <= 0)
+            counter = 0;
         if (counter >= 270) {
             float diff1 = maxSpeedScale - startSpeed;
             float diff2 = momentumScale - startMomentum;
