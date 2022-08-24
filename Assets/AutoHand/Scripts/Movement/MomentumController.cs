@@ -34,10 +34,10 @@ public class MomentumController : MonoBehaviour
         // one or both axis are registering input
         if ((Mathf.Abs(moveAxis.x) > deadzone) || (Mathf.Abs(moveAxis.y) > deadzone)) {
             // Get the direction of the vector, compare it to the direction camera is facing (using dot product?) to determine if momentum should be increased
-            Vector3 dir = Camera.main.transform.forward;
+            Vector3 dir = transform.forward;
             Vector3 move = new Vector3(moveAxis.x, 0f, moveAxis.y);
             dir.y = 0f;
-            if (Vector3.Dot(dir, move) > 0) {
+            if (Vector3.Dot(dir, move) > 0 && counter < 900) {
                 counter += 1;
             } else {
                 counter = 0;
@@ -49,15 +49,15 @@ public class MomentumController : MonoBehaviour
             player.maxMoveSpeed = startSpeed;
             player.moveAcceleration = startMomentum;
         }
-        if (counter >= 450) {
+        if (counter >= 270) {
             float diff1 = maxSpeedScale - startSpeed;
             float diff2 = momentumScale - startMomentum;
             if (diff1 <= 0 || diff2 <= 0) {
                 Debug.Log("Error: maxspeedscale and momentumscale cannot be lower than the starting values in AutoHandPlayer");
                 return;
             }
-            player.maxMoveSpeed = startSpeed + ((maxSpeedScale / 10) * ((counter >= 900 ? 450 : counter - 450) / 45));
-            player.moveAcceleration = startMomentum + ((momentumScale / 10) * ((counter >= 900 ? 450 : counter - 450) / 45));
+            player.maxMoveSpeed = startSpeed + ((maxSpeedScale / 14) * ((counter >= 900 ? 630 : counter - 270) / 45));
+            player.moveAcceleration = startMomentum + ((momentumScale / 14) * ((counter >= 900 ? 630 : counter - 270) / 45));
         }
         debugText.text = string.Format("Speed: {0}\nAccel: {1}\nCounter: {2}", player.maxMoveSpeed, player.moveAcceleration, counter);
     }
