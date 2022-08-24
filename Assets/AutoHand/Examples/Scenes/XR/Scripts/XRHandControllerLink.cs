@@ -38,10 +38,12 @@ namespace Autohand.Demo{
         [Tooltip("This axis will bend all the fingers on the hand -> replaced with finger bender scripts")]
         public CommonAxis grabAxis = CommonAxis.trigger;
         public CommonButton squeezeButton = CommonButton.gripButton;
+        public CommonButton pButton = CommonButton.primaryButton;
 
         XRNode role;
         bool squeezing;
         bool grabbing;
+        bool pButtonActive;
         InputDevice device;
         List<InputDevice> devices = new List<InputDevice>();
 
@@ -91,6 +93,16 @@ namespace Autohand.Demo{
                         hand.Squeeze();
                         squeezing = true;
                     }
+                }
+
+                //Button input
+                if(device.TryGetFeatureValue(GetCommonButton(pButton), out bool pB)) {
+                    if (!pButtonActive && pB) {
+                        transform.gameObject.GetComponent<PrimaryButton>().OnPrimaryButton();
+                        pButtonActive = true;
+                    }
+                    else if (pButtonActive && !pB)
+                        pButtonActive = false;
                 }
             }
         }

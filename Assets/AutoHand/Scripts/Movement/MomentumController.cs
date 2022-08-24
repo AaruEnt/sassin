@@ -9,6 +9,7 @@ public class MomentumController : MonoBehaviour
 {
     public AutoHandPlayer player;
     public XRHandPlayerControllerLink link;
+    public Rigidbody rb; //Debug
 
     public float maxSpeedScale;
     public float momentumScale;
@@ -43,8 +44,11 @@ public class MomentumController : MonoBehaviour
                 counter -= 4;
             }
         } else {
-            counter -= 2;
+            counter -= 1;
         }
+        Vector3 vel = rb.velocity;
+        if ((Mathf.Abs(vel.x) <= 1 && Mathf.Abs(vel.z) <= 1) || Mathf.Abs(vel.x) + Mathf.Abs(vel.z) <= 2)
+            counter -= 2;
         if (counter <= 0)
             counter = 0;
         if (counter >= 270) {
@@ -57,6 +61,6 @@ public class MomentumController : MonoBehaviour
             player.maxMoveSpeed = startSpeed + ((maxSpeedScale / 14) * ((counter >= 900 ? 630 : counter - 270) / 45));
             player.moveAcceleration = startMomentum + ((momentumScale / 14) * ((counter >= 900 ? 630 : counter - 270) / 45));
         }
-        debugText.text = string.Format("Speed: {0}\nAccel: {1}\nCounter: {2}", player.maxMoveSpeed, player.moveAcceleration, counter);
+        debugText.text = string.Format("Speed: {0}\nAccel: {1}\nCounter: {2}\nVelocity: {3}", player.maxMoveSpeed, player.moveAcceleration, counter, rb.velocity);
     }
 }
