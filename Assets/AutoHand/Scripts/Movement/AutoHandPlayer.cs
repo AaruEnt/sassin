@@ -1012,6 +1012,9 @@ namespace Autohand {
                 return forwardFollow.rotation * (new Vector3(moveAxis.x, moveAxis.y, moveAxis.z));
         }
 
-
+        public bool IsCrouching() {
+            float heightDiff = minMaxHeight.y - minMaxHeight.x;
+            return ((headCamera.transform.position.y - transform.position.y) <= (minMaxHeight.x + (heightDiff / 10))) || crouching;
+        }
     }
 }
