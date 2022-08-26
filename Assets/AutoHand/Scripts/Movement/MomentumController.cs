@@ -45,11 +45,10 @@ public class MomentumController : MonoBehaviour
                     counter -= 4;
                 }
             } else {
-                counter -= 1;
-            }
-            Vector3 vel = rb.velocity;
-            if ((Mathf.Abs(vel.x) <= 1 && Mathf.Abs(vel.z) <= 1) || Mathf.Abs(vel.x) + Mathf.Abs(vel.z) <= 2)
                 counter -= 2;
+            }
+            if (rb.velocity.magnitude < player.maxMoveSpeed * 0.95)
+                counter -= 3;
             if (counter <= 0)
                 counter = 0;
             if (counter >= 270) {
@@ -61,10 +60,13 @@ public class MomentumController : MonoBehaviour
                 }
                 player.maxMoveSpeed = startSpeed + ((maxSpeedScale / 14) * ((counter >= 900 ? 630 : counter - 270) / 45));
                 player.moveAcceleration = startMomentum + ((momentumScale / 14) * ((counter >= 900 ? 630 : counter - 270) / 45));
+            } else {
+                player.maxMoveSpeed = startSpeed;
+                player.moveAcceleration = startMomentum;
             }
         } else {
             counter = counter < 0 ? 0 : counter - 0.5f;
         }
-        debugText.text = string.Format("Speed: {0}\nAccel: {1}\nCounter: {2}\nVelocity: {3}", player.maxMoveSpeed, player.moveAcceleration, counter, rb.velocity);
+        debugText.text = string.Format("Speed: {0}\nAccel: {1}\nCounter: {2}\nVelocity: {3}", player.maxMoveSpeed, player.moveAcceleration, counter, rb.velocity.magnitude);
     }
 }
