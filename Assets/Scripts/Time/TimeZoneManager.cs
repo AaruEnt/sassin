@@ -6,9 +6,11 @@ public class TimeZoneManager : MonoBehaviour
 {
     public int startTimeZone = 1;
     public string previewLayer;
+    public GameObject particles;
     private int currTimeZone;
     private TimeZone[] timeZoneObjects;
     private List<GameObject> objsWithTime;
+    private bool isFirstEnable = true;
 
     void Start() {
         currTimeZone = startTimeZone;
@@ -18,6 +20,7 @@ public class TimeZoneManager : MonoBehaviour
             objsWithTime.Add(obj.transform.gameObject);
         }
         UpdateTimeZone();
+        isFirstEnable = false;
     }
 
     public void SetTimeZone(int time) {
@@ -28,6 +31,8 @@ public class TimeZoneManager : MonoBehaviour
     }
 
     private void UpdateTimeZone() {
+        if (!isFirstEnable)
+            particles.SetActive(true);
         foreach(var obj in objsWithTime) {
             if (!obj) {
                 continue;
