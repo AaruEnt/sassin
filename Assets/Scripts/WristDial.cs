@@ -9,6 +9,14 @@ public class WristDial : PhysicsGadgetHingeAngleReader
     public int numberOfOptions = 4;
     public TimeZoneManager manager;
     private int lastTimeZone = -1;
+    public int layer;
+    public int layer2;
+
+    new void Start() {
+        base.Start();
+        if (transform.gameObject.layer != layer && transform.gameObject.layer != layer2)
+            transform.gameObject.layer = layer;
+    }
 
     void Update() {
         int currTimeZone = ConvertValueToPos();
