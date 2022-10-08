@@ -1,16 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class WristButton : MonoBehaviour
 {
     public ConfigurableJoint cj;
     public float deadZone = 0.05f;
     public FollowObjectWithOffset follow;
+    public UnityEvent onPressed;
 
     private Vector3 _startPos;
     private Rigidbody rb;
     private float cd = 0.5f;
+    private bool isPressed = false;
 
     // Start is called before the first frame update
     void Start()
@@ -26,10 +29,12 @@ public class WristButton : MonoBehaviour
     {
         if (cd > 0)
             cd -= Time.deltaTime;
-        if (cd <= 0 && GetValue() <= 0.5f) {
+        if (cd <= 0 && GetValue() <= 0.5f && !isPressed) {
             rb.isKinematic = true;
             follow.followOn = false;
+            isPressed = true;
             transform.localPosition = _startPos;
+            onPressed.Invoke();
         }
     }
 
@@ -47,5 +52,6 @@ public class WristButton : MonoBehaviour
         rb.isKinematic = false;
         follow.followOn = true;
         cd = 1f;
+        isPressed = false;
     }
 }

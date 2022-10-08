@@ -19,17 +19,8 @@ public class WristDial : PhysicsGadgetHingeAngleReader
     }
 
     void Update() {
-        int currTimeZone = ConvertValueToPos();
-
         if (lastTimeZone == -1)
-            lastTimeZone = currTimeZone;
-
-        Debug.Log(string.Format("{0}, {1}", lastTimeZone, currTimeZone));
-
-        if (currTimeZone != lastTimeZone) {
-            manager.SetTimeZone(currTimeZone + 1);
-            lastTimeZone = currTimeZone;
-        }
+            OnActivate();
     }
 
     int ConvertValueToPos() {
@@ -42,5 +33,19 @@ public class WristDial : PhysicsGadgetHingeAngleReader
             res = 0;
 
         return ((int)res);
+    }
+
+    public void OnActivate() {
+        int currTimeZone = ConvertValueToPos();
+
+        if (lastTimeZone == -1)
+            lastTimeZone = currTimeZone;
+
+        Debug.Log(string.Format("{0}, {1}", lastTimeZone, currTimeZone));
+
+        if (currTimeZone != lastTimeZone) {
+            manager.SetTimeZone(currTimeZone + 1);
+            lastTimeZone = currTimeZone;
+        }
     }
 }
