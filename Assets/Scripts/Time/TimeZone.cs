@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class TimeZone : MonoBehaviour
 {
-    public bool timeZone1 = false;
-    public bool timeZone2 = false;
-    public bool timeZone3 = false;
-    public bool timeZone4 = false;
+    public timeZone time;
     public int layer;
+    public int previewLayer;
+}
+
+public enum timeZone
+{
+    timeZone1,
+    timeZone2,
+    timeZone3,
+    timeZone4
 }

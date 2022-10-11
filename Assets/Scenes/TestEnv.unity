@@ -435,7 +435,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startTimeZone: 1
-  previewLayer: 
   particles: {fileID: 0}
 --- !u!1001 &58691835
 PrefabInstance:
@@ -1377,11 +1376,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5e1f1c2e6868824fb8595c9043f8805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeZone1: 0
-  timeZone2: 0
-  timeZone3: 1
-  timeZone4: 0
+  time: 0
   layer: 30
+  previewLayer: 0
 --- !u!65 &146441066
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1785,6 +1782,7 @@ GameObject:
   - component: {fileID: 279015381}
   - component: {fileID: 279015383}
   - component: {fileID: 279015382}
+  - component: {fileID: 279015384}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -1869,7 +1867,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 268435575
+    m_Bits: 268435511
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 831c5c9e5b0353c4aaba537b72b7b695, type: 2}
   m_TargetDisplay: 0
@@ -1881,6 +1879,26 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &279015384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279015380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4424ef26a442c6c4a8001bf84c8be6c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  previewCamera: {fileID: 279015383}
+  pastTimeLayer: 6
+  presentTimeLayer: 7
+  futureTimeLayer: 8
+  dial: {fileID: 939433906}
+  mask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &336422651
 GameObject:
   m_ObjectHideFlags: 0
@@ -2324,6 +2342,7 @@ MonoBehaviour:
   manager: {fileID: 1590132488}
   layer: 30
   layer2: 31
+  dialPosToTimezone: 0
 --- !u!59 &386272884
 HingeJoint:
   m_ObjectHideFlags: 0
@@ -8017,11 +8036,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5e1f1c2e6868824fb8595c9043f8805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeZone1: 0
-  timeZone2: 0
-  timeZone3: 0
-  timeZone4: 1
+  time: 0
   layer: 30
+  previewLayer: 0
 --- !u!65 &553197264
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8294,11 +8311,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5e1f1c2e6868824fb8595c9043f8805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeZone1: 1
-  timeZone2: 1
-  timeZone3: 0
-  timeZone4: 0
+  time: 0
   layer: 30
+  previewLayer: 6
 --- !u!1 &656119670
 GameObject:
   m_ObjectHideFlags: 0
@@ -8672,11 +8687,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5e1f1c2e6868824fb8595c9043f8805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeZone1: 0
-  timeZone2: 1
-  timeZone3: 0
-  timeZone4: 0
+  time: 0
   layer: 30
+  previewLayer: 0
 --- !u!65 &693291200
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9416,11 +9429,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5e1f1c2e6868824fb8595c9043f8805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeZone1: 1
-  timeZone2: 1
-  timeZone3: 0
-  timeZone4: 0
+  time: 0
   layer: 30
+  previewLayer: 6
 --- !u!1001 &909752426
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9632,6 +9643,7 @@ MonoBehaviour:
   manager: {fileID: 1590132488}
   layer: 30
   layer2: 31
+  dialPosToTimezone: 0
 --- !u!59 &939433907
 HingeJoint:
   m_ObjectHideFlags: 0
@@ -10615,11 +10627,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5e1f1c2e6868824fb8595c9043f8805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeZone1: 0
-  timeZone2: 0
-  timeZone3: 0
-  timeZone4: 1
+  time: 2
   layer: 30
+  previewLayer: 8
 --- !u!1 &1080158721
 GameObject:
   m_ObjectHideFlags: 0
@@ -17587,8 +17597,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70a283cae17341344879836dda89ce08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startTimeZone: 1
-  previewLayer: OtherTime
+  startTimeZone: 2
   particles: {fileID: 538082609}
 --- !u!114 &1590132489
 MonoBehaviour:
@@ -18298,11 +18307,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5e1f1c2e6868824fb8595c9043f8805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeZone1: 0
-  timeZone2: 1
-  timeZone3: 1
-  timeZone4: 0
+  time: 1
   layer: 30
+  previewLayer: 7
 --- !u!1 &1719671703
 GameObject:
   m_ObjectHideFlags: 0
@@ -18505,11 +18512,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5e1f1c2e6868824fb8595c9043f8805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeZone1: 0
-  timeZone2: 0
-  timeZone3: 1
-  timeZone4: 0
+  time: 2
   layer: 30
+  previewLayer: 8
 --- !u!1001 &1806734527
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19094,11 +19099,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5e1f1c2e6868824fb8595c9043f8805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeZone1: 1
-  timeZone2: 1
-  timeZone3: 1
-  timeZone4: 1
+  time: 1
   layer: 30
+  previewLayer: 7
 --- !u!1 &1940092786
 GameObject:
   m_ObjectHideFlags: 0
@@ -19447,11 +19450,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5e1f1c2e6868824fb8595c9043f8805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeZone1: 1
-  timeZone2: 0
-  timeZone3: 0
-  timeZone4: 0
+  time: 0
   layer: 30
+  previewLayer: 0
 --- !u!65 &1981050107
 BoxCollider:
   m_ObjectHideFlags: 0

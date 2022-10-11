@@ -5,7 +5,6 @@ using UnityEngine;
 public class TimeZoneManager : MonoBehaviour
 {
     public int startTimeZone = 1;
-    public string previewLayer;
     public GameObject particles;
     private int currTimeZone;
     private TimeZone[] timeZoneObjects;
@@ -40,28 +39,28 @@ public class TimeZoneManager : MonoBehaviour
             
             TimeZone t = obj.GetComponent<TimeZone>();
             if (currTimeZone == 1) {
-                if (!t.timeZone1) {
+                if (t.time != timeZone.timeZone1) {
                     DisableObject(obj);
                 } else {
                     EnableObject(obj);
                 }
             }
             if (currTimeZone == 2) {
-                if (!t.timeZone2) {
+                if (t.time != timeZone.timeZone2) {
                     DisableObject(obj);
                 } else {
                     EnableObject(obj);
                 }
             }
             if (currTimeZone == 3) {
-                if (!t.timeZone3) {
+                if (t.time != timeZone.timeZone3) {
                     DisableObject(obj);
                 } else {
                     EnableObject(obj);
                 }
             }
             if (currTimeZone == 4) {
-                if (!t.timeZone4) {
+                if (t.time != timeZone.timeZone4) {
                     DisableObject(obj);
                 } else {
                     EnableObject(obj);
@@ -78,6 +77,7 @@ public class TimeZoneManager : MonoBehaviour
         Collider[] c = obj.GetComponentsInChildren<Collider>(true);
         Rigidbody[] ri = obj.GetComponentsInChildren<Rigidbody>(true);
         Transform[] tr = obj.GetComponentsInChildren<Transform>(true);
+        TimeZone tz = obj.GetComponent<TimeZone>();
 
         foreach (var col in c) {
             col.enabled = false;
@@ -93,7 +93,7 @@ public class TimeZoneManager : MonoBehaviour
         }
 
         foreach (var t in tr) {
-            t.gameObject.layer = LayerMask.NameToLayer(previewLayer);
+            t.gameObject.layer = tz.previewLayer;
         }
     }
 

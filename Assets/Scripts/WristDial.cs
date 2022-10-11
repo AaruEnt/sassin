@@ -11,6 +11,7 @@ public class WristDial : PhysicsGadgetHingeAngleReader
     private int lastTimeZone = -1;
     public int layer;
     public int layer2;
+    public int dialPosToTimezone;
 
     new void Start() {
         base.Start();
@@ -21,6 +22,7 @@ public class WristDial : PhysicsGadgetHingeAngleReader
     void Update() {
         if (lastTimeZone == -1)
             OnActivate();
+        dialPosToTimezone = ConvertValueToPos();
     }
 
     int ConvertValueToPos() {
@@ -41,7 +43,7 @@ public class WristDial : PhysicsGadgetHingeAngleReader
         if (lastTimeZone == -1)
             lastTimeZone = currTimeZone;
 
-        Debug.Log(string.Format("{0}, {1}", lastTimeZone, currTimeZone));
+        //Debug.Log(string.Format("{0}, {1}", lastTimeZone, currTimeZone));
 
         if (currTimeZone != lastTimeZone) {
             manager.SetTimeZone(currTimeZone + 1);

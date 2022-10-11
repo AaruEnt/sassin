@@ -39,7 +39,7 @@ public class WristButton : MonoBehaviour
     }
 
     private float GetValue() {
-        Debug.Log(Vector3.Distance(_startPos, transform.localPosition) / cj.linearLimit.limit);
+        //Debug.Log(Vector3.Distance(_startPos, transform.localPosition) / cj.linearLimit.limit);
         var val = Vector3.Distance(_startPos, transform.localPosition) / cj.linearLimit.limit;
 
         if (Mathf.Abs(val) < deadZone) {
