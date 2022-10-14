@@ -23,7 +23,7 @@ public class TimePreviewController : MonoBehaviour
         int pos = dial.dialPosToTimezone;
         mask = startMask;
 
-        Debug.Log(pos);
+        //Debug.Log(pos);
 
         switch (pos) {
             case 0:

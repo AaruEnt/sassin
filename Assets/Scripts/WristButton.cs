@@ -9,11 +9,14 @@ public class WristButton : MonoBehaviour
     public float deadZone = 0.05f;
     public FollowObjectWithOffset follow;
     public UnityEvent onPressed;
+    public float maxPosX;
 
     private Vector3 _startPos;
     private Rigidbody rb;
-    private float cd = 0.5f;
-    private bool isPressed = false;
+    private float cd = 0.25f;
+    private float cd2 = 0f;
+    private bool isPressed = true;
+    private bool ignoreTrigger = false;
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +30,8 @@ public class WristButton : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log(transform.localPosition.x);
+        //Debug.Log(cd2);
         if (cd > 0)
             cd -= Time.deltaTime;
         if (cd <= 0 && GetValue() <= 0.5f && !isPressed) {
@@ -36,6 +41,17 @@ public class WristButton : MonoBehaviour
             transform.localPosition = _startPos;
             onPressed.Invoke();
         }
+        if (cd2 >= 0 && GetValue() >= 1.5f && !ignoreTrigger)
+            rb.isKinematic = false;
+        if (transform.localPosition.x <= maxPosX && cd2 <= 0) {
+            Debug.Log("In If");
+            Vector3 tmp = transform.localPosition;
+            tmp.x = maxPosX;
+            transform.localPosition = tmp;
+            rb.isKinematic = true;
+        }
+        if (cd2 > 0)
+            cd2 -= Time.deltaTime;
     }
 
     private float GetValue() {
@@ -51,7 +67,19 @@ public class WristButton : MonoBehaviour
     public void UnlockButton() {
         rb.isKinematic = false;
         follow.followOn = true;
-        cd = 1f;
+        cd = 0.25f;
         isPressed = false;
+    }
+
+    public void BumpCooldown() {
+        cd2 = 0.01f;
+    }
+
+    public void InfiniteCooldown() {
+        ignoreTrigger = true;
+    }
+
+    public void ResetCooldown() {
+        ignoreTrigger = false;
     }
 }
