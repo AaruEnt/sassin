@@ -25,6 +25,7 @@ public class Enemy : MonoBehaviour
     private bool isChasing = false;
     // Agent's suspicion of player
     public float suspicion = 0f;
+    public LayerMask mask;
     // minimum suspicion
     private float minSuspicion = 0f;
     // maximum suspicion
@@ -44,6 +45,9 @@ public class Enemy : MonoBehaviour
     // should the agent look around
     private bool dontLook = false;
     private bool dontIncrement = false;
+    private bool reachedThreshhold = false;
+    private float startMoveSpeed;
+    public float minMoveSpeed;
     // Initializes agent and pathing. Unparents waypoints
     void Start()
     {
@@ -55,6 +59,7 @@ public class Enemy : MonoBehaviour
             Debug.Log(string.Format("No waypoints set for object {}", transform.gameObject.name));
         }
         SetNextWaypoint(wayPoints[0].position);
+        startMoveSpeed = minMoveSpeed < agent.speed ? minMoveSpeed : agent.speed;
     }
 
     // State switching
@@ -63,14 +68,22 @@ public class Enemy : MonoBehaviour
         // Clamp suspicion to min and max
         suspicion = Mathf.Clamp(suspicion, minSuspicion, maxSuspicion);
 
-        if (suspicion < 1f && state != EnemyState.patrol) {
+        if (suspicion < 1f && (state != EnemyState.patrol && state != EnemyState.alert)) {
             dontIncrement = true;
-            state = EnemyState.patrol;
+            if (reachedThreshhold)
+                state = EnemyState.alert;
+            else
+                state = EnemyState.patrol;
         }
         else if (suspicion >= 1f && state != EnemyState.search && lastDetectedArea && !isChasing) { // Lost line of sight
             state = EnemyState.search;
+            reachedThreshhold = true;
         }
-        if (state == EnemyState.patrol && !agent.pathPending && agent.remainingDistance < 0.5f && !isWaiting) { // If at patrol waypoint
+        else if (suspicion >= 1f && state == EnemyState.patrol) {
+            reachedThreshhold = true;
+            state = EnemyState.alert;
+        }
+        if ((state == EnemyState.patrol || state == EnemyState.alert) && !agent.pathPending && agent.remainingDistance < 0.5f && !isWaiting) { // If at patrol waypoint
             isWaiting = true;
             if (suspicion > minSuspicion) {
                 suspicion -= Time.deltaTime / 5;
@@ -86,7 +99,16 @@ public class Enemy : MonoBehaviour
         else if (state == EnemyState.chase) { // If chasing the player
             chasePlayer();
         }
-            
+
+        if (state == EnemyState.alert) {
+            minMoveSpeed = startMoveSpeed + 1f;
+            minSuspicion = minSuspicion <= 0.75f ? 0.75f : minSuspicion;
+        }
+        else if (state == EnemyState.chase) {
+            minMoveSpeed = startMoveSpeed + 1.5f;
+            minSuspicion = minSuspicion <= 0.9f ? 0.9f : minSuspicion;
+        }
+        agent.speed = minMoveSpeed;
     }
 
     void SetNextWaypoint(Vector3 point) {
@@ -102,7 +124,7 @@ public class Enemy : MonoBehaviour
                 searchWaypoint = (searchWaypoint + 2) % searchWaypoints.Length;
             SetNextWaypoint(searchWaypoints[searchWaypoint]);
         }
-        else if (state == EnemyState.patrol) {
+        else if (state == EnemyState.patrol || state == EnemyState.alert) {
             if (!dontIncrement)
                 currWaypoint = (currWaypoint + 1) % wayPoints.Length;
             dontIncrement = false;
@@ -112,7 +134,7 @@ public class Enemy : MonoBehaviour
     }
     public void attractAttention(Transform pos, float addedSuspicion) {
         dontLook = true;
-        minSuspicion = 0.5f;
+        minSuspicion = minSuspicion <= 0.5f ? 0.5f : minSuspicion;
         suspicion += addedSuspicion;
         if (suspicion >= 1f) {
             if (cr_running) {
@@ -150,7 +172,7 @@ public class Enemy : MonoBehaviour
         agent.isStopped = true;
         agent.ResetPath(); // Constantly update path to point towards player
         RaycastHit hitinfo;
-        Physics.Linecast(transform.position, player.transform.position, out hitinfo);
+        Physics.Linecast(transform.position, player.transform.position, out hitinfo, mask);
         if (hitinfo.collider.gameObject.tag == "Player") { // if line of sight present from enemy to player
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20f);
             foreach (var collider in hitColliders) {
@@ -159,6 +181,7 @@ public class Enemy : MonoBehaviour
                     e.suspicion += 3;
                     e.state = EnemyState.chase;
                     e.lastDetectedArea = lastDetectedArea;
+                    reachedThreshhold = true;
                 }
             }
             lastDetectedArea = player.transform; // log last detected are is case LoS lost
@@ -166,6 +189,7 @@ public class Enemy : MonoBehaviour
         }
         else {
             state = EnemyState.search; // swap to searching if LoS lost
+            reachedThreshhold = true;
             isChasing = false;
             searchWaypoints = new Vector3[] {lastDetectedArea.position};
             searchWaypoint = 0;
@@ -176,15 +200,17 @@ public class Enemy : MonoBehaviour
     // When something enters the look trigger
     void OnTriggerEnter (Collider col) {
         RaycastHit hitinfo;
+        Debug.Log(col.gameObject.name);
         if (col.gameObject.tag == "Player") { // If player in look cone
             Physics.Linecast(transform.position, col.transform.position, out hitinfo);
             //If line of sight present start chasing player
             if (hitinfo.collider.gameObject.tag == "Player" && hitinfo.collider.gameObject.GetComponent<PlayerState>().state == PlayerStates.suspicious) {
                 state = EnemyState.chase;
+                reachedThreshhold = true;
                 player = col.gameObject;
                 if (suspicion < maxSuspicion)
                     suspicion += 5f;
-                minSuspicion = 0.5f;
+                minSuspicion = minSuspicion <= 0.5f ? 0.5f : minSuspicion;
                 chasePlayer();
             }
         }
@@ -196,7 +222,7 @@ public class Enemy : MonoBehaviour
         t = 0;
         float RotationSpeed = 90f;
         Waypoint wp = null;
-        if (state == EnemyState.patrol)
+        if (state == EnemyState.patrol || state == EnemyState.alert)
             wp = wayPoints[currWaypoint].GetComponent<Waypoint>();
         yield return new WaitForSeconds(0.2f);
         if (!wp || wp.turnLeft) {
@@ -242,7 +268,10 @@ public class Enemy : MonoBehaviour
             if (col.gameObject.tag == "Distraction") {
                 Destroy(col.gameObject); // Needs to be swapped for a check later
                 suspicion = minSuspicion;
-                state = EnemyState.patrol;
+                if (reachedThreshhold)
+                    state = EnemyState.alert;
+                else
+                    state = EnemyState.patrol;
                 dontIncrement = true;
             }
         }
