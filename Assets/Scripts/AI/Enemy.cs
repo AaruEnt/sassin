@@ -48,6 +48,10 @@ public class Enemy : MonoBehaviour
     private bool reachedThreshhold = false;
     private float startMoveSpeed;
     public float minMoveSpeed;
+    public bool meleeAttack = false;
+    public Transform spellSpawnPoint;
+    public GameObject spellAttack;
+    internal bool canAttack = true;
     // Initializes agent and pathing. Unparents waypoints
     void Start()
     {
@@ -56,10 +60,15 @@ public class Enemy : MonoBehaviour
         agent.autoBraking = true;
         agent.autoRepath = true;
         if (wayPoints.Length <= 0) {
-            Debug.Log(string.Format("No waypoints set for object {}", transform.gameObject.name));
+            Debug.LogWarning(string.Format("No waypoints set for object {}", transform.gameObject.name));
         }
         SetNextWaypoint(wayPoints[0].position);
         startMoveSpeed = minMoveSpeed < agent.speed ? minMoveSpeed : agent.speed;
+        if (!spellSpawnPoint)
+            spellSpawnPoint = transform;
+        if (!spellAttack && !meleeAttack) {
+            Debug.LogError("Variable 'Spell Attack' is not defined");
+        }
     }
 
     // State switching
@@ -185,6 +194,13 @@ public class Enemy : MonoBehaviour
                 }
             }
             lastDetectedArea = player.transform; // log last detected are is case LoS lost
+            if (hitinfo.distance <= 10f && !meleeAttack) {
+                if (canAttack) {
+                    StartCoroutine(SpellAttack());
+                    canAttack = false;
+                }
+            return;
+        }
             SetNextWaypoint(player.transform.position);
         }
         else {
@@ -200,7 +216,7 @@ public class Enemy : MonoBehaviour
     // When something enters the look trigger
     void OnTriggerEnter (Collider col) {
         RaycastHit hitinfo;
-        Debug.Log(col.gameObject.name);
+        //Debug.Log(col.gameObject.name);
         if (col.gameObject.tag == "Player") { // If player in look cone
             Physics.Linecast(transform.position, col.transform.position, out hitinfo);
             //If line of sight present start chasing player
@@ -275,5 +291,27 @@ public class Enemy : MonoBehaviour
                 dontIncrement = true;
             }
         }
+    }
+
+    IEnumerator SpellAttack() {
+        var tmp = Instantiate(spellAttack, spellSpawnPoint.position, Quaternion.identity, spellSpawnPoint);
+        var s = tmp.GetComponent<Spell>();
+        var f = tmp.GetComponent<FollowObjectWithOffset>();
+
+        tmp.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        s.origin = this;
+        s.targetPosition = lastDetectedArea.position;
+        f.followTarget = spellSpawnPoint.gameObject;
+        f.enabled = true;
+        f.offset = Vector3.zero;
+        f._startPos = Vector3.zero;
+        StartCoroutine(SpellCooldown(s.chargeTime + 1f));
+        StartCoroutine(s.ThrowSpell());
+        yield return null;
+    }
+
+    IEnumerator SpellCooldown(float time) {
+        yield return new WaitForSeconds(time);
+        canAttack = true;
     }
 }
