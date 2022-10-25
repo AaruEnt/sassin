@@ -82,7 +82,6 @@ public class Civillian : MonoBehaviour
 
     // Waits for 2 seconds, then moves to original destination
     IEnumerator wait() {
-        Debug.Log("In Wait");
         agent.isStopped = true;
         agent.ResetPath();
         yield return new WaitForSeconds(2);
@@ -90,6 +89,5 @@ public class Civillian : MonoBehaviour
         agent.SetDestination(dest);
         state = CivillianState.normal;
         notStartedWait = true;
-        Debug.Log("Out Wait");
     }
 }
