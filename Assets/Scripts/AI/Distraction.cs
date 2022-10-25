@@ -33,7 +33,7 @@ public class Distraction : MonoBehaviour
                 } else if (collider.gameObject.tag == "Civillian") {
                     Civillian c = collider.gameObject.GetComponent<Civillian>();
                     if (!c) 
-                        Debug.Log(string.Format("No enemy script found on enemy {0}", c.gameObject.name));
+                        Debug.Log(string.Format("No civillian script found on civillian {0}", c.gameObject.name));
                     else
                         c.attractAttention(transform, addedSuspicion); // Needs to calculate based on distance
                 }

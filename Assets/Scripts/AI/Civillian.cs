@@ -21,7 +21,10 @@ public class Civillian : MonoBehaviour
     // finite states for civillian
     public CivillianState state = CivillianState.normal;
     public Material debugMat;
+    public float slowSpeed = 1.5f;
+    public float fastSpeed = 3f;
     private bool destGenerated = false;
+    private bool notStartedWait = true;
     // initializes dests and rand num generator objects
     void Start()
     {
@@ -48,14 +51,18 @@ public class Civillian : MonoBehaviour
 
     // State swapping
     void Update() { 
-        if (suspicion > suspicionThreshhold)
+        if (suspicion > suspicionThreshhold) {
             state = CivillianState.nosy;
+            agent.speed = fastSpeed;
+        }
         if (state == CivillianState.normal) {
+            agent.speed = slowSpeed;
             if (destGenerated && !agent.pathPending && agent.remainingDistance < 0.5f)
                 Destroy(this.gameObject);
         }
         else {
-            if (!agent.pathPending && agent.remainingDistance < 0.5f) {
+            if (!agent.pathPending && agent.remainingDistance < 2f && notStartedWait) {
+                notStartedWait = false;
                 StartCoroutine(wait());
             }
         }
@@ -75,9 +82,14 @@ public class Civillian : MonoBehaviour
 
     // Waits for 2 seconds, then moves to original destination
     IEnumerator wait() {
+        Debug.Log("In Wait");
+        agent.isStopped = true;
+        agent.ResetPath();
         yield return new WaitForSeconds(2);
         suspicion = 0f;
         agent.SetDestination(dest);
         state = CivillianState.normal;
+        notStartedWait = true;
+        Debug.Log("Out Wait");
     }
 }

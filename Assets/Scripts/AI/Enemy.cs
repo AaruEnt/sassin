@@ -27,7 +27,7 @@ public class Enemy : MonoBehaviour
     public float suspicion = 0f;
     public LayerMask mask;
     // minimum suspicion
-    private float minSuspicion = 0f;
+    public float minSuspicion = 0f;
     // maximum suspicion
     private float maxSuspicion = 8f;
     // which state the enemy is in
