@@ -25,6 +25,7 @@ public class Enemy : MonoBehaviour
     private bool isChasing = false;
     // Agent's suspicion of player
     public float suspicion = 0f;
+    // mask used for linecasts
     public LayerMask mask;
     // minimum suspicion
     public float minSuspicion = 0f;
@@ -44,13 +45,21 @@ public class Enemy : MonoBehaviour
     private bool cr_running = false;
     // should the agent look around
     private bool dontLook = false;
+    // prevents the agent from incrementing waypoint count while doing other things
     private bool dontIncrement = false;
+    // has the agent reached the threshold for the alert state
     private bool reachedThreshhold = false;
+    // starting move speed
     private float startMoveSpeed;
+    // minimum move speed
     public float minMoveSpeed;
+    // if true sets the agent to use melee attacks instead of spells
     public bool meleeAttack = false;
+    // spawn point for spell attacks
     public Transform spellSpawnPoint;
+    // prefab for the spell to be used
     public GameObject spellAttack;
+    // is the agent currently capable of starting an attack - currently only used for spells
     internal bool canAttack = true;
     // Initializes agent and pathing. Unparents waypoints
     void Start()

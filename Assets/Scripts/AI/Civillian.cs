@@ -20,10 +20,13 @@ public class Civillian : MonoBehaviour
     private randNum r;
     // finite states for civillian
     public CivillianState state = CivillianState.normal;
-    public Material debugMat;
+    // speed in default state
     public float slowSpeed = 1.5f;
+    // speed in nosy state
     public float fastSpeed = 3f;
+    // has a random destination been generated
     private bool destGenerated = false;
+    // prevents wait coroutine being called multiple times at once
     private bool notStartedWait = true;
     // initializes dests and rand num generator objects
     void Start()
@@ -45,7 +48,6 @@ public class Civillian : MonoBehaviour
         agent.autoBraking = true;
         agent.autoRepath = true;
         agent.SetDestination(dest);
-        GetComponent<MeshRenderer>().material = debugMat;
         destGenerated = true;
     }
 

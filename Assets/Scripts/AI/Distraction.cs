@@ -8,6 +8,7 @@ public class Distraction : MonoBehaviour
     public float overlapSphereRadius = 30f;
     // Max suspicion added
     public float addedSuspicion = 1.1f;
+    // mask used for linecasts to determine distance suspicion calculations
     public LayerMask mask;
     // cooldown before can ping again.
     private float cooldown = 0f;
