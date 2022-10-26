@@ -148,6 +148,7 @@ public class Enemy : MonoBehaviour
         if (suspicion >= 1f) {
             if (cr_running) {
                 StopCoroutine(c);
+                agent.updateRotation = true;
                 isWaiting = false;
             }
             agent.isStopped = true;
@@ -234,6 +235,7 @@ public class Enemy : MonoBehaviour
 
     // Looks left to right when called
     IEnumerator LookAround() {
+        agent.updateRotation = false;
         cr_running = true;
         t = 0;
         float RotationSpeed = 90f;
@@ -270,6 +272,7 @@ public class Enemy : MonoBehaviour
                 yield return null;
             }
         }
+        agent.updateRotation = true;
         DoAnAction();
         cr_running = false;
     }
@@ -284,6 +287,7 @@ public class Enemy : MonoBehaviour
             if (col.gameObject.tag == "Distraction") {
                 Destroy(col.gameObject); // Needs to be swapped for a check later
                 suspicion = minSuspicion;
+                lastDetectedArea = null;
                 if (reachedThreshhold)
                     state = EnemyState.alert;
                 else

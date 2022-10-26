@@ -82,9 +82,12 @@ public class Civillian : MonoBehaviour
 
     // Waits for 2 seconds, then moves to original destination
     IEnumerator wait() {
+        //agent.updateRotation = false;
+        //transform.rotation = Quaternion.LookRotation((Vector3)(agent.destination - transform.position).normalized);
         agent.isStopped = true;
         agent.ResetPath();
         yield return new WaitForSeconds(2);
+        //agent.updateRotation = true;
         suspicion = 0f;
         agent.SetDestination(dest);
         state = CivillianState.normal;
