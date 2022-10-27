@@ -7,8 +7,8 @@ public class FollowObjectWithOffset : MonoBehaviour
     public GameObject followTarget;
     public bool followOn = true;
 
-    private Vector3 offset;
-    private Vector3 _startPos;
+    internal Vector3 offset;
+    internal Vector3 _startPos;
 
     // Start is called before the first frame update
     void Start()
@@ -23,7 +23,7 @@ public class FollowObjectWithOffset : MonoBehaviour
     void Update()
     {
         if (followOn)
-            transform.localPosition = followTarget.transform.localPosition + offset;
+            transform.localPosition = _startPos + offset;
         else
             transform.localPosition = _startPos;
     }
