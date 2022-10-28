@@ -59,6 +59,7 @@ public class Enemy : MonoBehaviour
     public Transform spellSpawnPoint;
     // prefab for the spell to be used
     public GameObject spellAttack;
+    public float spellDamage = 1f;
     // is the agent currently capable of starting an attack - currently only used for spells
     internal bool canAttack = true;
     // Initializes agent and pathing. Unparents waypoints
@@ -230,7 +231,7 @@ public class Enemy : MonoBehaviour
         if (col.gameObject.tag == "Player") { // If player in look cone
             Physics.Linecast(transform.position, col.transform.position, out hitinfo);
             //If line of sight present start chasing player
-            if (hitinfo.collider.gameObject.tag == "Player" && hitinfo.collider.gameObject.GetComponent<PlayerState>().state == PlayerStates.suspicious) {
+            if (hitinfo.collider.gameObject.tag == "Player" && hitinfo.collider.transform.root.gameObject.GetComponent<PlayerState>().state == PlayerStates.suspicious) {
                 state = EnemyState.chase;
                 reachedThreshhold = true;
                 player = col.gameObject;
@@ -314,6 +315,7 @@ public class Enemy : MonoBehaviour
         tmp.GetComponent<Rigidbody>().velocity = Vector3.zero;
         s.origin = this;
         s.targetPosition = lastDetectedArea.position;
+        s.damage = spellDamage;
         f.followTarget = spellSpawnPoint.gameObject;
         f.enabled = true;
         f.offset = Vector3.zero;

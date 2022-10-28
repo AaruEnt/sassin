@@ -11,6 +11,7 @@ public class Spell : MonoBehaviour
     public GameObject body;
     public GameObject effectParticle;
     public GameObject collisionParticle;
+    public float damage = 0f; // If the spell deals damage it should have a damage value greater than 0
 
     internal Enemy origin;
     internal float force = 15f;
