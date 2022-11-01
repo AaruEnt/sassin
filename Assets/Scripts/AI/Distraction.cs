@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class Distraction : MonoBehaviour
 {
-    // Radius of sound ping
-    public float overlapSphereRadius = 30f;
-    // Max suspicion added
-    public float addedSuspicion = 1.1f;
-    // mask used for linecasts to determine distance suspicion calculations
-    public LayerMask mask;
+    [Header("Variables")]
+    [SerializeField, Tooltip("Radius of sound ping")]
+    private float overlapSphereRadius = 30f;
+
+    [SerializeField, Tooltip("Max suspicion added")]
+    private float addedSuspicion = 1.1f;
+    
+    [SerializeField, Tooltip("mask used for linecasts to determine distance suspicion calculations")]
+    private LayerMask mask;
+
+
     // cooldown before can ping again.
     private float cooldown = 0f;
 
@@ -22,6 +27,7 @@ public class Distraction : MonoBehaviour
             cooldown = 0f;
     }
 
+    // Attracts attention from enemy and civillian when hitting a wall or the ground
     void OnCollisionEnter (Collision col) {
         if ((col.gameObject.tag == "Wall" || col.gameObject.tag == "Ground") && cooldown == 0f) {
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, overlapSphereRadius);
