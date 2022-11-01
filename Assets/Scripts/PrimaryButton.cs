@@ -7,18 +7,34 @@ using NaughtyAttributes;
 
 public class PrimaryButton : MonoBehaviour
 {
-    public Rigidbody rb;
-    public AutoHandPlayer player;
-    public MomentumController momentum;
+    [Header("References")]
+    [SerializeField, Tooltip("Reference to the player rigidbody")]
+    private Rigidbody rb;
 
-    // if false, defaults to slide
-    public bool jumpOnPress;
+    [SerializeField, Tooltip("Reference to the player")]
+    private AutoHandPlayer player;
+
+    [SerializeField, Tooltip("Reference to the momentum manager")]
+    private MomentumController momentum;
+
+
+    [Header("Boolean Toggles")]
+    [SerializeField, Tooltip("If false, defaults to slide")]
+    private bool jumpOnPress;
+
+
+    [Header("Variables")]
     [ShowIf("jumpOnPress")]
-    public float jumpHeight = 40;
+    [SerializeField, Tooltip("The base jump height")]
+    private float jumpHeight = 40;
     [ShowIf("jumpOnPress")]
-    public float maxJumpHeight = 50;
+    [SerializeField, Tooltip("The maximum jump height after momentum")]
+    private float maxJumpHeight = 50;
+
+    [Header("Variables")]
     [HideIf("jumpOnPress")]
-    public float slideForce = 10f;
+    [SerializeField, Tooltip("The additional force applied while sliding")]
+    private float slideForce = 10f;
 
     private bool isSliding = false;
 

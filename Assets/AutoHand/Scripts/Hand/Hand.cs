@@ -1205,11 +1205,13 @@ namespace Autohand {
                         handPoseArea = null;
                     }
                 }
+                #pragma warning disable 0168
                 catch(MissingReferenceException e)
                 {
                     handPoseArea = null;
                     SetHandPose(preHandPoseAreaPose);
                 }
+                #pragma warning restore 0168
             }
         }
 

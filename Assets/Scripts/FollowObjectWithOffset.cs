@@ -4,11 +4,24 @@ using UnityEngine;
 
 public class FollowObjectWithOffset : MonoBehaviour
 {
-    public GameObject followTarget;
-    public bool followOn = true;
+    [Header("References")]
+    [SerializeField, Tooltip("The target to be followed")]
+    internal GameObject followTarget;
 
+
+    [Header("Variables")]
+    [SerializeField, Tooltip("Offset between this object and the target to be maintained")]
     internal Vector3 offset;
+
+    [SerializeField, Tooltip("The starting position of the object")]
     internal Vector3 _startPos;
+
+
+    [Header("Boolean Toggles")]
+    [SerializeField, Tooltip("Is the follow currently activated")]
+    internal bool followOn = true;
+
+    
 
     // Start is called before the first frame update
     void Start()
