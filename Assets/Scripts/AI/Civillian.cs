@@ -6,37 +6,58 @@ using UnityEngine.AI;
 
 public class Civillian : MonoBehaviour
 {
-    // File containing list of all possible destinations
-    Destinations dests;
-    // This civillian's destination
-    public Vector3 dest;
+    [Header("References")]
+    [SerializeField, Tooltip("File containing list of all possible destinations. Program will try to find if not set")]
+    private Destinations dests;
+    
+    [SerializeField, Tooltip("This civillian's destination")]
+    private Vector3 dest;
+
+    [SerializeField, Tooltip("rand num generator. Program will try to find if not set")]
+    private randNum r;
+
+
+    [Header("Variables")]
+    [SerializeField, Tooltip("How suspicious the civillian is of the player")]
+    private float suspicion = 0f;
+
+    [SerializeField, Tooltip("Threshhold for when they become nosy")]
+    private float suspicionThreshhold = 0f;
+    
+    [SerializeField, Tooltip("finite states for civillian")]
+    private CivillianState state = CivillianState.normal;
+
+    [SerializeField, Tooltip("speed in default state")]
+    private float slowSpeed = 1.5f;
+
+    [SerializeField, Tooltip("speed in nosy state")]
+    private float fastSpeed = 3f;
+    
+
+    // Unserialized vars
+
     // Navmesh agent
     private NavMeshAgent agent;
-    // How suspicious the civillian is of the player
-    public float suspicion = 0f;
-    // Threshhold for when they become nosy
-    public float suspicionThreshhold = 0f;
-    // rand num generator
-    private randNum r;
-    // finite states for civillian
-    public CivillianState state = CivillianState.normal;
-    // speed in default state
-    public float slowSpeed = 1.5f;
-    // speed in nosy state
-    public float fastSpeed = 3f;
+
     // has a random destination been generated
     private bool destGenerated = false;
+
     // prevents wait coroutine being called multiple times at once
     private bool notStartedWait = true;
+
+
     // initializes dests and rand num generator objects
     void Start()
     {
-        r = FindObjectsOfType<randNum>()[0];
-        dests = FindObjectsOfType<Destinations>()[0];
+        if (!r)
+            r = FindObjectsOfType<randNum>()[0];
+        if (!dests)
+            dests = FindObjectsOfType<Destinations>()[0];
         agent = GetComponent<NavMeshAgent>();
         dests.onDestinationsGenerated += generateDest;
     }
 
+    // Unsubscribes on disable
     void OnDisable() {
         dests.onDestinationsGenerated -= generateDest;
     }

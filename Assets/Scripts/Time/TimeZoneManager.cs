@@ -4,13 +4,25 @@ using UnityEngine;
 
 public class TimeZoneManager : MonoBehaviour
 {
-    public int startTimeZone = 1;
-    public GameObject particles;
+    [SerializeField, Tooltip("The starting timezone")]
+    internal int startTimeZone = 1;
+
+    [SerializeField, Tooltip("Particles played on timezone change")]
+    internal GameObject particles;
+
+
+    // Unserialized vars
+
+    // The current time zone
     private int currTimeZone;
+    // An array of all timezone scripts in the scene
     private TimeZone[] timeZoneObjects;
+    // A list of all objects affected by timezones
     private List<GameObject> objsWithTime;
+    // If true, the manager has not set a timezone yet
     private bool isFirstEnable = true;
 
+    // set all private vars and update the timezone
     void Start() {
         currTimeZone = startTimeZone;
         timeZoneObjects = (TimeZone[])FindObjectsOfType<TimeZone>();
@@ -22,6 +34,7 @@ public class TimeZoneManager : MonoBehaviour
         isFirstEnable = false;
     }
 
+    // Determine the timezone viewed by the player and call the update function
     public void SetTimeZone(int time) {
         if (time > 0 && time < 5) {
             currTimeZone = time;
@@ -29,6 +42,7 @@ public class TimeZoneManager : MonoBehaviour
         }
     }
 
+    // Update the timezone viewed by the player
     private void UpdateTimeZone() {
         if (!isFirstEnable)
             particles.SetActive(true);
@@ -69,6 +83,7 @@ public class TimeZoneManager : MonoBehaviour
         }
     }
 
+    // Disable an object that is on a foreign timezone
     private void DisableObject(GameObject obj) {
         if (!obj)
             return;
@@ -97,6 +112,7 @@ public class TimeZoneManager : MonoBehaviour
         }
     }
 
+    // Enable an object that is on the current timezone
     private void EnableObject(GameObject obj) {
         if (!obj)
             return;

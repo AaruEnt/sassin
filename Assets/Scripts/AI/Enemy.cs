@@ -4,65 +4,109 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
+using NaughtyAttributes;
 
 
 // Allows an object with a navmeshagent to patrol to preset waypoints on most efficient path
 public class Enemy : MonoBehaviour
 {
-    // All waypoints
-    public Transform[] wayPoints;
+    [Header("References")]
+    [SerializeField, Tooltip("All waypoints this AI moves to")]
+    private Transform[] wayPoints;
+
+    
+    [Header("Booleans")]
+    [SerializeField, Tooltip("if true sets the agent to use melee attacks instead of spells")]
+    private bool meleeAttack = false;
+
+
+    [Header("Spell Attack")]
+    [HideIf("meleeAttack")]
+    [SerializeField, Tooltip("spawn point for spell attacks")]
+    private Transform spellSpawnPoint;
+
+    [HideIf("meleeAttack")]
+    [SerializeField, Tooltip("prefab for the spell to be used")]
+    private GameObject spellPrefab;
+
+    [HideIf("meleeAttack")]
+    [SerializeField, Tooltip("")]
+    private float spellDamage = 1f;
+
+
+    [Header("Variables")]
+    [SerializeField, Tooltip("index of current waypoint")]
+    private int currWaypoint = 0;
+
+    [SerializeField, Tooltip("Agent's suspicion of player")]
+    private float suspicion = 0f;
+
+    [SerializeField, Tooltip("minimum suspicion")]
+    private float minSuspicion = 0f;
+
+    [SerializeField, Tooltip("Maximum suspicion - Recommend all are the same for consistency")]
+    private float maxSuspicion = 8f;
+
+    [SerializeField, Tooltip("minimum move speed")]
+    private float minMoveSpeed;
+
+
+    [Header("Other Var Types")]
+    [SerializeField, Tooltip("mask used for linecasts")]
+    private LayerMask mask;
+    
+    [SerializeField, Tooltip("which state the enemy is in")]
+    private EnemyState state = EnemyState.patrol;
+    
+    [SerializeField, Tooltip("Last position player was seen")]
+    private Transform lastDetectedArea;
+
+
+    // Unserialized vars
+
     // Waypoints auto generated while searching
     private Vector3[] searchWaypoints;
+
     // The navmeshagent component
     private NavMeshAgent agent;
-    // index of current waypoint
-    public int currWaypoint = 0;
+
     // index of search waypoint
     private int searchWaypoint = 0;
+
     // Is the agent currently waiting
     private bool isWaiting = false;
+
     // is the agent currently chasing
     private bool isChasing = false;
-    // Agent's suspicion of player
-    public float suspicion = 0f;
-    // mask used for linecasts
-    public LayerMask mask;
-    // minimum suspicion
-    public float minSuspicion = 0f;
-    // maximum suspicion
-    private float maxSuspicion = 8f;
-    // which state the enemy is in
-    public EnemyState state = EnemyState.patrol;
-    // Last position player was seen
-    public Transform lastDetectedArea;
+
     // Player - used for smoother chasing
     private GameObject player;
+
     // spin timer
     private float t = 0f;
+
     // used for cancelling coroutines
     private Coroutine c;
+
     // is a coroutine running
     private bool cr_running = false;
+
     // should the agent look around
     private bool dontLook = false;
+
     // prevents the agent from incrementing waypoint count while doing other things
     private bool dontIncrement = false;
+
     // has the agent reached the threshold for the alert state
     private bool reachedThreshhold = false;
+
     // starting move speed
     private float startMoveSpeed;
-    // minimum move speed
-    public float minMoveSpeed;
-    // if true sets the agent to use melee attacks instead of spells
-    public bool meleeAttack = false;
-    // spawn point for spell attacks
-    public Transform spellSpawnPoint;
-    // prefab for the spell to be used
-    public GameObject spellAttack;
-    public float spellDamage = 1f;
+
     // is the agent currently capable of starting an attack - currently only used for spells
     internal bool canAttack = true;
-    // Initializes agent and pathing. Unparents waypoints
+
+
     void Start()
     {
         wayPoints[0].parent.parent = null;
@@ -76,7 +120,7 @@ public class Enemy : MonoBehaviour
         startMoveSpeed = minMoveSpeed < agent.speed ? minMoveSpeed : agent.speed;
         if (!spellSpawnPoint)
             spellSpawnPoint = transform;
-        if (!spellAttack && !meleeAttack) {
+        if (!spellPrefab && !meleeAttack) {
             Debug.LogError("Variable 'Spell Attack' is not defined");
         }
     }
@@ -119,22 +163,26 @@ public class Enemy : MonoBehaviour
             chasePlayer();
         }
 
+        float speed = minMoveSpeed;
         if (state == EnemyState.alert) {
             minMoveSpeed = startMoveSpeed + 1f;
             minSuspicion = minSuspicion <= 0.75f ? 0.75f : minSuspicion;
+            speed = minMoveSpeed;
         }
         else if (state == EnemyState.chase) {
-            minMoveSpeed = startMoveSpeed + 1.5f;
+            speed = startMoveSpeed + 1.5f;
             minSuspicion = minSuspicion <= 0.9f ? 0.9f : minSuspicion;
         }
-        agent.speed = minMoveSpeed;
+        agent.speed = speed;
     }
 
+    // Sets the next waypoint for the AI
     void SetNextWaypoint(Vector3 point) {
         agent.SetDestination(point);
         isWaiting = false;
     }
 
+    // Determines next waypoint, and sets it
     void DoAnAction() {
         if (state == EnemyState.search && searchWaypoint + 1 < searchWaypoints.Length) {
             if (searchWaypoint + 2 >= searchWaypoints.Length)
@@ -151,6 +199,8 @@ public class Enemy : MonoBehaviour
         }
         isWaiting = false;
     }
+
+    // Called by outside functions, attracts the attention of the AI
     public void attractAttention(Transform pos, float addedSuspicion) {
         dontLook = true;
         minSuspicion = minSuspicion <= 0.5f ? 0.5f : minSuspicion;
@@ -178,6 +228,8 @@ public class Enemy : MonoBehaviour
             }
         }
     }
+
+    // Looks around for the player after losing LoS
     public void SearchForPlayer() {
         isWaiting = true;
         if (!dontLook)
@@ -187,10 +239,17 @@ public class Enemy : MonoBehaviour
         dontLook = false;
     }
 
+    // Chases the player while line of sight is maintained
     public void chasePlayer() {
         isChasing = true;
         agent.isStopped = true;
         agent.ResetPath(); // Constantly update path to point towards player
+        if (!player) {
+            state = EnemyState.alert;
+            suspicion = minSuspicion * 2;
+            DoAnAction();
+            return;
+        }
         RaycastHit hitinfo;
         Physics.Linecast(transform.position, player.transform.position, out hitinfo, mask);
         if (hitinfo.collider.gameObject.tag == "Player") { // if line of sight present from enemy to player
@@ -231,7 +290,7 @@ public class Enemy : MonoBehaviour
         if (col.gameObject.tag == "Player") { // If player in look cone
             Physics.Linecast(transform.position, col.transform.position, out hitinfo);
             //If line of sight present start chasing player
-            if (hitinfo.collider.gameObject.tag == "Player" && hitinfo.collider.transform.root.gameObject.GetComponent<PlayerState>().state == PlayerStates.suspicious) {
+            if (hitinfo.collider.gameObject.tag == "Player" && hitinfo.collider.transform.root.gameObject.GetComponentInChildren<PlayerState>().state == PlayerStates.suspicious) {
                 state = EnemyState.chase;
                 reachedThreshhold = true;
                 player = col.gameObject;
@@ -307,8 +366,9 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // Starts an attack with a spell
     IEnumerator SpellAttack() {
-        var tmp = Instantiate(spellAttack, spellSpawnPoint.position, Quaternion.identity, spellSpawnPoint);
+        var tmp = Instantiate(spellPrefab, spellSpawnPoint.position, Quaternion.identity, spellSpawnPoint);
         var s = tmp.GetComponent<Spell>();
         var f = tmp.GetComponent<FollowObjectWithOffset>();
 
@@ -325,6 +385,7 @@ public class Enemy : MonoBehaviour
         yield return null;
     }
 
+    // Cooldown after ending last spell before starting a new one
     IEnumerator SpellCooldown(float time) {
         yield return new WaitForSeconds(time);
         canAttack = true;

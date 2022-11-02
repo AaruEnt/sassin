@@ -4,5 +4,6 @@ using UnityEngine;
 
 public class WeakPoint : MonoBehaviour
 {
-    public float damageMod = 1.5f;
+    [SerializeField, Tooltip("Damage modifier applied when weakpoint hit")]
+    internal float damageMod = 1.5f;
 }

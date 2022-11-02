@@ -5,10 +5,15 @@ using UnityEngine;
 
 public class Destinations : MonoBehaviour
 {
-    // All child destination objects of parent
-    public List<Vector3> destinationPoints;
+    [Header("References")]
+    [SerializeField, Tooltip("All child destination objects of parent")]
+    internal List<Vector3> destinationPoints;
+
+
     // Event signalling all destination objects are loaded
     public event EventHandler onDestinationsGenerated;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,11 +25,5 @@ public class Destinations : MonoBehaviour
         }
         EventArgs e = new EventArgs();
         handler?.Invoke(this, e);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

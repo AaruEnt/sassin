@@ -4,25 +4,32 @@ using UnityEngine;
 
 public class MaterialToggle : MonoBehaviour
 {
-    public Material firstSwap;
-    public Material secondSwap;
-    public MeshRenderer renderer;
+    [Header("References")]
+    [SerializeField, Tooltip("Material to be enabled after odd-numbered swaps (1, 3, 5, etc)")]
+    private Material firstSwap;
 
+    [SerializeField, Tooltip("Material to be enabled after even-numbered swaps (2, 4 , 6, etc)")]
+    private Material secondSwap;
+
+    [SerializeField, Tooltip("The mesh renderer to pull the material from. If not set, program will try to find it on the object.")]
+    private MeshRenderer mRenderer;
+
+    // toggle state
     private bool toggle = false;
 
     void Start() {
-        if (!renderer)
-            renderer = GetComponent<MeshRenderer>();
+        if (!mRenderer)
+            mRenderer = GetComponent<MeshRenderer>();
     }
     
     
     public void Toggle() {
         if (!toggle) {
             toggle = true;
-            renderer.material = firstSwap;
+            mRenderer.material = firstSwap;
         } else {
             toggle = false;
-            renderer.material = secondSwap;
+            mRenderer.material = secondSwap;
         }
 
     }

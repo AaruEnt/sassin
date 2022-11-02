@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class DestroyOnParticleStop : MonoBehaviour
 {
-    public GameObject parentObj;
+    [SerializeField, Tooltip("Parent object to be destroyed if it exists")]
+    private GameObject parentObj;
 
     void Start() {
         transform.parent = null;
     }
 
     void OnParticleSystemStopped() {
-        Destroy(parentObj);
+        if (parentObj)
+            Destroy(parentObj);
         Destroy(this.gameObject);
     }
 }

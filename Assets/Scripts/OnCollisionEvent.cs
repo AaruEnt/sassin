@@ -5,11 +5,21 @@ using UnityEngine.Events;
 
 public class OnCollisionEvent : MonoBehaviour
 {
-    public float layer = -1;
-    public GameObject ignore;
-    public UnityEvent OnCol;
+    [Header("Variables")]
+    [SerializeField, Tooltip("")]
+    private float layer = -1;
 
-    // Start is called before the first frame update
+
+    [Header("References")]
+    [SerializeField, Tooltip("Gameobject to ignore")]
+    private GameObject ignore;
+
+
+    [Header("Events")]
+    [SerializeField, Tooltip("Activates on trigger entered")]
+    private UnityEvent OnCol;
+
+    // Called when trigger collider entered
     void OnTriggerEnter(Collider col) {
         if ((layer != -1 && col.gameObject.layer != layer) || col.gameObject == ignore)
             return;

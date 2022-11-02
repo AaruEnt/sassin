@@ -4,13 +4,34 @@ using UnityEngine;
 
 public class TimePreviewController : MonoBehaviour
 {
-    public Camera previewCamera;
+    [Header("References")]
+    [SerializeField, Tooltip("The camera displaying the timezone preview")]
+    internal Camera previewCamera;
+
+    [SerializeField, Tooltip("The dial controlling the timezone")]
+    internal WristDial dial;
+
+    [SerializeField, Tooltip("The layermask used for previews")]
+    internal LayerMask mask;
+
+
+    [Header("Variables")]
+    [SerializeField, Tooltip("The layer for 'past' time")]
+    internal int pastTimeLayer;
+
+    [SerializeField, Tooltip("the layer for 'present' time")]
+    internal int presentTimeLayer;
+
+    [SerializeField, Tooltip("The layer for 'future' time")]
+    internal int futureTimeLayer;
+
+
+    // Unserialized vars
+
+    // The starting layermask unmodified by timezones
     private LayerMask startMask;
-    public int pastTimeLayer;
-    public int presentTimeLayer;
-    public int futureTimeLayer;
-    public WristDial dial;
-    public LayerMask mask;
+
+
     // Start is called before the first frame update
     void Start()
     {

@@ -5,18 +5,34 @@ using UnityEngine.Events;
 
 public class WristButton : MonoBehaviour
 {
-    public ConfigurableJoint cj;
-    public float deadZone = 0.05f;
-    public FollowObjectWithOffset follow;
-    public UnityEvent onPressed;
-    public float maxPosX;
+    [Header("Variables")]
+    [SerializeField, Tooltip("Button deadzone")]
+    private float deadZone = 0.05f;
 
-    private Vector3 _startPos;
-    private Rigidbody rb;
-    private float cd = 0.25f;
-    private float cd2 = 0f;
-    private bool isPressed = true;
-    private bool ignoreTrigger = false;
+    [SerializeField, Tooltip("The max x value")]
+    private float maxPosX;
+
+
+    [Header("References")]
+    [SerializeField, Tooltip("The configurable joint allowing the button to be pressed")]
+    private ConfigurableJoint cj;
+    
+    [SerializeField, Tooltip("The object that should be followed")]
+    private FollowObjectWithOffset follow;
+
+
+    [Header("Events")]
+    [SerializeField, Tooltip("Activates on the button being pressed")]
+    private UnityEvent onPressed;
+    
+
+    // private vars
+    private Vector3 _startPos; // the starting local position
+    private Rigidbody rb; // the rigidbody of the object
+    private float cd = 0.25f; // current press cooldown remaining in seconds
+    private float cd2 = 0f; // current release cooldown remaining in seconds
+    private bool isPressed = true; // is the button currently pressed
+    private bool ignoreTrigger = false; // ignore the trigger
 
     // Start is called before the first frame update
     void Start()
@@ -54,6 +70,10 @@ public class WristButton : MonoBehaviour
             cd2 -= Time.deltaTime;
     }
 
+    // converts the position on the x axis to a float between 0 and 2 representing how far on its linear limits the joint is
+    // 0f - button is fully pressed
+    // 2f - button is fully released
+    // 1f - button is halfway pressed
     private float GetValue() {
         //Debug.Log(Vector3.Distance(_startPos, transform.localPosition) / cj.linearLimit.limit);
         var val = Vector3.Distance(_startPos, transform.localPosition) / cj.linearLimit.limit;
@@ -64,6 +84,7 @@ public class WristButton : MonoBehaviour
         return (Mathf.Clamp(val, 0f, 2f));
     }
 
+    // Releases the button when locked in pressed position
     public void UnlockButton() {
         rb.isKinematic = false;
         follow.followOn = true;
@@ -71,14 +92,17 @@ public class WristButton : MonoBehaviour
         isPressed = false;
     }
 
+    // Prevents the button from immediately locking on being released
     public void BumpCooldown() {
         cd2 = 0.01f;
     }
 
+    // Sets the ignoreTrigger var to true
     public void InfiniteCooldown() {
         ignoreTrigger = true;
     }
 
+    // sets the ignoreTrigger value to false
     public void ResetCooldown() {
         ignoreTrigger = false;
     }
