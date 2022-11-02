@@ -169,7 +169,6 @@ namespace Autohand {
 
 
 #if UNITY_EDITOR
-        bool editorSelected = false;
         void EditorCopyGrabbable() {
             if(CopySettings != null)
                 EditorUtility.CopySerialized(CopySettings, this);
@@ -191,6 +190,7 @@ namespace Autohand {
 
 
 #if UNITY_EDITOR
+            bool editorSelected = false;
             if (Selection.activeGameObject == gameObject)
             {
                 Selection.activeGameObject = null;
