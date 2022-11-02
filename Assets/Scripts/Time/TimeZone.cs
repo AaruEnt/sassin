@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class TimeZone : MonoBehaviour
 {
-    public timeZone time;
-    public int layer;
-    public int previewLayer;
+    [SerializeField, Tooltip("A enum containing 1 of 4 potential time zones")]
+    internal timeZone time;
+
+    [SerializeField, Tooltip("The default layer")]
+    internal int layer;
+
+    [SerializeField, Tooltip("The time layer")]
+    internal int previewLayer;
 }
 
 public enum timeZone

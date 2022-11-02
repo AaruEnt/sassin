@@ -163,15 +163,17 @@ public class Enemy : MonoBehaviour
             chasePlayer();
         }
 
+        float speed = minMoveSpeed;
         if (state == EnemyState.alert) {
             minMoveSpeed = startMoveSpeed + 1f;
             minSuspicion = minSuspicion <= 0.75f ? 0.75f : minSuspicion;
+            speed = minMoveSpeed;
         }
         else if (state == EnemyState.chase) {
-            minMoveSpeed = startMoveSpeed + 1.5f;
+            speed = startMoveSpeed + 1.5f;
             minSuspicion = minSuspicion <= 0.9f ? 0.9f : minSuspicion;
         }
-        agent.speed = minMoveSpeed;
+        agent.speed = speed;
     }
 
     // Sets the next waypoint for the AI
@@ -242,6 +244,12 @@ public class Enemy : MonoBehaviour
         isChasing = true;
         agent.isStopped = true;
         agent.ResetPath(); // Constantly update path to point towards player
+        if (!player) {
+            state = EnemyState.alert;
+            suspicion = minSuspicion * 2;
+            DoAnAction();
+            return;
+        }
         RaycastHit hitinfo;
         Physics.Linecast(transform.position, player.transform.position, out hitinfo, mask);
         if (hitinfo.collider.gameObject.tag == "Player") { // if line of sight present from enemy to player
@@ -282,7 +290,7 @@ public class Enemy : MonoBehaviour
         if (col.gameObject.tag == "Player") { // If player in look cone
             Physics.Linecast(transform.position, col.transform.position, out hitinfo);
             //If line of sight present start chasing player
-            if (hitinfo.collider.gameObject.tag == "Player" && hitinfo.collider.transform.root.gameObject.GetComponent<PlayerState>().state == PlayerStates.suspicious) {
+            if (hitinfo.collider.gameObject.tag == "Player" && hitinfo.collider.transform.root.gameObject.GetComponentInChildren<PlayerState>().state == PlayerStates.suspicious) {
                 state = EnemyState.chase;
                 reachedThreshhold = true;
                 player = col.gameObject;

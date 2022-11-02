@@ -2282,13 +2282,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   previewCamera: {fileID: 279015383}
-  pastTimeLayer: 6
-  presentTimeLayer: 7
-  futureTimeLayer: 8
   dial: {fileID: 939433906}
   mask:
     serializedVersion: 2
     m_Bits: 0
+  pastTimeLayer: 6
+  presentTimeLayer: 7
+  futureTimeLayer: 8
 --- !u!1 &330218413
 GameObject:
   m_ObjectHideFlags: 0
@@ -3043,7 +3043,6 @@ MonoBehaviour:
   numberOfOptions: 4
   layer: 30
   layer2: 31
-  dialPosToTimezone: 0
   manager: {fileID: 1590132488}
 --- !u!59 &386272884
 HingeJoint:
@@ -3772,8 +3771,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 663d344ebd7629242b924e54da9841f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cj: {fileID: 456877692}
   deadZone: 0.05
+  maxPosX: -0.046
+  cj: {fileID: 456877692}
   follow: {fileID: 939433912}
   onPressed:
     m_PersistentCalls:
@@ -3790,7 +3790,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  maxPosX: -0.046
 --- !u!4 &462390169 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2688200019420170291, guid: 684adc7d54241db44994b67ace3e5b08, type: 3}
@@ -10864,7 +10863,6 @@ MonoBehaviour:
   numberOfOptions: 4
   layer: 30
   layer2: 31
-  dialPosToTimezone: 0
   manager: {fileID: 1590132488}
 --- !u!59 &939433907
 HingeJoint:
@@ -11130,6 +11128,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   followTarget: {fileID: 456877687}
+  offset: {x: 0, y: 0, z: 0}
+  _startPos: {x: 0, y: 0, z: 0}
   followOn: 0
 --- !u!4 &943866040 stripped
 Transform:
@@ -12560,7 +12560,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8e3e8cbfc676c54bb1bf50139b5fadd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dests: {fileID: 160817647}
   dest: {x: 0, y: 0, z: 0}
+  r: {fileID: 30307142}
   suspicion: 0
   suspicionThreshhold: 0
   state: 0
@@ -14092,7 +14094,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1414778490}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.97, y: 5.84, z: 9.31}
+  m_LocalPosition: {x: 12.03, y: 5.84, z: 9.31}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 984507728}
@@ -14127,8 +14129,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 895642f083daeed4e8d59a8e20ec239c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 20
-  maxHealth: 20
+  health: 5
+  maxHealth: 5
   damage: 2
 --- !u!114 &1446144970 stripped
 MonoBehaviour:
@@ -21493,19 +21495,20 @@ MonoBehaviour:
   - {fileID: 1575641636}
   - {fileID: 1128801583}
   - {fileID: 330218414}
+  meleeAttack: 0
+  spellSpawnPoint: {fileID: 1392530106}
+  spellPrefab: {fileID: 8451535518627173996, guid: 62c1360f32bcb3f499ead24fca34c5a3, type: 3}
+  spellDamage: 3
   currWaypoint: 0
   suspicion: 0
+  minSuspicion: 0
+  maxSuspicion: 8
+  minMoveSpeed: 3.5
   mask:
     serializedVersion: 2
     m_Bits: 4160749585
-  minSuspicion: 0
   state: 0
   lastDetectedArea: {fileID: 0}
-  minMoveSpeed: 3.5
-  meleeAttack: 0
-  spellSpawnPoint: {fileID: 1392530106}
-  spellAttack: {fileID: 8451535518627173996, guid: 62c1360f32bcb3f499ead24fca34c5a3, type: 3}
-  spellDamage: 3
 --- !u!54 &1877491782
 Rigidbody:
   m_ObjectHideFlags: 0
