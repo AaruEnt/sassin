@@ -4142,13 +4142,21 @@ MonoBehaviour:
   ignoreCollisionOnStab: []
   angleThreshold: 30
   velocityThreshold: 3
+  dampOverTime:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   stabbedMassScale: 1
   stabbedConnectedMassScale: 1
   stabAmount: 5
   stabLength: 0
   restistance: 0
+  damper: 0
   unstabTimeThreshold: 0.2
   unstabDepthThreshold: 0.05
+  setStabbedColliderAsChild: 0
 --- !u!1 &538082609
 GameObject:
   m_ObjectHideFlags: 0
@@ -10302,6 +10310,7 @@ GameObject:
   - component: {fileID: 771427136}
   - component: {fileID: 771427135}
   - component: {fileID: 771427134}
+  - component: {fileID: 771427137}
   m_Layer: 0
   m_Name: Table (1)
   m_TagString: Untagged
@@ -10385,6 +10394,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 771427132}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &771427137
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 771427132}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &783311238
 GameObject:
   m_ObjectHideFlags: 0
@@ -11243,6 +11268,102 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b043406d7de482418dfa12f5e1ec5ea, type: 3}
+--- !u!1 &911694692
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 911694693}
+  - component: {fileID: 911694696}
+  - component: {fileID: 911694695}
+  - component: {fileID: 911694694}
+  m_Layer: 0
+  m_Name: Handle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &911694693
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 911694692}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0.641}
+  m_LocalScale: {x: 1, y: 0.2, z: 1}
+  m_Children: []
+  m_Father: {fileID: 929711724}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!136 &911694694
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 911694692}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &911694695
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 911694692}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &911694696
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 911694692}
+  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &925142267
 GameObject:
   m_ObjectHideFlags: 0
@@ -11364,13 +11485,21 @@ MonoBehaviour:
   ignoreCollisionOnStab: []
   angleThreshold: 30
   velocityThreshold: 3
+  dampOverTime:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   stabbedMassScale: 1
   stabbedConnectedMassScale: 1
   stabAmount: 5
   stabLength: 0
   restistance: 0
+  damper: 0
   unstabTimeThreshold: 0.2
   unstabDepthThreshold: 0.05
+  setStabbedColliderAsChild: 0
 --- !u!1 &929711720
 GameObject:
   m_ObjectHideFlags: 0
@@ -11385,6 +11514,7 @@ GameObject:
   - component: {fileID: 929711721}
   - component: {fileID: 929711725}
   - component: {fileID: 929711726}
+  - component: {fileID: 929711727}
   m_Layer: 0
   m_Name: StabTest
   m_TagString: Untagged
@@ -11468,6 +11598,7 @@ Transform:
   - {fileID: 1111983898}
   - {fileID: 1255354119}
   - {fileID: 943003627}
+  - {fileID: 911694693}
   m_Father: {fileID: 0}
   m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -11503,6 +11634,67 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &929711727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 929711720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 822bc9090447b9c40833509c4a32e597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ignoreMe: 0
+  body: {fileID: 0}
+  hightlightMaterial: {fileID: 0}
+  isGrabbable: 1
+  CopySettings: {fileID: 0}
+  grabType: 0
+  handType: 0
+  singleHandOnly: 1
+  allowHeldSwapping: 1
+  instantGrab: 0
+  useGentleGrab: 0
+  maintainGrabOffset: 0
+  ignoreWeight: 0
+  parentOnGrab: 1
+  throwPower: 1
+  jointBreakForce: 3500
+  showAdvancedSettings: 1
+  makeChildrenGrabbable: 1
+  grabPriorityWeight: 1
+  ignoreReleaseTime: 0.5
+  heldPositionOffset: {x: 0, y: 0, z: 0}
+  heldRotationOffset: {x: 0, y: 0, z: 0}
+  customGrabJoint: {fileID: 0}
+  jointedBodies: []
+  heldIgnoreColliders: []
+  pullApartBreakOnly: 1
+  showEvents: 1
+  onGrab:
+    m_PersistentCalls:
+      m_Calls: []
+  onRelease:
+    m_PersistentCalls:
+      m_Calls: []
+  onSqueeze:
+    m_PersistentCalls:
+      m_Calls: []
+  onUnsqueeze:
+    m_PersistentCalls:
+      m_Calls: []
+  onHighlight:
+    m_PersistentCalls:
+      m_Calls: []
+  onUnhighlight:
+    m_PersistentCalls:
+      m_Calls: []
+  OnJointBreak:
+    m_PersistentCalls:
+      m_Calls: []
+  lockHandOnGrab: 0
 --- !u!1 &932263454
 GameObject:
   m_ObjectHideFlags: 0
@@ -12004,15 +12196,23 @@ MonoBehaviour:
   stabJoints: []
   disableStabJointGroupsOnStab: []
   ignoreCollisionOnStab: []
-  angleThreshold: 30
+  angleThreshold: 0.3
   velocityThreshold: 3
+  dampOverTime:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   stabbedMassScale: 1
   stabbedConnectedMassScale: 1
   stabAmount: 5
   stabLength: 0
   restistance: 0
+  damper: 0
   unstabTimeThreshold: 0.2
   unstabDepthThreshold: 0.05
+  setStabbedColliderAsChild: 0
 --- !u!65 &943003629
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13388,15 +13588,23 @@ MonoBehaviour:
   stabJoints: []
   disableStabJointGroupsOnStab: []
   ignoreCollisionOnStab: []
-  angleThreshold: 30
+  angleThreshold: 0.66
   velocityThreshold: 3
+  dampOverTime:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   stabbedMassScale: 1
   stabbedConnectedMassScale: 1
   stabAmount: 5
   stabLength: 0
-  restistance: 0
+  restistance: 0.1
+  damper: 0
   unstabTimeThreshold: 0.2
   unstabDepthThreshold: 0.05
+  setStabbedColliderAsChild: 0
 --- !u!135 &1111983900
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -14464,15 +14672,23 @@ MonoBehaviour:
   stabJoints: []
   disableStabJointGroupsOnStab: []
   ignoreCollisionOnStab: []
-  angleThreshold: 30
+  angleThreshold: 0.3
   velocityThreshold: 3
+  dampOverTime:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   stabbedMassScale: 1
   stabbedConnectedMassScale: 1
   stabAmount: 5
   stabLength: 0
   restistance: 0
+  damper: 0
   unstabTimeThreshold: 0.2
   unstabDepthThreshold: 0.05
+  setStabbedColliderAsChild: 0
 --- !u!65 &1255354121
 BoxCollider:
   m_ObjectHideFlags: 0

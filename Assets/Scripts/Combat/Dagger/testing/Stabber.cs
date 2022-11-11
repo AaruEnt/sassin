@@ -16,17 +16,21 @@ namespace JointVR {
         public List<Stabber> disableStabJointGroupsOnStab = new List<Stabber>();
         public List<Collider> ignoreCollisionOnStab = new List<Collider>();
 
-        public float angleThreshold = 30f;
+        [Range(0, 1)]
+        public float angleThreshold = 0.66f;
         public float velocityThreshold = 3f;
+        [SerializeField] protected AnimationCurve dampOverTime;
         [SerializeField] protected float stabbedMassScale = 1;
         [SerializeField] protected float stabbedConnectedMassScale = 1;
         public float stabAmount = 5f;
         public float stabLength;
         public float restistance;
+        public float damper;
         public float unstabTimeThreshold = 0.2f;
         public float unstabDepthThreshold = 0.05f;
         internal float unstabTime;
 
+        public bool setStabbedColliderAsChild;
 
         [ShowNativeProperty]
         public bool isStabbing
@@ -82,7 +86,7 @@ namespace JointVR {
         public void Resistance() {
             foreach (StabJoint stabJoint in stabJoints)
             {
-                if (stabJoint.stabbedCollider)
+                if (stabJoint.stabbedCollider && stabJoint.previousStabDepth != 0)
                 {
                     float stabDepth = stabJoint.stabDepth;
 
@@ -139,14 +143,116 @@ namespace JointVR {
         // TODO
         public void Stab(StabJoint stabJoint, Collider stabbedCollider)
         {
-            return;
+            stabJoint.originalStabPosition = root.transform.InverseTransformPoint(stabbedCollider.transform.position);
+
+            stabJoint.stabTime = Time.time;
+            stabJoint.stabbedCollider = stabbedCollider;
+
+            Vector3 newAnchor = Vector3.zero;
+            float stabLength = -this.stabLength * (stabDirection.inverse ? -1 : 1);
+
+            newAnchor.x = stabDirection.xMotion == ConfigurableJointMotion.Limited ? stabLength : 0;
+            newAnchor.y = stabDirection.yMotion == ConfigurableJointMotion.Limited ? stabLength : 0;
+            newAnchor.z = stabDirection.zMotion == ConfigurableJointMotion.Limited ? stabLength : 0;
+
+            IgnoreCollision(stabbedCollider, true);
+
+            stabJoint.stabDirection = root.InverseTransformDirection(transform.TransformDirection(newAnchor));
+
+            foreach (Stabber disableGroup in disableStabJointGroupsOnStab)
+            {
+               if(!disableGroup.isStabbing)
+                   foreach (Collider collider in disableGroup.colliders)
+                       collider.enabled = false;
+            }
+
+            if (setStabbedColliderAsChild)
+                stabJoint.stabbedCollider.transform.parent = stabJoint.joint.transform;
+
+            stabJoint.joint = root.gameObject.AddComponent<ConfigurableJoint>();
+            stabJoint.joint.connectedBody = stabbedCollider.attachedRigidbody;
+            stabJoint.joint.autoConfigureConnectedAnchor = false;
+
+            if (stabDirectionTransform)
+            {
+                stabJoint.joint.axis = root.InverseTransformDirection(stabDirectionTransform.right);
+                stabJoint.joint.secondaryAxis = root.InverseTransformDirection(stabDirectionTransform.up);
+                newAnchor = root.InverseTransformDirection(transform.TransformDirection(newAnchor));
+            }
+
+            stabJoint.joint.anchor = newAnchor;
+
+            SoftJointLimit newLimit = new SoftJointLimit();
+            newLimit.limit = Mathf.Abs(stabLength);
+
+            stabJoint.joint.linearLimit = newLimit;
+
+            stabJoint.joint.xMotion = stabDirection.xMotion;
+            stabJoint.joint.yMotion = stabDirection.yMotion;
+            stabJoint.joint.zMotion = stabDirection.zMotion;
+
+            stabJoint.joint.angularXMotion = ConfigurableJointMotion.Locked;
+            stabJoint.joint.angularYMotion = ConfigurableJointMotion.Locked;
+            stabJoint.joint.angularZMotion = ConfigurableJointMotion.Locked;
+
+            stabJoint.joint.massScale = stabbedMassScale;
+            stabJoint.joint.connectedMassScale = stabbedConnectedMassScale;
+
+            StartCoroutine(SetDampOverTime(stabJoint));
         }
 
 
         // TODO
         public void IgnoreCollision(Collider collider)
         {
-            return;
+            StartCoroutine(IgnoreCollisionCO(collider));
+        }
+
+        IEnumerator IgnoreCollisionCO(Collider collider)
+        {
+            yield return new WaitForFixedUpdate();
+            yield return new WaitForFixedUpdate();
+            yield return new WaitForFixedUpdate();
+
+            IgnoreCollision(collider, false);
+        }
+
+        void IgnoreCollision(Collider collider, bool ignore)
+        {
+            foreach (Collider jointGroupCollider in ignoreCollisionOnStab)
+                Physics.IgnoreCollision(jointGroupCollider, collider, ignore);
+        }
+
+        protected virtual JointDrive SetJointDrive(JointDrive jointDrive, float spring, float damper, float maximumForce)
+        {
+            JointDrive newDrive = new JointDrive();
+            newDrive.positionSpring = spring;
+            newDrive.positionDamper = damper;
+            newDrive.maximumForce = maximumForce;
+            return newDrive;
+        }
+
+        IEnumerator SetDampOverTime(StabJoint stabJoint)
+        {
+            WaitForFixedUpdate wait = new WaitForFixedUpdate();
+
+            float newDamp = 0;
+
+            while (newDamp < damper && stabJoint.joint != null)
+            {
+                newDamp = Mathf.Clamp(dampOverTime.Evaluate(Time.time - stabJoint.stabTime), 0, damper);
+
+                if (stabDirection.xMotion == ConfigurableJointMotion.Limited)
+                    stabJoint.joint.xDrive = SetJointDrive(stabJoint.joint.xDrive, 0, newDamp, Mathf.Infinity);
+
+                if (stabDirection.yMotion == ConfigurableJointMotion.Limited)
+                    stabJoint.joint.yDrive = SetJointDrive(stabJoint.joint.yDrive, 0, newDamp, Mathf.Infinity);
+
+                if (stabDirection.zMotion == ConfigurableJointMotion.Limited)
+                    stabJoint.joint.zDrive = SetJointDrive(stabJoint.joint.zDrive, 0, newDamp, Mathf.Infinity);
+                
+                yield return wait;
+            }
         }
     }
 
