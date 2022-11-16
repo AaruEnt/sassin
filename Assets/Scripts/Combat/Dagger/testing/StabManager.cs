@@ -36,7 +36,7 @@ namespace JointVR
         bool AttemptStab(Stabber stabber, Collider hitCollider, Vector3 relativeVelocity)
         {
             if (!hitCollider.attachedRigidbody) return false;
-            if (hitCollider.attachedRigidbody.isKinematic) return false;
+            //if (hitCollider.attachedRigidbody.isKinematic) return false;
             if (hitCollider.isTrigger) return false;
 
             if (ColliderAlreadyStabbedByThis(hitCollider)) return false;
@@ -63,7 +63,7 @@ namespace JointVR
 
         bool SuccessfulAngleOfApproach(Vector3 stabDirection, Vector3 relativeVelocity, float angleThreshold) {
             float tmp = Vector3.Dot(-relativeVelocity.normalized, stabDirection);
-            Debug.Log(tmp);
+            //Debug.Log(tmp > angleThreshold);
             return tmp > angleThreshold;
         }
 

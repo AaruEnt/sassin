@@ -4,6 +4,8 @@ using UnityEngine;
 using NaughtyAttributes;
 
 
+// TODO: Add rB list. <list>.Contains(collider.attachedrigidbody) prevent stab hands and anything else
+
 namespace JointVR {
     public class Stabber : MonoBehaviour
     {
@@ -35,15 +37,14 @@ namespace JointVR {
         [ShowNativeProperty]
         public bool isStabbing
         {
-            get;set;
-            // get
-            // {
-            //     foreach (StabJoint stabJoint in stabJoints)
-            //         if (stabJoint.stabbedCollider)
-            //             return true;
+            get
+            {
+                foreach (StabJoint stabJoint in stabJoints)
+                    if (stabJoint.stabbedCollider)
+                        return true;
 
-            //     return false;
-            // }
+                return false;
+            }
         }
 
 
@@ -105,7 +106,7 @@ namespace JointVR {
                 {
                     float stabDepth = joint.stabDepth;
 
-                    //Debug.Log("Stab depth" + stabDepth);
+                    //Debug.Log("Stab depth " + stabDepth);
 
                     if (Time.time - joint.stabTime >= unstabTimeThreshold)
                     {
@@ -140,7 +141,6 @@ namespace JointVR {
             unstabTime = Time.time;
         }
 
-        // TODO
         public void Stab(StabJoint stabJoint, Collider stabbedCollider)
         {
             stabJoint.originalStabPosition = root.transform.InverseTransformPoint(stabbedCollider.transform.position);
