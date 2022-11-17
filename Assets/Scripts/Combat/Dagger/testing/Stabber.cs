@@ -240,7 +240,9 @@ namespace JointVR {
 
             while (newDamp < damper && stabJoint.joint != null)
             {
-                newDamp = Mathf.Clamp(dampOverTime.Evaluate(Time.time - stabJoint.stabTime), 0, damper);
+                newDamp = Mathf.Clamp(dampOverTime.Evaluate(Time.time - stabJoint.stabTime), 0, 1);
+
+                newDamp = newDamp * damper;
 
                 if (stabDirection.xMotion == ConfigurableJointMotion.Limited)
                     stabJoint.joint.xDrive = SetJointDrive(stabJoint.joint.xDrive, 0, newDamp, Mathf.Infinity);

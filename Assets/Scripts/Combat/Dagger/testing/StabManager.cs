@@ -11,6 +11,8 @@ namespace JointVR
     public class StabManager : MonoBehaviour
     {
         [SerializeField] public List<Stabber> stabbers = new List<Stabber>();
+        [SerializeField] public List<Rigidbody> ignoreStab = new List<Rigidbody>();
+        [Tag] public string ignoreStabTag;
         private Rigidbody rb;
         
         // Start is called before the first frame update
@@ -31,6 +33,8 @@ namespace JointVR
             foreach(Stabber s in stabbers)
                 foreach (StabJoint joint in s.stabJoints)
                     joint.jointRb = rb;
+
+            
         }
 
         bool AttemptStab(Stabber stabber, Collider hitCollider, Vector3 relativeVelocity)
@@ -97,12 +101,13 @@ namespace JointVR
 
             foreach (Stabber group in stabbers)
                 if (AttemptStab(group, collision.collider, collision.relativeVelocity))
-                    foreach (ContactPoint contact in collision.contacts)
-                        foreach (Collider collider in group.colliders)
-                            if (contact.thisCollider == collider)
-                            {
-                                validGroups.Add(group);
-                            }
+                    if (IsValidTarget(collision.collider))
+                        foreach (ContactPoint contact in collision.contacts)
+                            foreach (Collider collider in group.colliders)
+                                if (contact.thisCollider == collider)
+                                {
+                                    validGroups.Add(group);
+                                }
 
             List<Collider> colliders = new List<Collider>();
 
@@ -146,6 +151,14 @@ namespace JointVR
                                 }                       
                             }
             }
+        }
+
+        private bool IsValidTarget(Collider hitCollider) {
+            if (ignoreStabTag != "" && (hitCollider.gameObject.tag == ignoreStabTag || hitCollider.attachedRigidbody.gameObject.tag == ignoreStabTag))
+                return false;
+            if (ignoreStab.Contains(hitCollider.attachedRigidbody))
+                return false;
+            return true;
         }
     }
 }
