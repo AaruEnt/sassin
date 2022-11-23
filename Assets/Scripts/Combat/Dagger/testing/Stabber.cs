@@ -12,6 +12,7 @@ namespace JointVR {
         public Transform root;
         public Transform stabDirectionTransform;
         public StabDirection stabDirection;
+        public Rigidbody rb;
 
         public List<Collider> colliders = new List<Collider>();
         public List<StabJoint> stabJoints = new List<StabJoint>();
@@ -33,6 +34,7 @@ namespace JointVR {
         internal float unstabTime;
 
         public bool setStabbedColliderAsChild;
+        internal bool kinematicStab = false;
 
         [ShowNativeProperty]
         public bool isStabbing
@@ -139,6 +141,15 @@ namespace JointVR {
             stabJoint.stabbedCollider = null;
 
             unstabTime = Time.time;
+
+            if (stabJoint.kinematicStab) {
+                stabJoint.kinematicStab = false;
+                foreach(StabJoint joint in stabJoints) {
+                    if (joint.kinematicStab)
+                        return;
+                }
+                kinematicStab = false;
+            }
         }
 
         public void Stab(StabJoint stabJoint, Collider stabbedCollider)
@@ -171,16 +182,16 @@ namespace JointVR {
 
             stabJoint.joint = root.gameObject.AddComponent<ConfigurableJoint>();
             stabJoint.joint.connectedBody = stabbedCollider.attachedRigidbody;
-            stabJoint.joint.autoConfigureConnectedAnchor = false;
+            stabJoint.joint.autoConfigureConnectedAnchor = true; // changed
 
             if (stabDirectionTransform)
             {
                 stabJoint.joint.axis = root.InverseTransformDirection(stabDirectionTransform.right);
                 stabJoint.joint.secondaryAxis = root.InverseTransformDirection(stabDirectionTransform.up);
-                newAnchor = root.InverseTransformDirection(transform.TransformDirection(newAnchor));
+                //newAnchor = root.InverseTransformDirection(transform.TransformDirection(newAnchor));
             }
 
-            stabJoint.joint.anchor = newAnchor;
+            //stabJoint.joint.anchor = newAnchor;
 
             SoftJointLimit newLimit = new SoftJointLimit();
             newLimit.limit = Mathf.Abs(stabLength);
@@ -197,6 +208,9 @@ namespace JointVR {
 
             stabJoint.joint.massScale = stabbedMassScale;
             stabJoint.joint.connectedMassScale = stabbedConnectedMassScale;
+
+            if (stabbedCollider.attachedRigidbody.isKinematic)
+                stabJoint.kinematicStab = true;
 
             StartCoroutine(SetDampOverTime(stabJoint));
         }

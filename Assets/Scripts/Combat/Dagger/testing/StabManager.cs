@@ -49,6 +49,9 @@ namespace JointVR
 
             if (relativeVelocity.magnitude < stabber.velocityThreshold) return false;
 
+            if (hitCollider.attachedRigidbody.isKinematic)
+                stabber.kinematicStab = true;
+
             return true;
         }
 

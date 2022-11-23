@@ -22,6 +22,8 @@ namespace JointVR
 
         public float previousStabDepth;
 
+        internal bool kinematicStab = false;
+
         [SerializeField, ReadOnly]
         [AllowNesting]
         private float _stabDepth;
