@@ -34,7 +34,17 @@ namespace JointVR {
         internal float unstabTime;
 
         public bool setStabbedColliderAsChild;
-        internal bool kinematicStab = false;
+        internal bool kinematicStab
+        {
+            get
+            {
+                foreach (StabJoint stabJoint in stabJoints)
+                    if (stabJoint.kinematicStab)
+                        return true;
+
+                return false;
+            }
+        }
 
         [ShowNativeProperty]
         public bool isStabbing
@@ -132,6 +142,10 @@ namespace JointVR {
                 if (stabJoint.stabbedCollider.transform.parent == stabJoint.joint.transform)
                     stabJoint.stabbedCollider.transform.parent = null;
 
+            if (stabJoint.kinematicStab) {
+                stabJoint.kinematicStab = false;
+            }
+
             Destroy(stabJoint.joint);
 
             IgnoreCollision(stabJoint.stabbedCollider);
@@ -141,15 +155,6 @@ namespace JointVR {
             stabJoint.stabbedCollider = null;
 
             unstabTime = Time.time;
-
-            if (stabJoint.kinematicStab) {
-                stabJoint.kinematicStab = false;
-                foreach(StabJoint joint in stabJoints) {
-                    if (joint.kinematicStab)
-                        return;
-                }
-                kinematicStab = false;
-            }
         }
 
         public void Stab(StabJoint stabJoint, Collider stabbedCollider)

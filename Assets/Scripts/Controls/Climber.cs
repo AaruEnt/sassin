@@ -7,31 +7,21 @@ using JointVR;
 
 public class Climber : MonoBehaviour
 {
-    public bool hand;
-    [ShowIf("hand")]
-    public HandPublicEvents h;
-    [HideIf("hand")]
     public StabManager s;
+    public AutoHandPlayer player;
+    public Climbable c;
+
     // Start is called before the first frame update
-    void OnEnable()
-    {
-        if (hand) {
-            h.hand.OnGrabbed += CheckValidClimb;
+
+    public void RemoveClimb(Hand hand, Grabbable grab) {
+        player.EndClimb(hand, grab);
+        c.enabled = false;
+    }
+
+    public void AttemptStartClimb(Hand hand, Grabbable grab) {
+        if (s.CheckKinematicStab()) {
+            c.enabled = true;
+            player.StartClimb(hand, grab);
         }
-    }
-
-    void OnDisable() {
-        if (hand) {
-            h.hand.OnGrabbed -= CheckValidClimb;
-        }
-    }
-
-    public void CheckValidClimb(Hand hand, Grabbable grab) {
-        if (grab.gameObject.GetComponent<ClimbInteractible>())
-            AttemptStartClimb();
-    }
-
-    internal void AttemptStartClimb() {
-        ClimbManager.climbing.Add(this);
     }
 }
