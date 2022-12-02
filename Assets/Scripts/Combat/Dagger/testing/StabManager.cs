@@ -49,9 +49,6 @@ namespace JointVR
 
             if (relativeVelocity.magnitude < stabber.velocityThreshold) return false;
 
-            if (hitCollider.attachedRigidbody.isKinematic)
-                stabber.kinematicStab = true;
-
             return true;
         }
 
@@ -162,6 +159,22 @@ namespace JointVR
             if (ignoreStab.Contains(hitCollider.attachedRigidbody))
                 return false;
             return true;
+        }
+
+        public bool CheckKinematicStab() {
+            foreach (Stabber s in stabbers)
+                if (s.kinematicStab)
+                    return true;
+            return false;
+        }
+
+        public void FreezeRigidbody() {
+            if (CheckKinematicStab())
+                rb.constraints = RigidbodyConstraints.FreezeAll;
+        }
+
+        public void UnFreezeRigidbody() {
+            rb.constraints = RigidbodyConstraints.None;
         }
     }
 }

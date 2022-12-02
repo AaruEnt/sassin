@@ -143,7 +143,7 @@ namespace Autohand {
         float turnResetzone = 0.3f;
         float groundedOffset = 0.05f;
 
-        bool tempDisableGrounding = false;
+        internal bool tempDisableGrounding = false;
         HeadPhysicsFollower headPhysicsFollower;
         CapsuleCollider bodyCapsule;
         Vector3 moveDirection;
@@ -873,7 +873,7 @@ namespace Autohand {
 
 
 
-        protected virtual void StartClimb(Hand hand, Grabbable grab) {
+        public virtual void StartClimb(Hand hand, Grabbable grab) {
             if(!allowClimbing)
                 return;
 
@@ -892,7 +892,7 @@ namespace Autohand {
             }
         }
 
-        protected virtual void EndClimb(Hand hand, Grabbable grab) {
+        public virtual void EndClimb(Hand hand, Grabbable grab) {
             if(!allowClimbing)
                 return;
 
