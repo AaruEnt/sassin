@@ -4,6 +4,7 @@ using UnityEngine;
 using Autohand;
 using Autohand.Demo;
 using UnityEngine.UI;
+using NaughtyAttributes;
 
 public class MomentumController : MonoBehaviour
 {
@@ -15,13 +16,30 @@ public class MomentumController : MonoBehaviour
     public float momentumScale;
 
     public Text debugText;
+    [Header("Particles")]
+    public bool displayParticleAtSpeed = false;
 
+    [ShowIf("displayParticleAtSpeed")]
+    public float speedThreshhold = 3f;
+
+    [ShowIf("displayParticleAtSpeed")]
+    public GameObject particleObject;
+
+    [ShowIf("displayParticleAtSpeed")]
+    public ParticleSystem windEffect;
+    [ShowIf("displayParticleAtSpeed")]
+    public float maxParticlesPerSecond = 0.85f;
+
+    
     private float startSpeed;
     private float startMomentum;
     private float deadzone = 0.1f;
     private Vector2 moveAxis;
     internal float counter = 0;
     private Vector2 lastMoveDir;
+    private bool overrideParticle = false;
+    [ShowIf("overrideParticle")]
+    public float debugSpeed = 6f;
 
     void Start() {
         startSpeed = player.maxMoveSpeed;
@@ -64,9 +82,49 @@ public class MomentumController : MonoBehaviour
                 player.maxMoveSpeed = startSpeed;
                 player.moveAcceleration = startMomentum;
             }
+            if (!overrideParticle) {
+                if (displayParticleAtSpeed && (rb.velocity.magnitude >= player.maxMoveSpeed * 0.95 && player.maxMoveSpeed >= speedThreshhold)) {
+                    particleObject.SetActive(true);
+                    var e = windEffect.emission;
+                    e.rateOverTime = CalculateEmissionRate();
+                } else {
+                    particleObject.SetActive(false);
+                    var e = windEffect.emission;
+                    e.rateOverTime = 0f;
+                }
+            } else {
+                DebugWind(true);
+            }
         } else {
             counter = counter < 0 ? 0 : counter - 0.5f;
         }
         debugText.text = string.Format("Speed: {0}\nAccel: {1}\nCounter: {2}\nVelocity: {3}", player.maxMoveSpeed, player.moveAcceleration, counter, rb.velocity.magnitude);
+    }
+
+    float CalculateEmissionRate(float speed = -1f) {
+        float final;
+        float currSpeed;
+        if (speed == -1)
+            currSpeed = rb.velocity.magnitude - speedThreshhold;
+        else
+            currSpeed = speed - speedThreshhold;
+        float maxSpeed = maxSpeedScale + startSpeed;
+        maxSpeed -= speedThreshhold;
+        final = currSpeed / maxSpeed;
+
+        return final * maxParticlesPerSecond;
+    }
+
+    [ShowIf("displayParticleAtSpeed"), Button]
+    private void DebugWind() {
+        overrideParticle = !overrideParticle;
+        particleObject.SetActive(!particleObject.activeSelf);
+        var e = windEffect.emission;
+        e.rateOverTime = CalculateEmissionRate(debugSpeed);
+    }
+
+    private void DebugWind(bool scriptCall) {
+        var e = windEffect.emission;
+        e.rateOverTime = CalculateEmissionRate(debugSpeed);
     }
 }
