@@ -2,7 +2,7 @@
 
 namespace NaughtyAttributes
 {
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.All, AllowMultiple = true, Inherited = true)]
+	[AttributeUsage(AttributeTargets.Field, AllowMultiple = true, Inherited = true)]
 	public class HorizontalLineAttribute : DrawerAttribute
 	{
 		public const float DefaultHeight = 2.0f;
@@ -17,5 +17,4 @@ namespace NaughtyAttributes
 			Color = color;
 		}
 	}
-
 }

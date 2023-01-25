@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEditor;
 using UnityEngine;
 
 namespace NaughtyAttributes.Editor
 {
 	public static class ReflectionUtility
 	{
-
 		public static IEnumerable<FieldInfo> GetAllFields(object target, Func<FieldInfo, bool> predicate)
 		{
 			if (target == null)
@@ -17,7 +15,6 @@ namespace NaughtyAttributes.Editor
 				Debug.LogError("The target object is null. Check for missing scripts.");
 				yield break;
 			}
-
 
 			List<Type> types = GetSelfAndBaseTypes(target);
 
@@ -80,47 +77,14 @@ namespace NaughtyAttributes.Editor
 			}
 		}
 
-		static double savedFieldTime = 0;
-		static Dictionary<object, Dictionary<string, FieldInfo>> fieldInfoDictionary = new  Dictionary<object, Dictionary<string, FieldInfo>>();
-
 		public static FieldInfo GetField(object target, string fieldName)
 		{
-			if(EditorApplication.timeSinceStartup - savedFieldTime > 60f){
-				savedFieldTime = EditorApplication.timeSinceStartup;
-				fieldInfoDictionary.Clear();
-			}
-
-			if (fieldInfoDictionary.ContainsKey(target) && fieldInfoDictionary[target].ContainsKey(fieldName))
-				return fieldInfoDictionary[target][fieldName];
-
-			if (!fieldInfoDictionary.ContainsKey(target))
-				fieldInfoDictionary.Add(target, new Dictionary<string, FieldInfo>());
-
-			var fields = GetAllFields(target, f => f.Name.Equals(fieldName, StringComparison.Ordinal)).FirstOrDefault();
-			fieldInfoDictionary[target].Add(fieldName, fields);
-
-			return fields;
+			return GetAllFields(target, f => f.Name.Equals(fieldName, StringComparison.Ordinal)).FirstOrDefault();
 		}
 
-		static double savedPropertyTime = 0;
-		static Dictionary<object, Dictionary<string, PropertyInfo>> propertyInfoDictionary = new Dictionary<object, Dictionary<string, PropertyInfo>>();
-
-		public static PropertyInfo GetProperty(object target, string propertyName){
-			if (EditorApplication.timeSinceStartup - savedPropertyTime > 60f){
-				savedPropertyTime = EditorApplication.timeSinceStartup;
-				propertyInfoDictionary.Clear();
-			}
-
-			if (propertyInfoDictionary.ContainsKey(target) && propertyInfoDictionary[target].ContainsKey(propertyName))
-				return propertyInfoDictionary[target][propertyName];
-
-			if (!propertyInfoDictionary.ContainsKey(target))
-				propertyInfoDictionary.Add(target, new Dictionary<string, PropertyInfo>());
-			
-			var properties = GetAllProperties(target, p => p.Name.Equals(propertyName, StringComparison.Ordinal));
-			propertyInfoDictionary[target].Add(propertyName, properties.FirstOrDefault());
-
-			return properties.FirstOrDefault();
+		public static PropertyInfo GetProperty(object target, string propertyName)
+		{
+			return GetAllProperties(target, p => p.Name.Equals(propertyName, StringComparison.Ordinal)).FirstOrDefault();
 		}
 
 		public static MethodInfo GetMethod(object target, string methodName)

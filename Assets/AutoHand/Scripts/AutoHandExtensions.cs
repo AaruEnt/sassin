@@ -24,6 +24,11 @@ namespace Autohand
                 if (_transformRuler.localScale != Vector3.one)
                     _transformRuler.localScale = Vector3.one;
 
+                if (IsPositionNan(_transformRuler.position))
+                    _transformRuler.position = Vector3.zero;
+                if (IsRotationNan(_transformRuler.rotation))
+                    _transformRuler.rotation = Quaternion.identity;
+
 
 
                 return _transformRuler;
@@ -47,8 +52,23 @@ namespace Autohand
                 if (_transformRulerChild.localScale != Vector3.one)
                     _transformRulerChild.localScale = Vector3.one;
 
+                if (IsPositionNan(_transformRulerChild.position))
+                    _transformRulerChild.position = Vector3.zero;
+                if (IsRotationNan(_transformRulerChild.rotation))
+                    _transformRulerChild.rotation = Quaternion.identity;
+
                 return _transformRulerChild;
             }
+        }
+
+        static bool IsPositionNan(Vector3 pos)
+        {
+            return float.IsNaN(pos.x) || float.IsNaN(pos.y) || float.IsNaN(pos.z);
+        }
+        
+        static bool IsRotationNan(Quaternion rot)
+        {
+            return float.IsNaN(rot.x) || float.IsNaN(rot.y) || float.IsNaN(rot.z) || float.IsNaN(rot.w);
         }
 
         static Transform _transformParent = null;

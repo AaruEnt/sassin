@@ -206,7 +206,7 @@ namespace Autohand {
                 Remove(placedObject);
             
             if(placedObject == null && highlightingObj == null) {
-                var overlaps = Physics.OverlapSphereNonAlloc(transform.position + transform.rotation * radiusOffset, radius * scale, collidersNonAlloc, placeLayers);
+                var overlaps = Physics.OverlapSphereNonAlloc(placedOffset.position + transform.rotation * radiusOffset, radius * scale, collidersNonAlloc, placeLayers);
                 if(overlaps != lastOverlapCount) {
                     for(int i = 0; i < overlaps; i++) {
                         if(AutoHandExtensions.HasGrabbable(collidersNonAlloc[i].gameObject, out tempGrabbable) && CanPlace(tempGrabbable)) {
@@ -373,7 +373,7 @@ namespace Autohand {
 
 
         protected bool IsStillOverlapping(Grabbable from, float scale = 1){
-            var sphereCheck = Physics.OverlapSphereNonAlloc(transform.position + transform.rotation * radiusOffset, placeRadius * scale, collidersNonAlloc, placeLayers);
+            var sphereCheck = Physics.OverlapSphereNonAlloc(placedOffset.position + placedOffset.rotation * radiusOffset, placeRadius * scale, collidersNonAlloc, placeLayers);
             for (int i = 0; i < sphereCheck; i++){
                 if (collidersNonAlloc[i].attachedRigidbody == from.body) {
                     return true;
@@ -387,6 +387,7 @@ namespace Autohand {
         public virtual void SetStartPlaced() {
             if(startPlaced != null){
                 startPlaced.SetPlacePoint(this);
+                Highlight(startPlaced);
                 Place(startPlaced);
             }
         }
@@ -421,7 +422,7 @@ namespace Autohand {
             var scale = Mathf.Abs(transform.lossyScale.x < transform.lossyScale.y ? transform.lossyScale.x : transform.lossyScale.y);
             scale = Mathf.Abs(scale < transform.lossyScale.z ? scale : transform.lossyScale.z);
 
-            Gizmos.DrawWireSphere(transform.rotation * radiusOffset + transform.position, placeRadius* scale);
+            Gizmos.DrawWireSphere(transform.rotation * radiusOffset + placedOffset.position, placeRadius* scale);
         }
 
     }

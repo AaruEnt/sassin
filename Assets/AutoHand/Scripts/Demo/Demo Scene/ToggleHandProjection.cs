@@ -16,6 +16,7 @@ namespace Autohand.Demo
 
             foreach (var projection in projections)
             {
+                projection.gameObject.SetActive(false);
                 if (projection.useGrabTransition)
                     projection.enabled = false;
             }
@@ -30,6 +31,7 @@ namespace Autohand.Demo
 #endif
             foreach (var projection in projections)
             {
+                projection.gameObject.SetActive(true);
                 if (projection.useGrabTransition)
                     projection.enabled = true;
             }
@@ -44,6 +46,7 @@ namespace Autohand.Demo
 #endif
             foreach (var projection in projections)
             {
+                projection.gameObject.SetActive(false);
                 if (!projection.useGrabTransition)
                     projection.enabled = false;
             }
@@ -58,6 +61,7 @@ namespace Autohand.Demo
 #endif
             foreach (var projection in projections)
             {
+                projection.gameObject.SetActive(true);
                 if (!projection.useGrabTransition)
                     projection.enabled = true;
             }

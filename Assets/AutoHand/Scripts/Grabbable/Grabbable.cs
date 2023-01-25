@@ -169,12 +169,27 @@ namespace Autohand {
 
 
 #if UNITY_EDITOR
+        bool editorSelected = false;
         void EditorCopyGrabbable() {
             if(CopySettings != null)
                 EditorUtility.CopySerialized(CopySettings, this);
         }
 #endif
 
+
+        protected override void Start()
+        {
+            base.Start();
+#if UNITY_EDITOR
+            if (Selection.activeGameObject == gameObject)
+            {
+                Selection.activeGameObject = null;
+                Debug.Log("Auto Hand: highlighting grabbables and rigidbodies in the inspector can cause lag and quality reduction at runtime in VR. (Automatically deselecting at runtime) Remove this code at any time.", this);
+                editorSelected = true;
+            }
+            Application.quitting += () => { if (editorSelected && Selection.activeGameObject == null) Selection.activeGameObject = gameObject; };
+#endif
+        }
 
         protected new virtual void Awake() {
             if(makeChildrenGrabbable)
@@ -189,16 +204,6 @@ namespace Autohand {
             }
 
 
-#if UNITY_EDITOR
-            bool editorSelected = false;
-            if (Selection.activeGameObject == gameObject)
-            {
-                Selection.activeGameObject = null;
-                Debug.Log("Auto Hand: highlighting grabbables and rigidbodies in the inspector can cause lag and quality reduction at runtime in VR. (Automatically deselecting at runtime) Remove this code at any time.", this);
-                editorSelected = true;
-            }
-            Application.quitting += () => { if (editorSelected) Selection.activeGameObject = gameObject; };
-#endif
         }
 
         void Update()
@@ -805,6 +810,28 @@ namespace Autohand {
                         jointedBodies[i].transform.parent = jointedParents[i];
                 }
             }
+        }
+
+        public bool IsHolding(Rigidbody body)
+        {
+            foreach (var holding in heldBy)
+            {
+                if (holding.body == body)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public bool IsHolding(Hand hand)
+        {
+            foreach (var held in heldBy)
+            {
+                if (held == hand)
+                    return true;
+            }
+
+            return false;
         }
     }
 }

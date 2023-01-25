@@ -299,6 +299,8 @@ namespace Autohand {
                     selectingDistanceGrabbable.grabbable.body.velocity = Vector3.zero;
                     selectingDistanceGrabbable.grabbable.body.angularVelocity = Vector3.zero;
                     selectionHit.point = hitPoint.transform.position;
+                    if (selectingDistanceGrabbable.grabbable.placePoint != null)
+                        selectingDistanceGrabbable.grabbable.placePoint.Remove();
                     primaryHand.Grab(selectionHit, selectingDistanceGrabbable.grabbable);
                     CancelSelect();
                     selectingDistanceGrabbable?.CancelTarget();
@@ -306,12 +308,19 @@ namespace Autohand {
                 else if(selectingDistanceGrabbable.grabType == DistanceGrabType.Velocity) {
                     catchAssistRoutine = StartCoroutine(StartCatchAssist(selectingDistanceGrabbable, selectedEstimatedRadius));
                     catchAsistGrabbable = selectingDistanceGrabbable;
+                    if (selectingDistanceGrabbable.grabbable.placePoint != null)
+                    {
+                        
+                        selectingDistanceGrabbable.grabbable.placePoint.Remove();
+                    }
                     selectingDistanceGrabbable.SetTarget(primaryHand.palmTransform);
                 }
                 else if(selectingDistanceGrabbable.grabType == DistanceGrabType.Linear) {
                     selectingDistanceGrabbable.grabbable.body.velocity = Vector3.zero;
                     selectingDistanceGrabbable.grabbable.body.angularVelocity = Vector3.zero;
                     selectionHit.point = hitPoint.transform.position;
+                    if (selectingDistanceGrabbable.grabbable.placePoint != null)
+                        selectingDistanceGrabbable.grabbable.placePoint.Remove();
                     primaryHand.Grab(selectionHit, selectingDistanceGrabbable.grabbable, GrabType.GrabbableToHand);
                     CancelSelect();
                     selectingDistanceGrabbable?.CancelTarget();

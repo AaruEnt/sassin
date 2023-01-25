@@ -15,10 +15,9 @@ namespace NaughtyAttributes.Editor
 			return (attributes.Length > 0) ? attributes[0] : null;
 		}
 
-		static FieldInfo fieldInfo;
 		public static T[] GetAttributes<T>(SerializedProperty property) where T : class
 		{
-			fieldInfo = ReflectionUtility.GetField(GetTargetObjectWithProperty(property), property.name);
+			FieldInfo fieldInfo = ReflectionUtility.GetField(GetTargetObjectWithProperty(property), property.name);
 			if (fieldInfo == null)
 			{
 				return new T[] { };
@@ -27,9 +26,33 @@ namespace NaughtyAttributes.Editor
 			return (T[])fieldInfo.GetCustomAttributes(typeof(T), true);
 		}
 
+		public static NaughtyProperty CreateNaughtyProperty(SerializedProperty serializedProperty)
+		{
+			NaughtyProperty naughtyProperty = new NaughtyProperty();
+			naughtyProperty.serializedProperty = serializedProperty;
+
+			naughtyProperty.readOnlyAttribute = PropertyUtility.GetAttribute<ReadOnlyAttribute>(serializedProperty);
+			naughtyProperty.enableIfAttribute = PropertyUtility.GetAttribute<EnableIfAttributeBase>(serializedProperty);
+						
+			naughtyProperty.showIfAttribute = PropertyUtility.GetAttribute<ShowIfAttributeBase>(serializedProperty);
+			naughtyProperty.validatorAttributes = PropertyUtility.GetAttributes<ValidatorAttribute>(serializedProperty);
+
+			naughtyProperty.labelAttribute = PropertyUtility.GetAttribute<LabelAttribute>(serializedProperty);
+			
+			naughtyProperty.specialCaseDrawerAttribute =
+				PropertyUtility.GetAttribute<SpecialCaseDrawerAttribute>(serializedProperty);
+			
+			return naughtyProperty;
+		}
+
 		public static GUIContent GetLabel(SerializedProperty property)
 		{
 			LabelAttribute labelAttribute = GetAttribute<LabelAttribute>(property);
+			return GetLabel(labelAttribute, property);
+		}
+		
+		public static GUIContent GetLabel(LabelAttribute labelAttribute, SerializedProperty property)
+		{
 			string labelText = (labelAttribute == null)
 				? property.displayName
 				: labelAttribute.Label;
@@ -48,11 +71,10 @@ namespace NaughtyAttributes.Editor
 
 			object target = GetTargetObjectWithProperty(property);
 			property.serializedObject.ApplyModifiedProperties(); // We must apply modifications so that the new value is updated in the serialized object
-			MethodInfo callbackMethod; 
 
 			foreach (var onValueChangedAttribute in onValueChangedAttributes)
 			{
-				callbackMethod = ReflectionUtility.GetMethod(target, onValueChangedAttribute.CallbackName);
+				MethodInfo callbackMethod = ReflectionUtility.GetMethod(target, onValueChangedAttribute.CallbackName);
 				if (callbackMethod != null &&
 					callbackMethod.ReturnType == typeof(void) &&
 					callbackMethod.GetParameters().Length == 0)
@@ -70,22 +92,26 @@ namespace NaughtyAttributes.Editor
 			}
 		}
 
-		static ReadOnlyAttribute readOnlyAttribute;
-		static EnableIfAttributeBase enableIfAttribute;
 		public static bool IsEnabled(SerializedProperty property)
 		{
-			readOnlyAttribute = GetAttribute<ReadOnlyAttribute>(property);
+			ReadOnlyAttribute readOnlyAttribute = GetAttribute<ReadOnlyAttribute>(property);
+			EnableIfAttributeBase enableIfAttribute = GetAttribute<EnableIfAttributeBase>(property);
+
+			return IsEnabled(readOnlyAttribute, enableIfAttribute, property);
+		}
+
+		public static bool IsEnabled(ReadOnlyAttribute readOnlyAttribute, EnableIfAttributeBase enableIfAttribute, SerializedProperty property)
+		{
 			if (readOnlyAttribute != null)
 			{
 				return false;
 			}
-
-			enableIfAttribute = GetAttribute<EnableIfAttributeBase>(property);
+			
 			if (enableIfAttribute == null)
 			{
 				return true;
 			}
-
+			
 			object target = GetTargetObjectWithProperty(property);
 
 			// deal with enum conditions
@@ -122,16 +148,21 @@ namespace NaughtyAttributes.Editor
 				return false;
 			}
 		}
-
-		static ShowIfAttributeBase showIfAttribute;
+		
 		public static bool IsVisible(SerializedProperty property)
 		{
-			showIfAttribute = GetAttribute<ShowIfAttributeBase>(property);
+			ShowIfAttributeBase showIfAttribute = GetAttribute<ShowIfAttributeBase>(property);
+
+			return IsVisible(showIfAttribute, property);
+		}
+
+		public static bool IsVisible(ShowIfAttributeBase showIfAttribute, SerializedProperty property)
+		{
 			if (showIfAttribute == null)
 			{
 				return true;
 			}
-
+			
 			object target = GetTargetObjectWithProperty(property);
 
 			// deal with enum conditions
@@ -147,7 +178,8 @@ namespace NaughtyAttributes.Editor
 					return matched != showIfAttribute.Inverted;
 				}
 
-				string message = showIfAttribute.GetType().Name + " needs a valid enum field, property or method name to work";
+				string message = showIfAttribute.GetType().Name +
+				                 " needs a valid enum field, property or method name to work";
 				Debug.LogWarning(message, property.serializedObject.targetObject);
 
 				return false;
@@ -157,13 +189,14 @@ namespace NaughtyAttributes.Editor
 			List<bool> conditionValues = GetConditionValues(target, showIfAttribute.Conditions);
 			if (conditionValues.Count > 0)
 			{
-				return GetConditionsFlag(conditionValues, showIfAttribute.ConditionOperator, showIfAttribute.Inverted);
+				bool enabled = GetConditionsFlag(conditionValues, showIfAttribute.ConditionOperator,
+					showIfAttribute.Inverted);
+				return enabled;
 			}
 			else
 			{
-				if (target != null)
-					return true;
-				string message = showIfAttribute.GetType().Name + " needs a valid boolean condition field, property or method name to work";
+				string message = showIfAttribute.GetType().Name +
+				                 " needs a valid boolean condition field, property or method name to work";
 				Debug.LogWarning(message, property.serializedObject.targetObject);
 
 				return false;
@@ -202,33 +235,29 @@ namespace NaughtyAttributes.Editor
 		internal static List<bool> GetConditionValues(object target, string[] conditions)
 		{
 			List<bool> conditionValues = new List<bool>();
-			FieldInfo conditionField;
-			PropertyInfo conditionProperty;
-			MethodInfo conditionMethod;
 			foreach (var condition in conditions)
 			{
-				conditionField = ReflectionUtility.GetField(target, condition);
+				FieldInfo conditionField = ReflectionUtility.GetField(target, condition);
 				if (conditionField != null &&
 					conditionField.FieldType == typeof(bool))
 				{
 					conditionValues.Add((bool)conditionField.GetValue(target));
 				}
 
-				conditionProperty = ReflectionUtility.GetProperty(target, condition);
+				PropertyInfo conditionProperty = ReflectionUtility.GetProperty(target, condition);
 				if (conditionProperty != null &&
 					conditionProperty.PropertyType == typeof(bool))
 				{
 					conditionValues.Add((bool)conditionProperty.GetValue(target));
 				}
 
-				/*
-				conditionMethod = ReflectionUtility.GetMethod(target, condition);
+				MethodInfo conditionMethod = ReflectionUtility.GetMethod(target, condition);
 				if (conditionMethod != null &&
 					conditionMethod.ReturnType == typeof(bool) &&
 					conditionMethod.GetParameters().Length == 0)
 				{
 					conditionValues.Add((bool)conditionMethod.Invoke(target, null));
-				}*/
+				}
 			}
 
 			return conditionValues;
@@ -340,18 +369,16 @@ namespace NaughtyAttributes.Editor
 			}
 
 			Type type = source.GetType();
-			FieldInfo field;
-			PropertyInfo property;
 
 			while (type != null)
 			{
-				field = type.GetField(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+				FieldInfo field = type.GetField(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
 				if (field != null)
 				{
 					return field.GetValue(source);
 				}
 
-				property = type.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+				PropertyInfo property = type.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
 				if (property != null)
 				{
 					return property.GetValue(source, null);

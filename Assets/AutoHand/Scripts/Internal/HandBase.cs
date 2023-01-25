@@ -380,13 +380,14 @@ namespace Autohand {
                 if (holdingObj == null)
                 {
                     MoveTo();
+                   
+                    body.velocity *= (1 - Mathf.Clamp01(body.drag * deltaTime));
                     transform.position = Vector3.MoveTowards(transform.position, moveTo.position, body.velocity.magnitude * deltaTime);
-                    body.velocity *= (1 - body.drag * deltaTime);
                     body.position = transform.position;
 
                     TorqueTo();
+                    body.angularVelocity *= (1 - Mathf.Clamp01(body.angularDrag * deltaTime));
                     transform.rotation = Quaternion.Euler(Vector3.MoveTowards(transform.rotation.eulerAngles, moveTo.rotation.eulerAngles, body.angularVelocity.magnitude * deltaTime));
-                    body.angularVelocity *= (1 - body.angularDrag * deltaTime);
                     body.rotation = transform.rotation;
 
                     var deltaHandPos = transform.position - startHandPos;
@@ -405,13 +406,13 @@ namespace Autohand {
                     var startGrabRotation = grabPosition.rotation;
 
                     MoveTo();
-                    transform.position = Vector3.MoveTowards(transform.position, moveTo.position, body.velocity.magnitude * deltaTime);
                     body.velocity *= (1 - body.drag * deltaTime);
+                    transform.position = Vector3.MoveTowards(transform.position, moveTo.position, body.velocity.magnitude * deltaTime);
                     body.position = transform.position;
 
-                    TorqueTo();
-                    transform.rotation = Quaternion.Euler(Vector3.MoveTowards(transform.rotation.eulerAngles, moveTo.rotation.eulerAngles, body.angularVelocity.magnitude * deltaTime));
+                    TorqueTo();                    
                     body.angularVelocity *= (1 - body.angularDrag * deltaTime);
+                    transform.rotation = Quaternion.Euler(Vector3.MoveTowards(transform.rotation.eulerAngles, moveTo.rotation.eulerAngles, body.angularVelocity.magnitude * deltaTime));
                     body.rotation = transform.rotation;
 
                     var deltaHandPos = transform.position - startHandPos;
@@ -419,14 +420,12 @@ namespace Autohand {
                     if (transform.position != startHandPos)
                     {
                         bool didHit = false;
-                        RaycastHit hit = new RaycastHit();
                         var sweepTest = holdingObj.body.SweepTestAll(deltaHeldPos, deltaHeldPos.magnitude);
                         for (int i = 0; i < sweepTest.Length; i++)
                         {
-                            if (sweepTest[i].rigidbody != holdingObj.body && sweepTest[i].rigidbody != body)
+                            if (sweepTest[i].rigidbody != holdingObj.body && !holdingObj.IsHolding(sweepTest[i].rigidbody))
                             {
                                 didHit = true;
-                                hit = sweepTest[i];
                             }
                         }
                         if (didHit)
@@ -439,10 +438,9 @@ namespace Autohand {
                             sweepTest = holdingObj.body.SweepTestAll(deltaHeldPos, deltaHeldPos.magnitude);
                             for (int i = 0; i < sweepTest.Length; i++)
                             {
-                                if (sweepTest[i].rigidbody != holdingObj.body && sweepTest[i].rigidbody != body)
+                            if (sweepTest[i].rigidbody != holdingObj.body && !holdingObj.IsHolding(sweepTest[i].rigidbody))
                                 {
                                     didHit = true;
-                                    hit = sweepTest[i];
                                 }
                             }
 
@@ -587,10 +585,6 @@ namespace Autohand {
                 vel.z = Mathf.Clamp(vel.z, -velocityClamp, velocityClamp);
                 body.velocity = vel;
             }
-
-            //body.velocity *= 1f-positionStiffness;
-            //transform.position = Vector3.Lerp(transform.position, moveTo.position, positionStiffness);
-            //body.position = transform.position;
         }
 
         /// <summary>Rotates the hand to the controller rotation using physics movement</summary>
@@ -612,9 +606,6 @@ namespace Autohand {
             else
                 body.angularVelocity = Vector3.Lerp(body.angularVelocity, angular, 0.8f);
 
-            //body.angularVelocity *= 1f - rotationStiffness;
-            //transform.rotation = Quaternion.Lerp(transform.rotation, moveTo.rotation, rotationStiffness);
-            //body.rotation = transform.rotation;
         }
 
         ///<summary>Moves the hand and whatever it might be holding (if teleport allowed) to given pos/rot</summary>
@@ -638,7 +629,6 @@ namespace Autohand {
 
                 grabPositionOffset = deltaRot * grabPositionOffset;
 
-
                 var deltaHeldRot = Quaternion.Inverse(holdingObj.body.rotation) * fromHoldingRot;
 
                 foreach(var jointed in holdingObj.jointedBodies)
@@ -651,7 +641,7 @@ namespace Autohand {
             }
             else {
                 ignoreMoveFrame = true;
-                holdingObj?.ForceHandRelease(this as Hand);
+                //holdingObj?.ForceHandRelease(this as Hand);
                 transform.position = pos;
                 transform.rotation = rot;
                 body.position = pos;
@@ -788,42 +778,26 @@ namespace Autohand {
         float fingerSwayVel;
         /// <summary>Determines how the hand should look/move based on its flags</summary>
         protected virtual void UpdateFingers(float deltaTime) {
-            //Responsable for movement finger sway
-            //if(!grabbing && !disableIK && !IsPosing() && !holdingObj) {
-            //    float vel = -palmTransform.InverseTransformDirection(body.velocity).z;
-            //    if (collisionTracker.collisionObjects.Count > 0)
-            //        vel = 0;
-            //    float grip = triggerPoint + gripOffset + swayStrength * (vel / 8f);
-
-            //    bool less = (currGrip < grip) ? true : false;
-            //    currGrip += ((currGrip < grip) ? Time.deltaTime : -Time.deltaTime) * (Mathf.Abs(currGrip - grip) * 25);
-            //    if (less && currGrip > grip)
-            //        currGrip = grip;
-
-            //    else if (!less && currGrip < grip)
-            //        currGrip = grip;
-
-            //    foreach (var finger in fingers) {
-            //        finger.UpdateFinger(currGrip);
-            //    }
-            //}
-
             var averageVel = Vector3.zero;
             for (int i = 1; i < updatePositionTracked.Length; i++)
-            {
                 averageVel += updatePositionTracked[i] - updatePositionTracked[i - 1];
-            }
             averageVel /= updatePositionTracked.Length;
+            averageVel = (Quaternion.Inverse(palmTransform.rotation)*transform.parent.rotation)*averageVel;
+
 
             //Responsable for movement finger sway
             if (!grabbing && !disableIK && !IsPosing() && !holdingObj)
             {
-                float vel = -(averageVel*60).x;
-                if (left)
-                    vel *= -1;
+
+
+                float vel = (averageVel*60).z;
+                //if (left)
+                //    vel *= -1;
 
                 if (CollisionCount() > 0) vel = 0;
-                fingerSwayVel = Mathf.MoveTowards(fingerSwayVel, vel, deltaTime * (Mathf.Abs((fingerSwayVel-vel) * 25f)));
+                fingerSwayVel = Mathf.MoveTowards(fingerSwayVel, vel, deltaTime * (Mathf.Abs((fingerSwayVel-vel) * 30f)));
+
+
 
                 float grip = gripOffset + swayStrength * fingerSwayVel;
                 currGrip = grip;
