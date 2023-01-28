@@ -10,6 +10,9 @@ namespace Autohand.Demo{
         public SteamVR_Action_Single grabAxis;
         public SteamVR_Action_Boolean grabAction;
         public SteamVR_Action_Boolean squeezeAction;
+        public SteamVR_Action_Boolean primaryButton;
+
+        public PrimaryButton pButton;
 
         bool grabbing;
         bool squeezing;
@@ -34,6 +37,10 @@ namespace Autohand.Demo{
             else if(squeezeAction != null && !squeezeAction.GetState(handType) && squeezing) {
                 squeezing = false;
                 hand.Unsqueeze();
+            }
+
+            if (primaryButton != null && primaryButton.GetState(handType)) {
+                pButton.OnPrimaryButton();
             }
             
             if(grabAction != null && grabAction.GetState(handType) && !grabbing) {

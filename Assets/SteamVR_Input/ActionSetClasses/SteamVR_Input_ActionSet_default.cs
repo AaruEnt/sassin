@@ -25,11 +25,11 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Boolean Teleport
+        public virtual SteamVR_Action_Boolean SmoothMovement
         {
             get
             {
-                return SteamVR_Actions.default_Teleport;
+                return SteamVR_Actions.default_SmoothMovement;
             }
         }
         
@@ -102,6 +102,30 @@ namespace Valve.VR
             get
             {
                 return SteamVR_Actions.default_SnapTurnRight;
+            }
+        }
+        
+        public virtual SteamVR_Action_Boolean PrimaryButtonRight
+        {
+            get
+            {
+                return SteamVR_Actions.default_PrimaryButtonRight;
+            }
+        }
+        
+        public virtual SteamVR_Action_Boolean PrimaryButtonLeft
+        {
+            get
+            {
+                return SteamVR_Actions.default_PrimaryButtonLeft;
+            }
+        }
+        
+        public virtual SteamVR_Action_Boolean ThumbstickTouch
+        {
+            get
+            {
+                return SteamVR_Actions.default_ThumbstickTouch;
             }
         }
         

@@ -941,7 +941,7 @@ namespace Autohand {
 
 
 
-        protected virtual void StartClimb(Hand hand, Grabbable grab) {
+        internal virtual void StartClimb(Hand hand, Grabbable grab) {
             if(!allowClimbing)
                 return;
 
@@ -960,7 +960,7 @@ namespace Autohand {
             }
         }
 
-        protected virtual void EndClimb(Hand hand, Grabbable grab) {
+        internal virtual void EndClimb(Hand hand, Grabbable grab) {
             if(!allowClimbing)
                 return;
 
