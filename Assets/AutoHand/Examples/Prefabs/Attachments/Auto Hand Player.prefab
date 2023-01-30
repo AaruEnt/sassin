@@ -84,9 +84,9 @@ MonoBehaviour:
   handRight: {fileID: 0}
   handLeft: {fileID: 0}
   useMovement: 1
-  maxMoveSpeed: 2
-  moveAcceleration: 100
-  groundedDrag: 100
+  maxMoveSpeed: 3
+  moveAcceleration: 10000
+  groundedDrag: 10000
   snapTurning: 1
   snapTurnAngle: 30
   smoothTurnSpeed: 50
@@ -119,9 +119,7 @@ MonoBehaviour:
   allowPlatforms: 1
   platformingLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
-  speed: 0
-  fixedDeltaTime: 0
+    m_Bits: 1
 --- !u!135 &8834320319295017372
 SphereCollider:
   m_ObjectHideFlags: 0

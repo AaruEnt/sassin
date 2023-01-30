@@ -157,19 +157,26 @@ namespace Autohand {
             }
 
 
+
+            SetLayer();
+            base.Awake();
+        }
+
+
+        private void Start()
+        {
+
 #if UNITY_EDITOR
-            if(Selection.activeGameObject == gameObject) {
+            if (Selection.activeGameObject == gameObject)
+            {
                 Selection.activeGameObject = null;
                 Debug.Log("Auto Hand: highlighting hand component in the inspector can cause lag and quality reduction at runtime in VR. (Automatically deselecting at runtime) Remove this code at any time.", this);
                 editorSelected = true;
             }
 
-            Application.quitting += () => { if(editorSelected) Selection.activeGameObject = gameObject; };
+            Application.quitting += () => { if (editorSelected && Selection.activeGameObject == null) Selection.activeGameObject = gameObject; };
 #endif
-            SetLayer();
-            base.Awake();
         }
-
 
 
         protected override void OnEnable() {
@@ -184,6 +191,7 @@ namespace Autohand {
             collisionTracker.OnCollisionLastExit += (collision) => { OnHandCollisionStop?.Invoke(this, collision); };
             collisionTracker.OnTriggerFirstEnter += (collision) => { OnHandTriggerStart?.Invoke(this, collision); };
             collisionTracker.OnTriggeLastExit += (collision) => { OnHandTriggerStop?.Invoke(this, collision); };
+
         }
 
         protected override void OnDisable() {
@@ -909,13 +917,14 @@ namespace Autohand {
             var startHoldingObj = holdingObj;
             body.velocity = Vector3.zero;
             body.angularVelocity = Vector3.zero;
-            startHandGrabPosition = holdingObj.body.transform.InverseTransformPoint(transform.position);
 
             foreach(var collider in holdingObj.heldIgnoreColliders)
                 HandIgnoreCollider(collider, true);
 
             OnBeforeGrabbed?.Invoke(this, holdingObj);
             holdingObj.OnBeforeGrab(this);
+
+            startHandGrabPosition = holdingObj.transform.InverseTransformPoint(transform.position);
 
             if(holdingObj == null) {
                 CancelGrab();
@@ -926,8 +935,8 @@ namespace Autohand {
             //Sets Pose
             HandPoseData startGrabPose;
 
-            var startGrabbablePosition = holdingObj.body.transform.position;
-            var startGrabbableRotation = holdingObj.body.transform.rotation;
+            var startGrabbablePosition = holdingObj.transform.position;
+            var startGrabbableRotation = holdingObj.transform.rotation;
             startGrabDist = Vector3.Distance(palmTransform.position, grabPoint.position);
 
             if(grabPose = GetGrabPose(hit.collider.transform, holdingObj)) {
@@ -956,8 +965,8 @@ namespace Autohand {
             if(!instantGrab) {
                 Transform grabTarget = grabPose != null ? grabPose.transform : grabPoint;
                 HandPoseData postGrabPose = grabPose == null ? new HandPoseData(this, grabPoint) : grabPose.GetHandPoseData(this);
-                var endGrabbablePosition = transform.InverseTransformPoint(holdingObj.body.transform.position);
-                var endGrabbableRotation = Quaternion.Inverse(palmTransform.transform.rotation) * holdingObj.body.transform.rotation;
+                var endGrabbablePosition = transform.InverseTransformPoint(holdingObj.transform.position);
+                var endGrabbableRotation = Quaternion.Inverse(palmTransform.transform.rotation) * holdingObj.transform.rotation;
 
                 foreach(var finger in fingers)
                     finger.SetFingerBend(gripOffset + Mathf.Clamp01(finger.GetCurrentBend()/4f));
@@ -1002,6 +1011,8 @@ namespace Autohand {
                 }
                 else if(grabType == GrabType.GrabbableToHand)
                 {
+                    holdingObj.ActivateRigidbody();
+
                     bool useGravity = true;
                     if (holdingObj.body != null)
                     {
@@ -1090,8 +1101,8 @@ namespace Autohand {
 
             grabPoint.transform.position = transform.position;
             grabPoint.transform.rotation = transform.rotation;
-            grabPosition.position = holdingObj.body.transform.position;
-            grabPosition.rotation = holdingObj.body.transform.rotation;
+            grabPosition.position = holdingObj.transform.position;
+            grabPosition.rotation = holdingObj.transform.rotation;
 
             OnGrabbed?.Invoke(this, holdingObj);
             holdingObj.OnGrab(this);
@@ -1205,13 +1216,11 @@ namespace Autohand {
                         handPoseArea = null;
                     }
                 }
-                #pragma warning disable 0168
                 catch(MissingReferenceException e)
                 {
                     handPoseArea = null;
                     SetHandPose(preHandPoseAreaPose);
                 }
-                #pragma warning restore 0168
             }
         }
 
