@@ -1,0 +1,37 @@
+Dreamscapes v1.2 update list
+- trees have been equipped with capsule colliders
+(bushes and smaller trees didn't, so you can easily navigate with an FPS/TPS controller)
+- rocks and crystals are also equipped with colliders
+- grass and branch textures got compressed for better performance
+
+Dreamscapes v2.0 update list
+- 3 new bushes
+- 6 new trees
+- Sprite (ghost) particle system
+- new demo scene
+
+Dreamscapes v2.1 update
+- 2 new bushes
+- 6 new trees
+- 5.5 and 5.6 compatibility
+
+Dreamscapes 2.1.1 Update
+- 5 new trees
+
+Dreamscapes 2.1.2 Update
+- 14 new rocks
+- 10 new trees
+- 3 new bushes
+
+Dreamscapes v2.0 website
+http://shapes.hu/pack/dreamscapes-2.0/
+
+
+About performance - tips and tricks
+If you are still experiencing low FPS with the pack, consider compressing the grasstextures further down, or use less patches of grass. You can adjust the amount of grass displayed in the Terrain asset settings. 
+
+For those who own a GPU powerful enough to display more high-res grass and branches, the pack still has the high resolution textures, you just need to reverse the compression inside Unity. Simply select all the textures and turn the Max Size up to 1024 for the grass and 2048 for the branches.
+
+Be advised though, the higher resolution grass you use, the smaller amount you will able to draw. 
+
+An other workaround is to angle the camera in ways that won't let multiple grass planes line up. Slowdown happens when multiple alpha planes are lining up, taxing a lot on the GPU.
