@@ -12,7 +12,7 @@ public class OnCollisionEvent : MonoBehaviour
 
     [Header("References")]
     [SerializeField, Tooltip("Gameobject to ignore")]
-    private GameObject ignore;
+    private List<GameObject> ignore;
 
 
     [Header("Events")]
@@ -21,7 +21,7 @@ public class OnCollisionEvent : MonoBehaviour
 
     // Called when trigger collider entered
     void OnTriggerEnter(Collider col) {
-        if ((layer != -1 && col.gameObject.layer != layer) || col.gameObject == ignore)
+        if ((layer != -1 && col.gameObject.layer != layer) || ignore.Contains(col.gameObject))
             return;
         Debug.Log(col.gameObject.name);
         OnCol.Invoke();
