@@ -18,12 +18,13 @@ public class FollowObjectWithOffset : MonoBehaviour
 
 
     [Header("Boolean Toggles")]
-    [SerializeField, Tooltip("Is the follow currently activated")]
-    internal bool followOn = true;
+    [Tooltip("Is the follow currently activated")]
+    public bool followOn = true;
     [SerializeField, Tooltip("Is the rotation follow currently activated")]
     internal bool followRotOn = true;
     [SerializeField, Tooltip("Ignore offsets - set to exact position/rotation")]
     internal bool ignoreOffsets = true;
+    public bool startDisabled = false;
 
 
 
@@ -35,6 +36,8 @@ public class FollowObjectWithOffset : MonoBehaviour
         pos = Parent.transform.InverseTransformPoint(transform.position);
         fw = Parent.transform.InverseTransformDirection(transform.forward);
         up = Parent.transform.InverseTransformDirection(transform.up);
+        if (startDisabled)
+            this.enabled = false;
     }
 
     // Update is called once per frame

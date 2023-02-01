@@ -20,11 +20,15 @@ public class WristButton : MonoBehaviour
 
     [SerializeField, Tooltip("The object that should be followed")]
     private FollowObjectWithOffset follow;
+    [SerializeField, Tooltip("An object following this")]
+    private FollowObjectWithOffset follow2;
 
 
     [Header("Events")]
     [SerializeField, Tooltip("Activates on the button being pressed")]
     private UnityEvent onPressed;
+    [SerializeField, Tooltip("Activates on the button being pressed")]
+    private UnityEvent onExtended;
     [Button]
     private void unlockButton() { UnlockButton(); }
 
@@ -38,12 +42,15 @@ public class WristButton : MonoBehaviour
     private bool isPressed = true; // is the button currently pressed
     private bool ignoreTrigger = false; // ignore the trigger
     private bool lockInPressed = true;
+    private bool isExtended = false;
+    private Quaternion _startRot;
 
 
     // Start is called before the first frame update
     void Start()
     {
         _startPos = transform.localPosition;
+        _startRot = transform.localRotation;
         if (!cj)
             cj = GetComponent<ConfigurableJoint>();
         rb = GetComponent<Rigidbody>();
@@ -73,17 +80,20 @@ public class WristButton : MonoBehaviour
         }
         if (cd2 > 0 && GetValue() >= 1.5f && !ignoreTrigger)
             rb.isKinematic = false;
-        if (!lockInPressed && transform.localPosition.z >= maxPosX && cd2 <= 0)
+        if (!lockInPressed && transform.localPosition.z >= maxPosX && cd2 <= 0 && !isExtended)
         {
+            isExtended = true;
             Debug.Log("In If");
             Vector3 tmp = transform.localPosition;
             tmp.z = maxPosX;
             transform.localPosition = tmp;
             rb.isKinematic = true;
             isPressed = false;
+            onExtended.Invoke();
         }
         if (cd2 > 0)
             cd2 -= Time.deltaTime;
+        transform.localRotation = _startRot;
     }
 
     // converts the position on the x axis to a float between 0 and 2 representing how far on its linear limits the joint is
@@ -115,6 +125,8 @@ public class WristButton : MonoBehaviour
         cd = 0.25f;
         isPressed = false;
         transform.localPosition = new Vector3(0f, 0f, maxPosX);
+        //if (follow2)
+        //    follow2.followOn = true;
         Debug.Log("Unlock Button");
     }
 
@@ -124,6 +136,9 @@ public class WristButton : MonoBehaviour
         cd2 = 0.05f;
         if (!isPressed && !ignoreTrigger)
             rb.isKinematic = false;
+        //if (follow2)
+        //    follow2.followOn = true;
+        isExtended = false;
     }
 
     // Sets the ignoreTrigger var to true
@@ -136,5 +151,17 @@ public class WristButton : MonoBehaviour
     public void ResetCooldown()
     {
         ignoreTrigger = false;
+    }
+
+    public void CallDisableFollow()
+    {
+        StartCoroutine(DelayedDisableFollow());
+    }
+
+    public IEnumerator DelayedDisableFollow()
+    {
+        yield return new WaitForSeconds(0.01f);
+        //if (follow2)
+        //    follow2.followOn = false;
     }
 }

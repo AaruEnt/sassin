@@ -77,4 +77,12 @@ public class WristDial : PhysicsGadgetHingeAngleReader
             lastTimeZone = currTimeZone;
         }
     }
+
+    public void resetRot()
+    {
+        Vector3 currRot = transform.localRotation.eulerAngles;
+        Vector3 newRot = new Vector3(0f, 0f, currRot.z);
+
+        transform.localRotation = Quaternion.Euler(newRot);
+    }
 }
