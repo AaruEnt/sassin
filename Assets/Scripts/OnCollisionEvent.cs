@@ -19,11 +19,26 @@ public class OnCollisionEvent : MonoBehaviour
     [SerializeField, Tooltip("Activates on trigger entered")]
     private UnityEvent OnCol;
 
+    private float cd = 0f;
+
+    void Update()
+    {
+        if (cd > 0f)
+            cd -= Time.deltaTime;
+    }
+
     // Called when trigger collider entered
     void OnTriggerEnter(Collider col) {
-        if ((layer != -1 && col.gameObject.layer != layer) || ignore.Contains(col.gameObject))
+        if ((layer != -1 && col.gameObject.layer != layer) || ignore.Contains(col.gameObject) && cd <= 0f)
             return;
         Debug.Log(col.gameObject.name);
         OnCol.Invoke();
+    }
+
+    public void SetCD(float toSet)
+    {
+        if (toSet <= 0f)
+            return;
+        cd = toSet;
     }
 }

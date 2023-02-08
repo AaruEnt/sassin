@@ -37,7 +37,6 @@ public class WristDialV2 : PhysicsGadgetHingeAngleReader
     void Update()
     {
         dialPosToTimezone = ConvertValueToPos();
-        manager.SetTimeZone(dialPosToTimezone);
     }
 
     int ConvertValueToPos()
@@ -59,7 +58,7 @@ public class WristDialV2 : PhysicsGadgetHingeAngleReader
 
         res = res > numberOfOptions ? numberOfOptions : res <= 0 ? 1 : res;
 
-        Debug.Log(string.Format("{0}, {1}", val, res));
+        //Debug.Log(string.Format("{0}, {1}", val, res));
 
         return (res);
     }
@@ -70,5 +69,10 @@ public class WristDialV2 : PhysicsGadgetHingeAngleReader
         float maxAngle = hJoint.limits.max - hJoint.limits.min;
         //Debug.Log(string.Format("{0}, {1}", angles, maxAngle));
         return angles.y / maxAngle;
+    }
+
+    public void OnSetTimeZone()
+    {
+        manager.SetTimeZone(dialPosToTimezone);
     }
 }
