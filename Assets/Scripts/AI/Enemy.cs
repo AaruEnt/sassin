@@ -376,9 +376,9 @@ public class Enemy : MonoBehaviour
         s.origin = this;
         s.targetPosition = lastDetectedArea.position;
         s.damage = spellDamage;
-        f.followTarget = spellSpawnPoint.gameObject;
+        f.Parent = spellSpawnPoint.gameObject.transform;
         f.enabled = true;
-        f.offset = Vector3.zero;
+        f.pos = Vector3.zero;
         f._startPos = Vector3.zero;
         StartCoroutine(SpellCooldown(s.chargeTime + 1f));
         StartCoroutine(s.ThrowSpell());

@@ -6,38 +6,64 @@ public class FollowObjectWithOffset : MonoBehaviour
 {
     [Header("References")]
     [SerializeField, Tooltip("The target to be followed")]
-    internal GameObject followTarget;
+    public Transform Parent;
 
 
     [Header("Variables")]
     [SerializeField, Tooltip("Offset between this object and the target to be maintained")]
-    internal Vector3 offset;
+    internal Vector3 pos, fw, up;
 
     [SerializeField, Tooltip("The starting position of the object")]
     internal Vector3 _startPos;
 
 
     [Header("Boolean Toggles")]
-    [SerializeField, Tooltip("Is the follow currently activated")]
-    internal bool followOn = true;
+    [Tooltip("Is the follow currently activated")]
+    public bool followOn = true;
+    [SerializeField, Tooltip("Is the rotation follow currently activated")]
+    internal bool followRotOn = true;
+    [SerializeField, Tooltip("Ignore offsets - set to exact position/rotation")]
+    internal bool ignoreOffsets = true;
+    public bool startDisabled = false;
 
-    
+
 
     // Start is called before the first frame update
     void Start()
     {
-        if (!followTarget)
+        if (!Parent)
             Destroy(this);
-        offset = transform.position - followTarget.transform.position;
-        _startPos = transform.localPosition;
+        pos = Parent.transform.InverseTransformPoint(transform.position);
+        fw = Parent.transform.InverseTransformDirection(transform.forward);
+        up = Parent.transform.InverseTransformDirection(transform.up);
+        if (startDisabled)
+            this.enabled = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (followOn)
-            transform.localPosition = _startPos + offset;
+        var newpos = Parent.transform.TransformPoint(pos);
+        var newfw = Parent.transform.TransformDirection(fw);
+        var newup = Parent.transform.TransformDirection(up);
+        var newrot = Quaternion.LookRotation(newfw, newup);
+        if (!ignoreOffsets)
+        {
+            if (followOn)
+                transform.position = newpos;
+            else
+                transform.localPosition = _startPos;
+            if (followRotOn)
+            {
+                transform.rotation = newrot;
+            }
+        }
         else
-            transform.localPosition = _startPos;
+        {
+            if (followOn)
+                transform.position = Parent.transform.position;
+            if (followRotOn)
+                transform.rotation = Parent.transform.rotation;
+        }
     }
 }
