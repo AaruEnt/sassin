@@ -44,7 +44,7 @@ public class TimeZoneManager : MonoBehaviour
 
     // Update the timezone viewed by the player
     private void UpdateTimeZone() {
-        if (!isFirstEnable)
+        if (!isFirstEnable && particles)
             particles.SetActive(true);
         foreach(var obj in objsWithTime) {
             if (!obj) {
