@@ -8,6 +8,8 @@ public class DaggerSummon : MonoBehaviour
 {
     public PlacePoint place;
 
+    internal bool isHeld = false; 
+
     [Button]
     public void SummonKnife() { SummonToPlacePoint(); }
     // Start is called before the first frame update
@@ -24,11 +26,18 @@ public class DaggerSummon : MonoBehaviour
 
     public void SummonToPlacePoint()
     {
+        if (isHeld)
+            return;
         Rigidbody rb = GetComponent<Rigidbody>();
         Grabbable g = GetComponent<Grabbable>();
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         transform.position = place.placedOffset.position;
         place.Place(g);
+    }
+
+    public void SetIsHeld(bool held)
+    {
+        isHeld = held;
     }
 }
