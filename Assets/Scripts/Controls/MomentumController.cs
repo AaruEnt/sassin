@@ -124,7 +124,8 @@ namespace Autohand {
             {
                 counter = counter < 0 ? 0 : counter - 0.5f;
             }
-            debugText.text = string.Format("Speed: {0}\nAccel: {1}\nCounter: {2}\nVelocity: {3}", player.maxMoveSpeed, player.moveAcceleration, counter, rb.velocity.magnitude);
+            if (debugText)
+                debugText.text = string.Format("Speed: {0}\nAccel: {1}\nCounter: {2}\nVelocity: {3}", player.maxMoveSpeed, player.moveAcceleration, counter, rb.velocity.magnitude);
         }
 
         float CalculateEmissionRate(float speed = -1f)
