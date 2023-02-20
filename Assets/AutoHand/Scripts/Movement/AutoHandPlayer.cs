@@ -150,7 +150,7 @@ namespace Autohand {
         float turningAxis;
         bool isGrounded = false;
         bool axisReset = true;
-        float playerHeight = 0;
+        internal float playerHeight = 0;
         bool lastCrouching;
         float lastCrouchingHeight;
         Vector3 targetTrackedPos;
