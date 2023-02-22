@@ -45,6 +45,8 @@ namespace Autohand {
         [ShowIf("overrideParticle")]
         public float debugSpeed = 6f;
 
+        private float magnitudePercentThreshhold = 0.95f;
+
         void Start()
         {
             startSpeed = player.maxMoveSpeed;
@@ -79,7 +81,7 @@ namespace Autohand {
                 {
                     counter -= 2;
                 }
-                if (rb.velocity.magnitude < player.maxMoveSpeed * 0.95)
+                if (rb.velocity.magnitude < player.maxMoveSpeed * magnitudePercentThreshhold)
                     counter -= 3;
                 if (counter <= 0)
                     counter = 0;
@@ -156,6 +158,11 @@ namespace Autohand {
         {
             var e = windEffect.emission;
             e.rateOverTime = CalculateEmissionRate(debugSpeed);
+        }
+        
+        public void LowerMagnitudeThreshhold()
+        {
+            magnitudePercentThreshhold = 0.5f;
         }
     }
 }
