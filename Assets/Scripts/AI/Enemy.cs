@@ -19,6 +19,10 @@ public class Enemy : MonoBehaviour
     [SerializeField, Tooltip("if true sets the agent to use melee attacks instead of spells")]
     private bool meleeAttack = false;
 
+    [ShowIf("meleeAttack")]
+    [SerializeField, Tooltip("")]
+    private float meleeDamage = 1f;
+
 
     [Header("Spell Attack")]
     [HideIf("meleeAttack")]
@@ -350,7 +354,14 @@ public class Enemy : MonoBehaviour
     void OnCollisionEnter(Collision col) {
         if (col.gameObject.tag == "Player") { // Needs changing, reboots the scene for now
             if (col.gameObject.GetComponent<PlayerState>().state == PlayerStates.suspicious)
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            {
+                var s = col.gameObject.GetComponent<Stats>();
+                if (s)
+                {
+                    s.OnDamageReceived(meleeDamage);
+                }
+            }
+                
         }
         if (state == EnemyState.search) {
             if (col.gameObject.tag == "Distraction") {
@@ -389,5 +400,10 @@ public class Enemy : MonoBehaviour
     IEnumerator SpellCooldown(float time) {
         yield return new WaitForSeconds(time);
         canAttack = true;
+    }
+
+    public void SetEnemyStateAlertManually()
+    {
+        state = EnemyState.alert;
     }
 }

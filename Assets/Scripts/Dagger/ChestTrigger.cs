@@ -16,7 +16,7 @@ public class ChestTrigger : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(hands.Count);
+        //Debug.Log(hands.Count);
     }
 
     void OnTriggerEnter(Collider col)
@@ -52,7 +52,7 @@ public class ChestTrigger : MonoBehaviour
 
     void SummonDagger(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
     {
-        Debug.Log(fromSource);
+        //Debug.Log(fromSource);
         ds.SummonToPlacePoint();
     }
 }
