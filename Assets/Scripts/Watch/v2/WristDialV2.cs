@@ -10,6 +10,7 @@ public class WristDialV2 : PhysicsGadgetHingeAngleReader
     public int dialPosToTimezone;
     public Collider grabCol;
     public Collider baseCol;
+    public AudioSource click;
 
     [SerializeField, Tooltip("Reference to the time zone manager in the scene")]
     private TimeZoneManager manager;
@@ -17,6 +18,7 @@ public class WristDialV2 : PhysicsGadgetHingeAngleReader
     public List<GameObject> ignoreCollision;
     private List<Collider> ignoreColliders;
     private HingeJoint hJoint;
+    private int lastDialPos;
 
     // Start is called before the first frame update
     void Start()
@@ -31,12 +33,20 @@ public class WristDialV2 : PhysicsGadgetHingeAngleReader
             }
         }
         hJoint = GetComponent<HingeJoint>();
+        dialPosToTimezone = ConvertValueToPos();
+        lastDialPos = dialPosToTimezone;
     }
 
     // Update is called once per frame
     void Update()
     {
         dialPosToTimezone = ConvertValueToPos();
+        if (lastDialPos != dialPosToTimezone && click)
+        {
+            click.Stop();
+            click.Play();
+        }
+        lastDialPos = dialPosToTimezone;
     }
 
     int ConvertValueToPos()
