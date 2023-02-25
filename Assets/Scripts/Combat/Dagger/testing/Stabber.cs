@@ -275,6 +275,15 @@ namespace JointVR {
                 yield return wait;
             }
         }
+
+        internal void ForceUnstab()
+        {
+            foreach (StabJoint j in stabJoints)
+            {
+                if (j.joint)
+                    Unstab(j);
+            }
+        }
     }
 
     [System.Serializable]
