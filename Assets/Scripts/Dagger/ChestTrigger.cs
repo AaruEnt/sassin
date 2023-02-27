@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR;
 using Autohand;
+using JointVR;
 
 public class ChestTrigger : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class ChestTrigger : MonoBehaviour
     public DaggerSummon ds;
 
     public List<Hand> hands = new List<Hand>();
+
+    public StabManager stabM;
 
     private bool actionSet = false;
 
@@ -53,6 +56,7 @@ public class ChestTrigger : MonoBehaviour
     void SummonDagger(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
     {
         //Debug.Log(fromSource);
+        stabM.UnstabAll();
         ds.SummonToPlacePoint();
     }
 }

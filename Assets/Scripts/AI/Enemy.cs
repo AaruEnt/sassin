@@ -291,7 +291,7 @@ public class Enemy : MonoBehaviour
     void OnTriggerEnter (Collider col) {
         RaycastHit hitinfo;
         //Debug.Log(col.gameObject.name);
-        if (col.gameObject.tag == "Player") { // If player in look cone
+        if (col.attachedRigidbody && col.attachedRigidbody.gameObject.tag == "Player") { // If player in look cone
             Physics.Linecast(transform.position, col.transform.position, out hitinfo);
             //If line of sight present start chasing player
             if (hitinfo.collider.gameObject.tag == "Player" && hitinfo.collider.transform.root.gameObject.GetComponentInChildren<PlayerState>().state == PlayerStates.suspicious) {

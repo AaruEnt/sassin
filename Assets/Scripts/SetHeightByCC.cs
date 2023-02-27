@@ -5,11 +5,11 @@ using Autohand;
 
 public class SetHeightByCC : MonoBehaviour
 {
-    public AutoHandPlayer cc;
 
     public PlacePoint place;
     internal Grabbable placedObj = null;
 
+    private float yOffset;
 
 
     // Start is called before the first frame update
@@ -17,13 +17,14 @@ public class SetHeightByCC : MonoBehaviour
     {
         place.OnPlaceEvent += OnPlaced;
         place.OnRemoveEvent += OnRemoved;
+        yOffset = Camera.main.transform.localPosition.y - transform.localPosition.y;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 pos = transform.localPosition;
-        pos.y = (cc.playerHeight / 4) * 3f;
+        Vector3 pos = Camera.main.transform.localPosition;
+        pos.y -= yOffset;
         transform.localPosition = pos;
 
         if (placedObj)

@@ -176,5 +176,13 @@ namespace JointVR
         public void UnFreezeRigidbody() {
             rb.constraints = RigidbodyConstraints.None;
         }
+
+        public void UnstabAll()
+        {
+            foreach (Stabber s in stabbers)
+            {
+                s.ForceUnstab();
+            }
+        }
     }
 }
