@@ -102,6 +102,7 @@ namespace Autohand {
         public PlacePointEvent OnStopHighlightEvent;
 
         public Grabbable highlightingObj { get; protected set; } = null;
+        [ShowNativeProperty]
         public Grabbable placedObject { get; protected set; } = null;
         public Grabbable lastPlacedObject { get; protected set; } = null;
 
@@ -120,6 +121,8 @@ namespace Autohand {
         protected CollisionDetectionMode placedObjDetectionMode;
         float tickRate = 0.02f;
         Collider[] collidersNonAlloc = new Collider[30];
+
+        internal bool canRelease = false;
 
 
         protected virtual void Start(){
@@ -304,12 +307,14 @@ namespace Autohand {
         }
 
         public void Remove() {
-            if(placedObject != null)
+            Debug.Log("SuperRemove called");
+            if (placedObject != null)
                 Remove(placedObject);
         }
 
         public virtual void Remove(Grabbable placeObj) {
-            if (placeObj == null || placeObj != placedObject || disablePlacePointOnPlace)
+            Debug.Log("Remove called: " + canRelease.ToString());
+            if (placeObj == null || placeObj != placedObject || disablePlacePointOnPlace || !canRelease)
                 return;
 
             if (placeObj.body != null){
@@ -423,6 +428,11 @@ namespace Autohand {
             scale = Mathf.Abs(scale < transform.lossyScale.z ? scale : transform.lossyScale.z);
 
             Gizmos.DrawWireSphere(transform.rotation * radiusOffset + placedOffset.position, placeRadius* scale);
+        }
+
+        public void SetCanRelease(bool c)
+        {
+            canRelease = c;
         }
 
     }

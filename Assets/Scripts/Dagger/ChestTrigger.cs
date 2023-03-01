@@ -15,11 +15,17 @@ public class ChestTrigger : MonoBehaviour
 
     public StabManager stabM;
 
+    public PlacePoint place;
+
     private bool actionSet = false;
 
     void Update()
     {
         //Debug.Log(hands.Count);
+        //if (hands.Count > 0)
+        //    place.canRelease = true;
+        //else
+        //    place.canRelease = false;
     }
 
     void OnTriggerEnter(Collider col)
@@ -35,6 +41,8 @@ public class ChestTrigger : MonoBehaviour
             }
             hands.Add(h);
         }
+        //if (!place.enabled)
+        //    place.enabled = true;
     }
 
     void OnTriggerExit(Collider col)
@@ -51,6 +59,8 @@ public class ChestTrigger : MonoBehaviour
                 triggerAction.onStateDown -= SummonDagger;
             }
         }
+        //if (place.enabled && place.placedObject)
+        //    place.enabled = false;
     }
 
     void SummonDagger(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
