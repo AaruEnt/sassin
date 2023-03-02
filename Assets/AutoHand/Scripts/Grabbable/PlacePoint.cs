@@ -313,7 +313,7 @@ namespace Autohand {
         }
 
         public virtual void Remove(Grabbable placeObj) {
-            Debug.Log("Remove called: " + canRelease.ToString());
+            //Debug.Log("Remove called: " + canRelease.ToString());
             if (placeObj == null || placeObj != placedObject || disablePlacePointOnPlace || !canRelease)
                 return;
 

@@ -26,6 +26,10 @@ public class Stats : MonoBehaviour
 
     private List<GameObject> currCollisions = new List<GameObject>();
 
+    public SkinnedMeshRenderer mesh;
+
+    public Animator anim;
+
     void Update()
     {
         if (debugText)
@@ -56,6 +60,8 @@ public class Stats : MonoBehaviour
     // When health reaches 0 or less
     void OnKill()
     {
+        if (anim)
+            anim.SetBool("IsDead", true);
         if (destroyOnDeath)
             Destroy(this.gameObject);
         else if (reloadSceneOnDeath)
@@ -71,6 +77,12 @@ public class Stats : MonoBehaviour
             {
                 rb.isKinematic = false;
                 rb.constraints = RigidbodyConstraints.None;
+            }
+
+            if (mesh)
+            {
+                Color newColor = new Color(0.8f, 0.5f, 0.5f, 1f);
+                mesh.material.color = newColor;
             }
 
             if (mr)

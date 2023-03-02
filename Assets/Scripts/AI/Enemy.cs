@@ -65,6 +65,8 @@ public class Enemy : MonoBehaviour
     [SerializeField, Tooltip("Last position player was seen")]
     private Transform lastDetectedArea;
 
+    public Animator anim;
+
 
     // Unserialized vars
 
@@ -178,6 +180,56 @@ public class Enemy : MonoBehaviour
             minSuspicion = minSuspicion <= 0.9f ? 0.9f : minSuspicion;
         }
         agent.speed = speed;
+
+        if (c != null && state == EnemyState.chase)
+        {
+            StopCoroutine(c);
+            agent.updateRotation = true;
+            cr_running = false;
+            if (anim)
+                anim.SetBool("IsLooking", false);
+        }
+
+        if (anim) {
+            switch (state)
+            {
+                case EnemyState.patrol:
+                    anim.SetBool("IsWalking", true);
+                    anim.SetBool("IsChasing", false);
+                    break;
+
+                case EnemyState.alert:
+                    anim.SetBool("IsWalking", true);
+                    anim.SetBool("IsChasing", false);
+                    break;
+
+                case EnemyState.search:
+                    anim.SetBool("IsWalking", false);
+                    if (agent.remainingDistance >= 0.5f)
+                    {
+                        anim.SetBool("IsChasing", true);
+                        anim.SetBool("IsLooking", false);
+                    }
+                    else
+                    {
+                        anim.SetBool("IsLooking", true);
+                        anim.SetBool("IsChasing", false);
+                    }
+                    break;
+
+                case EnemyState.chase:
+                    anim.SetBool("IsWalking", false);
+                    anim.SetBool("IsChasing", true);
+                    break;
+
+                default:
+                    anim.SetBool("IsWalking", false);
+                    anim.SetBool("IsChasing", false);
+                    anim.SetBool("IsLooking", true);
+                    break;
+            }
+        }
+
     }
 
     // Sets the next waypoint for the AI
@@ -308,6 +360,8 @@ public class Enemy : MonoBehaviour
 
     // Looks left to right when called
     IEnumerator LookAround() {
+        if (anim)
+            anim.SetBool("IsLooking", true);
         agent.updateRotation = false;
         cr_running = true;
         t = 0;
@@ -348,6 +402,8 @@ public class Enemy : MonoBehaviour
         agent.updateRotation = true;
         DoAnAction();
         cr_running = false;
+        if (anim)
+            anim.SetBool("IsLooking", false);
     }
 
     // When the enemy bumps into something
