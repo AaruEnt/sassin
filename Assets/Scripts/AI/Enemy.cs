@@ -406,4 +406,9 @@ public class Enemy : MonoBehaviour
     {
         state = EnemyState.alert;
     }
+
+    public EnemyState GetCurrentState()
+    {
+        return state;
+    }
 }
