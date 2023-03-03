@@ -67,6 +67,10 @@ public class Enemy : MonoBehaviour
 
     public Animator anim;
 
+    public randNum randomNumberGenerator;
+
+    public bool pickRandomWaypoint = false;
+
 
     // Unserialized vars
 
@@ -229,7 +233,6 @@ public class Enemy : MonoBehaviour
                     break;
             }
         }
-
     }
 
     // Sets the next waypoint for the AI
@@ -251,6 +254,13 @@ public class Enemy : MonoBehaviour
             if (!dontIncrement)
                 currWaypoint = (currWaypoint + 1) % wayPoints.Length;
             dontIncrement = false;
+
+            if (pickRandomWaypoint && randomNumberGenerator != null && randomNumberGenerator.rand != null)
+            {
+                int lastWaypoint = currWaypoint;
+                while (currWaypoint == lastWaypoint)
+                    currWaypoint = randomNumberGenerator.rand.Next((wayPoints.Length - 1));
+            }
             SetNextWaypoint(wayPoints[currWaypoint].position);
         }
         isWaiting = false;
