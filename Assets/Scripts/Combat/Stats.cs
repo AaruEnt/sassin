@@ -18,6 +18,7 @@ public class Stats : MonoBehaviour
     internal float damage = 2f;
 
     public UnityEvent OnTakeDamage;
+    public UnityEvent OnDeath;
 
     public bool destroyOnDeath = true;
     public bool reloadSceneOnDeath = false;
@@ -29,6 +30,8 @@ public class Stats : MonoBehaviour
     public SkinnedMeshRenderer mesh;
 
     public Animator anim;
+
+    public Rigidbody[] ragdoll;
 
     void Update()
     {
@@ -60,6 +63,7 @@ public class Stats : MonoBehaviour
     // When health reaches 0 or less
     void OnKill()
     {
+        OnDeath.Invoke();
         if (anim)
             anim.SetBool("IsDead", true);
         if (destroyOnDeath)
@@ -96,6 +100,19 @@ public class Stats : MonoBehaviour
 
             if (a)
                 a.enabled = false;
+
+            if (anim)
+            {
+                anim.enabled = false;
+            }
+
+            if (ragdoll != null && ragdoll.Length > 0)
+            {
+                foreach (var r in ragdoll)
+                {
+                    r.isKinematic = false;
+                }
+            }
         }
     }
 

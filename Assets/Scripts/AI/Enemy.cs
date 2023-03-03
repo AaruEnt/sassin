@@ -71,6 +71,8 @@ public class Enemy : MonoBehaviour
 
     public bool pickRandomWaypoint = false;
 
+    public GameObject eyeLinePosition;
+
 
     // Unserialized vars
 
@@ -118,6 +120,8 @@ public class Enemy : MonoBehaviour
 
     private Coroutine searchCoroutine;
 
+    private bool chasedThisFrame = false;
+
 
     void Start()
     {
@@ -140,6 +144,7 @@ public class Enemy : MonoBehaviour
     // State switching
     void Update()
     {
+        chasedThisFrame = false;
         // Clamp suspicion to min and max
         suspicion = Mathf.Clamp(suspicion, minSuspicion, maxSuspicion);
 
@@ -171,7 +176,7 @@ public class Enemy : MonoBehaviour
             if (!isWaiting)
                 SearchForPlayer();
         }
-        else if (state == EnemyState.chase) { // If chasing the player
+        else if (state == EnemyState.chase && !chasedThisFrame) { // If chasing the player
             chasePlayer();
         }
 
@@ -309,6 +314,9 @@ public class Enemy : MonoBehaviour
 
     // Chases the player while line of sight is maintained
     public void chasePlayer() {
+        if (chasedThisFrame)
+            return;
+        chasedThisFrame = true;
         isChasing = true;
         agent.isStopped = true;
         agent.ResetPath(); // Constantly update path to point towards player
@@ -319,8 +327,8 @@ public class Enemy : MonoBehaviour
             return;
         }
         RaycastHit hitinfo;
-        Physics.Linecast(transform.position, player.transform.position, out hitinfo, mask);
-        if (hitinfo.collider.gameObject.tag == "Player") { // if line of sight present from enemy to player
+        Physics.Linecast(eyeLinePosition.transform.position, player.transform.position, out hitinfo, mask);
+        if (hitinfo.collider && hitinfo.collider.gameObject.tag == "Player") { // if line of sight present from enemy to player
             if (searchCoroutine != null)
                 StopCoroutine(searchCoroutine);
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20f);
@@ -339,11 +347,13 @@ public class Enemy : MonoBehaviour
                     StartCoroutine(SpellAttack());
                     canAttack = false;
                 }
-            return;
+                return;
             }
+            Debug.Log("Waypoint set");
             SetNextWaypoint(player.transform.position);
         }
         else {
+            lastDetectedArea = player.transform;
             SetNextWaypoint(player.transform.position);
             if (searchCoroutine == null)
                 searchCoroutine = StartCoroutine(LoSLostCheck());
@@ -351,11 +361,35 @@ public class Enemy : MonoBehaviour
     }
 
     // When something enters the look trigger
-    void OnTriggerEnter (Collider col) {
+    void OnTriggerEnter(Collider col)
+    {
         RaycastHit hitinfo;
-        //Debug.Log(col.gameObject.name);
+        //Debug.Log(col.gameObject.transform.root.gameObject.name);
+        if (col.attachedRigidbody && col.attachedRigidbody.gameObject.tag == "Player")
+        { // If player in look cone
+            Physics.Linecast(eyeLinePosition.transform.position, col.transform.position, out hitinfo);
+            //If line of sight present start chasing player
+            if (hitinfo.collider.gameObject.tag == "Player" && hitinfo.collider.transform.root.gameObject.GetComponentInChildren<PlayerState>().state == PlayerStates.suspicious)
+            {
+                state = EnemyState.chase;
+                reachedThreshhold = true;
+                player = col.gameObject;
+                if (suspicion < maxSuspicion)
+                    suspicion += 5f;
+                minSuspicion = minSuspicion <= 0.5f ? 0.5f : minSuspicion;
+                chasePlayer();
+            }
+        }
+    }
+
+    // When something enters the look trigger
+    void OnTriggerStay (Collider col) {
+        RaycastHit hitinfo;
+        //Debug.Log(col.gameObject.transform.root.gameObject.name);
         if (col.attachedRigidbody && col.attachedRigidbody.gameObject.tag == "Player") { // If player in look cone
-            Physics.Linecast(transform.position, col.transform.position, out hitinfo);
+            if (chasedThisFrame)
+                return;
+            Physics.Linecast(eyeLinePosition.transform.position, col.transform.position, out hitinfo);
             //If line of sight present start chasing player
             if (hitinfo.collider.gameObject.tag == "Player" && hitinfo.collider.transform.root.gameObject.GetComponentInChildren<PlayerState>().state == PlayerStates.suspicious) {
                 state = EnemyState.chase;
@@ -371,50 +405,53 @@ public class Enemy : MonoBehaviour
 
     // Looks left to right when called
     IEnumerator LookAround() {
+        agent.isStopped = true;
         if (anim)
             anim.SetBool("IsLooking", true);
         agent.updateRotation = false;
         cr_running = true;
         t = 0;
-        float RotationSpeed = 90f;
-        Waypoint wp = null;
-        if (state == EnemyState.patrol || state == EnemyState.alert)
-            wp = wayPoints[currWaypoint].GetComponent<Waypoint>();
-        yield return new WaitForSeconds(0.2f);
-        if (!wp || wp.turnLeft) {
-            while (t <= 90) {
-                transform.Rotate (Vector3.up * (RotationSpeed * Time.deltaTime));
-                t += RotationSpeed * Time.deltaTime;
-                yield return null;
-            }
-            t = 0;
-            yield return new WaitForSeconds(0.5f);
-            while (t <= 90) {
-                transform.Rotate (-Vector3.up * (RotationSpeed * Time.deltaTime));
-                t += RotationSpeed * Time.deltaTime;
-                yield return null;
-            }
-        }
-        t = 0;
-        if (!wp || wp.turnRight) {
-            while (t <= 90) {
-                transform.Rotate (-Vector3.up * (RotationSpeed * Time.deltaTime));
-                t += RotationSpeed * Time.deltaTime;
-                yield return null;
-            }
-            t = 0;
-            yield return new WaitForSeconds(0.5f);
-            while (t <= 90) {
-                transform.Rotate (Vector3.up * (RotationSpeed * Time.deltaTime));
-                t += RotationSpeed * Time.deltaTime;
-                yield return null;
-            }
-        }
+        yield return new WaitForSeconds(4.5f);
+        //float RotationSpeed = 90f;
+        //Waypoint wp = null;
+        //if (state == EnemyState.patrol || state == EnemyState.alert)
+        //    wp = wayPoints[currWaypoint].GetComponent<Waypoint>();
+        //yield return new WaitForSeconds(0.2f);
+        //if (!wp || wp.turnLeft) {
+         //   while (t <= 90) {
+         //       transform.Rotate (Vector3.up * (RotationSpeed * Time.deltaTime));
+         //       t += RotationSpeed * Time.deltaTime;
+        //yield return null;
+           // }
+           // t = 0;
+        //yield return new WaitForSeconds(0.5f);
+           // while (t <= 90) {
+           //     transform.Rotate (-Vector3.up * (RotationSpeed * Time.deltaTime));
+           //     t += RotationSpeed * Time.deltaTime;
+           //     yield return null;
+           // }
+        //}
+       // t = 0;
+        //if (!wp || wp.turnRight) {
+        //    while (t <= 90) {
+        //        transform.Rotate (-Vector3.up * (RotationSpeed * Time.deltaTime));
+        //        t += RotationSpeed * Time.deltaTime;
+        //yield return null;
+        //    }
+        //    t = 0;
+        //yield return new WaitForSeconds(0.5f);
+       //     while (t <= 90) {
+        //        transform.Rotate (Vector3.up * (RotationSpeed * Time.deltaTime));
+         //       t += RotationSpeed * Time.deltaTime;
+        //yield return null;
+         //   }
+       // }
         agent.updateRotation = true;
         DoAnAction();
         cr_running = false;
         if (anim)
             anim.SetBool("IsLooking", false);
+        agent.isStopped = false;
     }
 
     // When the enemy bumps into something
@@ -481,6 +518,7 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator LoSLostCheck()
     {
+        Debug.Log("LoS lost");
         yield return new WaitForSeconds(1.5f);
         if (state == EnemyState.chase)
         {
@@ -496,5 +534,22 @@ public class Enemy : MonoBehaviour
             searchWaypoint = 0;
             SetNextWaypoint(searchWaypoints[searchWaypoint]); // Move to last known position of player
         }
+    }
+
+    public void SetLayer(int layer)
+    {
+        Transform[] children = gameObject.GetComponentsInChildren<Transform>(includeInactive: true);
+        foreach (Transform child in children)
+        {
+            child.gameObject.layer = layer;
+        }
+    }
+
+    public void OnTakeDamage()
+    {
+        if (state != EnemyState.chase)
+            SearchForPlayer();
+        if (state == EnemyState.patrol)
+            SetEnemyStateAlertManually();
     }
 }
