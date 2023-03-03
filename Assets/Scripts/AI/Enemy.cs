@@ -116,6 +116,8 @@ public class Enemy : MonoBehaviour
     // is the agent currently capable of starting an attack - currently only used for spells
     internal bool canAttack = true;
 
+    private Coroutine searchCoroutine;
+
 
     void Start()
     {
@@ -319,6 +321,8 @@ public class Enemy : MonoBehaviour
         RaycastHit hitinfo;
         Physics.Linecast(transform.position, player.transform.position, out hitinfo, mask);
         if (hitinfo.collider.gameObject.tag == "Player") { // if line of sight present from enemy to player
+            if (searchCoroutine != null)
+                StopCoroutine(searchCoroutine);
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20f);
             foreach (var collider in hitColliders) {
                 if (collider.gameObject.tag == "Enemy") { // Attract other nearby enemies if LoS maintained
@@ -336,16 +340,13 @@ public class Enemy : MonoBehaviour
                     canAttack = false;
                 }
             return;
-        }
+            }
             SetNextWaypoint(player.transform.position);
         }
         else {
-            state = EnemyState.search; // swap to searching if LoS lost
-            reachedThreshhold = true;
-            isChasing = false;
-            searchWaypoints = new Vector3[] {lastDetectedArea.position};
-            searchWaypoint = 0;
-            SetNextWaypoint(searchWaypoints[searchWaypoint]); // Move to last known position of player
+            SetNextWaypoint(player.transform.position);
+            if (searchCoroutine == null)
+                searchCoroutine = StartCoroutine(LoSLostCheck());
         }
     }
 
@@ -476,5 +477,24 @@ public class Enemy : MonoBehaviour
     public EnemyState GetCurrentState()
     {
         return state;
+    }
+
+    private IEnumerator LoSLostCheck()
+    {
+        yield return new WaitForSeconds(1.5f);
+        if (state == EnemyState.chase)
+        {
+            RaycastHit hitinfo;
+            Physics.Linecast(transform.position, player.transform.position, out hitinfo, mask);
+            if (hitinfo.collider.gameObject.tag == "Player") { // if line of sight present from enemy to player
+                yield break;
+            }
+            state = EnemyState.search; // swap to searching if LoS lost
+            reachedThreshhold = true;
+            isChasing = false;
+            searchWaypoints = new Vector3[] { lastDetectedArea.position };
+            searchWaypoint = 0;
+            SetNextWaypoint(searchWaypoints[searchWaypoint]); // Move to last known position of player
+        }
     }
 }
