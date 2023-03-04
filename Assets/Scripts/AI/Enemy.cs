@@ -120,6 +120,8 @@ public class Enemy : MonoBehaviour
 
     private Coroutine searchCoroutine;
 
+    private bool scr_running = false;
+
     private bool chasedThisFrame = false;
 
 
@@ -148,6 +150,11 @@ public class Enemy : MonoBehaviour
         // Clamp suspicion to min and max
         suspicion = Mathf.Clamp(suspicion, minSuspicion, maxSuspicion);
 
+        if (agent.path.status == NavMeshPathStatus.PathPartial && agent.velocity == Vector3.zero && state == EnemyState.chase && agent.path.corners.Length <= 2)
+        {
+            state = EnemyState.search;
+        }
+
         if (suspicion < 1f && (state != EnemyState.patrol && state != EnemyState.alert)) {
             dontIncrement = true;
             if (reachedThreshhold)
@@ -171,8 +178,11 @@ public class Enemy : MonoBehaviour
             SearchForPlayer();
         }
         else if (state == EnemyState.search && !agent.pathPending && agent.remainingDistance < 0.5f) { // If at search waypoint
-            if (searchWaypoint + 1 >= searchWaypoints.Length && suspicion >= minSuspicion) // If at last waypoint
+            if ((searchWaypoints == null || searchWaypoint + 1 >= searchWaypoints.Length) && suspicion >= minSuspicion) {// If at last waypoint
+                searchWaypoints = null;
+                searchWaypoint = 0;
                 suspicion -= Time.deltaTime / 2;
+             }
             if (!isWaiting)
                 SearchForPlayer();
         }
@@ -216,16 +226,8 @@ public class Enemy : MonoBehaviour
 
                 case EnemyState.search:
                     anim.SetBool("IsWalking", false);
-                    if (agent.remainingDistance >= 0.5f)
-                    {
-                        anim.SetBool("IsChasing", true);
-                        anim.SetBool("IsLooking", false);
-                    }
-                    else
-                    {
-                        anim.SetBool("IsLooking", true);
-                        anim.SetBool("IsChasing", false);
-                    }
+                    anim.SetBool("IsLooking", true);
+                    anim.SetBool("IsChasing", false);
                     break;
 
                 case EnemyState.chase:
@@ -244,13 +246,40 @@ public class Enemy : MonoBehaviour
 
     // Sets the next waypoint for the AI
     void SetNextWaypoint(Vector3 point) {
-        agent.SetDestination(point);
-        isWaiting = false;
+        NavMeshPath navMeshPath = new NavMeshPath();
+        //create path and check if it can be done
+        // and check if navMeshAgent can reach its target
+        if (agent.CalculatePath(point, navMeshPath) && navMeshPath.status == NavMeshPathStatus.PathComplete)
+        {
+            Debug.Log(navMeshPath.corners.Length);
+            //move to target
+            agent.SetPath(navMeshPath);
+            isWaiting = false;
+        }
+        else
+        {
+            if (navMeshPath.corners.Length > 0)
+            {
+                agent.SetPath(navMeshPath);
+            }
+            else
+            {
+                if (state == EnemyState.chase)
+                {
+                    reachedThreshhold = true;
+                    isChasing = false;
+                    state = EnemyState.search;
+                    searchWaypoints = navMeshPath.corners;
+                    searchWaypoint = 0;
+                    DoAnAction();
+                }
+            }
+        }
     }
 
     // Determines next waypoint, and sets it
     void DoAnAction() {
-        if (state == EnemyState.search && searchWaypoint + 1 < searchWaypoints.Length) {
+        if (state == EnemyState.search && searchWaypoints != null && searchWaypoint + 1 < searchWaypoints.Length) {
             if (searchWaypoint + 2 >= searchWaypoints.Length)
                 searchWaypoint = searchWaypoints.Length - 1;
             else
@@ -329,8 +358,11 @@ public class Enemy : MonoBehaviour
         RaycastHit hitinfo;
         Physics.Linecast(eyeLinePosition.transform.position, player.transform.position, out hitinfo, mask);
         if (hitinfo.collider && hitinfo.collider.gameObject.tag == "Player") { // if line of sight present from enemy to player
-            if (searchCoroutine != null)
+            if (scr_running == true)
+            {
                 StopCoroutine(searchCoroutine);
+                scr_running = false;
+            }
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20f);
             foreach (var collider in hitColliders) {
                 if (collider.gameObject.tag == "Enemy") { // Attract other nearby enemies if LoS maintained
@@ -355,7 +387,7 @@ public class Enemy : MonoBehaviour
         else {
             lastDetectedArea = player.transform;
             SetNextWaypoint(player.transform.position);
-            if (searchCoroutine == null)
+            if (scr_running)
                 searchCoroutine = StartCoroutine(LoSLostCheck());
         }
     }
@@ -519,21 +551,25 @@ public class Enemy : MonoBehaviour
     private IEnumerator LoSLostCheck()
     {
         Debug.Log("LoS lost");
+        scr_running = true;
         yield return new WaitForSeconds(1.5f);
         if (state == EnemyState.chase)
         {
+            Debug.Log("In check");
             RaycastHit hitinfo;
             Physics.Linecast(transform.position, player.transform.position, out hitinfo, mask);
             if (hitinfo.collider.gameObject.tag == "Player") { // if line of sight present from enemy to player
+                Debug.Log("Player seen");
+                scr_running = false;
                 yield break;
             }
             state = EnemyState.search; // swap to searching if LoS lost
             reachedThreshhold = true;
             isChasing = false;
-            searchWaypoints = new Vector3[] { lastDetectedArea.position };
-            searchWaypoint = 0;
-            SetNextWaypoint(searchWaypoints[searchWaypoint]); // Move to last known position of player
+            DoAnAction();
+            Debug.Log("Did an action");
         }
+        scr_running = false;
     }
 
     public void SetLayer(int layer)
