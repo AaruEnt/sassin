@@ -73,6 +73,8 @@ public class Enemy : MonoBehaviour
 
     public GameObject eyeLinePosition;
 
+    public Stats stats;
+
 
     // Unserialized vars
 
