@@ -135,6 +135,7 @@ public class Stats : MonoBehaviour
                 WeakPoint w = hitCol.gameObject.GetComponent<WeakPoint>();
                 if (w)
                 {
+                    w.OnWeakPointHit.Invoke();
                     OnDamageReceived(s.damage * w.damageMod);
                     Debug.Log("Hit weakpoint");
                 }

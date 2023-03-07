@@ -10,7 +10,8 @@ public enum EnemyState {
     patrol,
     alert,
     search,
-    chase
+    chase,
+    wounded
 }
 
 // Player states, used for stealth

@@ -60,7 +60,7 @@ public class Enemy : MonoBehaviour
     private LayerMask mask;
     
     [SerializeField, Tooltip("which state the enemy is in")]
-    private EnemyState state = EnemyState.patrol;
+    internal EnemyState state = EnemyState.patrol;
     
     [SerializeField, Tooltip("Last position player was seen")]
     private Transform lastDetectedArea;
@@ -126,6 +126,11 @@ public class Enemy : MonoBehaviour
 
     private bool chasedThisFrame = false;
 
+    private EnemyState savedState;
+
+    [Button]
+    private void DoKneel() { Kneel(); }
+
 
     void Start()
     {
@@ -164,7 +169,7 @@ public class Enemy : MonoBehaviour
             else
                 state = EnemyState.patrol;
         }
-        else if (suspicion >= 1f && state != EnemyState.search && lastDetectedArea && !isChasing) { // Lost line of sight
+        else if (suspicion >= 1f && state != EnemyState.search && lastDetectedArea && !isChasing && state != EnemyState.wounded) { // Lost line of sight
             state = EnemyState.search;
             reachedThreshhold = true;
         }
@@ -184,7 +189,7 @@ public class Enemy : MonoBehaviour
                 searchWaypoints = null;
                 searchWaypoint = 0;
                 suspicion -= Time.deltaTime / 2;
-             }
+            }
             if (!isWaiting)
                 SearchForPlayer();
         }
@@ -589,5 +594,23 @@ public class Enemy : MonoBehaviour
             SearchForPlayer();
         if (state == EnemyState.patrol)
             SetEnemyStateAlertManually();
+    }
+
+    public void Kneel()
+    {
+        anim.SetBool("WoundedKnee", true);
+        suspicion = maxSuspicion;
+        savedState = state;
+        state = EnemyState.wounded;
+        dontIncrement = true;
+        agent.isStopped = true;
+        StartCoroutine(UnKneel());
+    }
+
+    private IEnumerator UnKneel()
+    {
+        yield return new WaitForSeconds(5f);
+        anim.SetBool("WoundedKnee", false);
+        state = savedState;
     }
 }
