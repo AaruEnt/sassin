@@ -410,13 +410,20 @@ public class Enemy : MonoBehaviour
             //If line of sight present start chasing player
             if (hitinfo.collider.gameObject.tag == "Player" && hitinfo.collider.transform.root.gameObject.GetComponentInChildren<PlayerState>().state == PlayerStates.suspicious)
             {
-                state = EnemyState.chase;
-                reachedThreshhold = true;
                 player = col.gameObject;
                 if (suspicion < maxSuspicion)
                     suspicion += 5f;
                 minSuspicion = minSuspicion <= 0.5f ? 0.5f : minSuspicion;
-                chasePlayer();
+                if (state == EnemyState.wounded)
+                {
+                    savedState = EnemyState.chase;
+                }
+                else
+                {
+                    state = EnemyState.chase;
+                    reachedThreshhold = true;
+                    chasePlayer();
+                }
             }
         }
     }
@@ -431,13 +438,20 @@ public class Enemy : MonoBehaviour
             Physics.Linecast(eyeLinePosition.transform.position, col.transform.position, out hitinfo);
             //If line of sight present start chasing player
             if (hitinfo.collider.gameObject.tag == "Player" && hitinfo.collider.transform.root.gameObject.GetComponentInChildren<PlayerState>().state == PlayerStates.suspicious) {
-                state = EnemyState.chase;
-                reachedThreshhold = true;
                 player = col.gameObject;
                 if (suspicion < maxSuspicion)
                     suspicion += 5f;
                 minSuspicion = minSuspicion <= 0.5f ? 0.5f : minSuspicion;
-                chasePlayer();
+                if (state == EnemyState.wounded)
+                {
+                    savedState = EnemyState.chase;
+                }
+                else
+                {
+                    state = EnemyState.chase;
+                    reachedThreshhold = true;
+                    chasePlayer();
+                }
             }
         }
     }
@@ -598,6 +612,7 @@ public class Enemy : MonoBehaviour
 
     public void Kneel()
     {
+        Debug.Log("Kneel");
         anim.SetBool("WoundedKnee", true);
         suspicion = maxSuspicion;
         savedState = state;
