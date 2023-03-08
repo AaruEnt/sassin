@@ -117,7 +117,7 @@ public class Stats : MonoBehaviour
     }
 
     // When collision is detected, check if it affects health
-    void OnCollisionEnter(Collision col)
+    internal void OnCollisionEnter(Collision col)
     {
         //Debug.Log("Collision enter " + col.gameObject.name);
         if (currCollisions.Contains(col.gameObject))
@@ -150,6 +150,7 @@ public class Stats : MonoBehaviour
                     WeakPoint wp = hitCol.gameObject.GetComponent<WeakPoint>();
                     if (wp)
                     {
+                        wp.OnWeakPointHit.Invoke();
                         OnDamageReceived(we.damage * wp.damageMod);
                         Debug.Log("Hit weakpoint");
                     }
@@ -160,7 +161,7 @@ public class Stats : MonoBehaviour
         }
     }
 
-    void OnCollisionExit(Collision col)
+    internal void OnCollisionExit(Collision col)
     {
         //Debug.Log("Collision exit " + col.gameObject.name);
         currCollisions.Remove(col.gameObject);
