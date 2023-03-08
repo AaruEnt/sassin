@@ -626,6 +626,8 @@ public class Enemy : MonoBehaviour
     {
         yield return new WaitForSeconds(5f);
         anim.SetBool("WoundedKnee", false);
+        if (savedState == EnemyState.wounded)
+            savedState = EnemyState.search;
         state = savedState;
     }
 }
