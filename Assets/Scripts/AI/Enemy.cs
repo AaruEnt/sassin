@@ -258,7 +258,7 @@ public class Enemy : MonoBehaviour
         // and check if navMeshAgent can reach its target
         if (agent.CalculatePath(point, navMeshPath) && navMeshPath.status == NavMeshPathStatus.PathComplete)
         {
-            Debug.Log(navMeshPath.corners.Length);
+            //Debug.Log(navMeshPath.corners.Length);
             //move to target
             agent.SetPath(navMeshPath);
             isWaiting = false;
@@ -388,7 +388,7 @@ public class Enemy : MonoBehaviour
                 }
                 return;
             }
-            Debug.Log("Waypoint set");
+            //Debug.Log("Waypoint set");
             SetNextWaypoint(player.transform.position);
         }
         else {
@@ -571,16 +571,16 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator LoSLostCheck()
     {
-        Debug.Log("LoS lost");
+        //Debug.Log("LoS lost");
         scr_running = true;
         yield return new WaitForSeconds(1.5f);
         if (state == EnemyState.chase)
         {
-            Debug.Log("In check");
+            //Debug.Log("In check");
             RaycastHit hitinfo;
             Physics.Linecast(transform.position, player.transform.position, out hitinfo, mask);
             if (hitinfo.collider.gameObject.tag == "Player") { // if line of sight present from enemy to player
-                Debug.Log("Player seen");
+                //Debug.Log("Player seen");
                 scr_running = false;
                 yield break;
             }
@@ -588,7 +588,7 @@ public class Enemy : MonoBehaviour
             reachedThreshhold = true;
             isChasing = false;
             DoAnAction();
-            Debug.Log("Did an action");
+            //Debug.Log("Did an action");
         }
         scr_running = false;
     }
@@ -612,7 +612,7 @@ public class Enemy : MonoBehaviour
 
     public void Kneel()
     {
-        Debug.Log("Kneel");
+        //Debug.Log("Kneel");
         anim.SetBool("WoundedKnee", true);
         suspicion = maxSuspicion;
         savedState = state;
