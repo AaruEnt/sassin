@@ -8,8 +8,8 @@ public class RagdollCollisionHelper : MonoBehaviour
     // Start is called before the first frame update
     void OnCollisionEnter(Collision col)
     {
-        if (col.body as Rigidbody)
-            Debug.Log(string.Format("{0} hit {1}", col.gameObject.name, gameObject.name));
+        //if (col.body as Rigidbody)
+        //    Debug.Log(string.Format("{0} hit {1}", col.gameObject.name, gameObject.name));
         stats.OnCollisionEnter(col);
     }
 
