@@ -14,6 +14,8 @@ namespace JointVR
         [SerializeField] public List<Rigidbody> ignoreStab = new List<Rigidbody>();
         [Tag] public string ignoreStabTag;
         private Rigidbody rb;
+
+        internal Transform maintainParent;
         
         // Start is called before the first frame update
         void Start()
@@ -35,6 +37,12 @@ namespace JointVR
                     joint.jointRb = rb;
 
             
+        }
+
+        void Update()
+        {
+            if (maintainParent)
+                transform.parent = maintainParent;
         }
 
         bool AttemptStab(Stabber stabber, Collider hitCollider, Vector3 relativeVelocity)
@@ -130,6 +138,10 @@ namespace JointVR
 
             if (stab != null && stabJoint != null)
             {
+                if (collision.collider.attachedRigidbody.isKinematic)
+                {
+                    maintainParent = collision.collider.transform;
+                }
                 stab.Stab(stabJoint, collision.collider);
             }
         }
@@ -183,6 +195,9 @@ namespace JointVR
             {
                 s.ForceUnstab();
             }
+            Debug.Log("parent removed");
+            maintainParent = null;
+            transform.parent = null;
         }
     }
 }
