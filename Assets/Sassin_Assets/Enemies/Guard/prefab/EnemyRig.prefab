@@ -278,11 +278,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1110589229}
-  m_LocalRotation: {x: 0.11910488, y: 0.020392803, z: -0.03043842, w: 0.9922055}
-  m_LocalPosition: {x: 0.002787266, y: -0.0498553, z: -0.0050449464}
-  m_LocalScale: {x: 0.050000016, y: 0.050000004, z: 0.05000001}
+  m_LocalRotation: {x: 0.012650187, y: 0.029724631, z: -0.023778116, w: 0.9991952}
+  m_LocalPosition: {x: 0.0038046446, y: 0.009659927, z: 0.07035023}
+  m_LocalScale: {x: 0.05000002, y: 0.050000012, z: 0.050000016}
   m_Children: []
-  m_Father: {fileID: 893206845314532461}
+  m_Father: {fileID: 571694202931064087}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1110589234
@@ -360,6 +360,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageMod: 2
+  OnWeakPointHit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1514039808
 GameObject:
   m_ObjectHideFlags: 0
@@ -1278,7 +1281,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2683021410794766467}
-  - {fileID: 1110589230}
   m_Father: {fileID: 571694202931064087}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1668,6 +1670,7 @@ MonoBehaviour:
   randomNumberGenerator: {fileID: 0}
   pickRandomWaypoint: 1
   eyeLinePosition: {fileID: 5908376964056352021}
+  stats: {fileID: 0}
 --- !u!195 &919132149575513867
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2078,6 +2081,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 893206845314532461}
+  - {fileID: 1110589230}
   m_Father: {fileID: 6383728290699387242}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

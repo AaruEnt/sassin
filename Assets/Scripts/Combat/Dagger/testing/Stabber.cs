@@ -292,7 +292,12 @@ namespace JointVR {
             foreach (StabJoint j in stabJoints)
             {
                 if (j.joint)
+                {
+                    Stats s = j.stabbedCollider.transform.root.GetComponent<Stats>();
+                    if (s)
+                        s.ManuallyRemoveCollision(root.gameObject);
                     Unstab(j);
+                }
             }
         }
     }

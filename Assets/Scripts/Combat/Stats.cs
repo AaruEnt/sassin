@@ -123,23 +123,27 @@ public class Stats : MonoBehaviour
     // When collision is detected, check if it affects health
     internal void OnCollisionEnter(Collision col)
     {
-        //Debug.Log("Collision enter " + col.gameObject.name);
-        if (currCollisions.Contains(col.transform.root.gameObject) || stabCD > 0)
+        if (col.body as Rigidbody == null)
             return;
+        //Debug.Log("Collision enter " + col.gameObject.name);
 
         //if (col.body)
         //    Debug.Log(col.body.gameObject.name);
 
-        if (col.gameObject.tag == "Effect" || (col.body && col.body.gameObject.tag == "Effect") || (col.gameObject.tag == "Enemy" && gameObject.tag != "Enemy"))
+        if (col.gameObject.tag == "Effect" || col.body.gameObject.tag == "Effect" || (col.gameObject.tag == "Enemy" && gameObject.tag != "Enemy"))
         { // Includes spells and weapons that deal damage, heal, or create some form of effect
-            currCollisions.Add(col.transform.root.gameObject);
             Collider hitCol = col.contacts[0].thisCollider;
+            WeakPoint w = hitCol.gameObject.GetComponent<WeakPoint>();
             //Debug.Log(string.Format("collider a: {0}, collider b: {2}", one.gameObject.name, two.gameObject.name));
+
+            if ((currCollisions.Contains(col.body.gameObject) && !w) || stabCD > 0)
+                return;
+
+            currCollisions.Add(col.body.gameObject);
 
             Spell s = col.gameObject.GetComponent<Spell>();
             if (s)
             {
-                WeakPoint w = hitCol.gameObject.GetComponent<WeakPoint>();
                 if (w)
                 {
                     w.OnWeakPointHit.Invoke();
@@ -157,15 +161,15 @@ public class Stats : MonoBehaviour
                 if (velRB)
                 {
                     vel = velRB.velocity.magnitude;
-                    Debug.Log(vel);
+                    //Debug.Log(vel);
                 }
+                vel = vel > 2 ? 2 : vel;
                 if (we)
                 {
-                    WeakPoint wp = hitCol.gameObject.GetComponent<WeakPoint>();
-                    if (wp)
+                    if (w)
                     {
-                        wp.OnWeakPointHit.Invoke();
-                        OnDamageReceived(we.damage * wp.damageMod * vel);
+                        w.OnWeakPointHit.Invoke();
+                        OnDamageReceived(we.damage * w.damageMod * vel);
                         Debug.Log("Hit weakpoint");
                     }
                     else
@@ -177,9 +181,26 @@ public class Stats : MonoBehaviour
 
     internal void OnCollisionExit(Collision col)
     {
-        //Debug.Log("Collision exit " + col.gameObject.name);
-        if (currCollisions.Contains(col.transform.root.gameObject))
-            currCollisions.Remove(col.transform.root.gameObject);
+        if (col.body as Rigidbody == null)
+            return;
+        if (currCollisions.Contains(col.body.gameObject))
+            Debug.Log("Collision exit " + col.gameObject.name);
+        if (currCollisions.Contains(col.body.gameObject))
+            currCollisions.Remove(col.body.gameObject);
         stabCD = 0.25f;
+    }
+
+    internal void OnCollisionStay(Collision col)
+    {
+        if (col.body as Rigidbody != null && col.body.gameObject.CompareTag("Effect") && !currCollisions.Contains(col.body.gameObject))
+        {
+            currCollisions.Add(col.body.gameObject);
+        }
+    }
+
+    internal void ManuallyRemoveCollision(GameObject gm)
+    {
+        if (currCollisions.Contains(gm))
+            currCollisions.Remove(gm);
     }
 }
