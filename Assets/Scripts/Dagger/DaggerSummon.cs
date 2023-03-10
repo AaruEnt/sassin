@@ -8,6 +8,8 @@ public class DaggerSummon : MonoBehaviour
 {
     public PlacePoint place;
 
+    public DaggerAnimator dAnim;
+
     internal bool isHeld = false; 
 
     [Button]
@@ -34,6 +36,8 @@ public class DaggerSummon : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
         transform.position = place.placedOffset.position;
         place.Place(g);
+        if (dAnim)
+            dAnim.ToggleOff();
     }
 
     public void SetIsHeld(bool held)
