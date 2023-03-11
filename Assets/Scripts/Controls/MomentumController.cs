@@ -57,7 +57,8 @@ namespace Autohand {
             startMomentum = player.moveAcceleration;
         }
 
-        void Update()
+        // Update is called once per frame
+        void FixedUpdate()
         {
             if (isWallRunning)
             {
@@ -67,14 +68,9 @@ namespace Autohand {
                 {
                     Vector3 newVel = rb.velocity;
                     newVel.y = 0.15f;
-                   rb.velocity = newVel;
+                    rb.velocity = newVel;
                 }
             }
-        }
-
-        // Update is called once per frame
-        void FixedUpdate()
-        {
             //Debug.Log(rb.velocity.magnitude);
             if (!player.IsClimbing())
             {
@@ -202,6 +198,7 @@ namespace Autohand {
         {
             if (runningWall == col.collider.gameObject)
             {
+                Debug.Log("CollisionExit");
                 runningWall = null;
                 isWallRunning = false;
             }
