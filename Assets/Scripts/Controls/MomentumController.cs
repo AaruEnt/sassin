@@ -47,6 +47,12 @@ namespace Autohand {
 
         private float magnitudePercentThreshhold = 0.95f;
 
+        internal bool isWallRunning = false;
+
+        private GameObject runningWall;
+
+        internal bool isWallJumping = false;
+
         void Start()
         {
             startSpeed = player.maxMoveSpeed;
@@ -56,6 +62,17 @@ namespace Autohand {
         // Update is called once per frame
         void FixedUpdate()
         {
+            if (isWallRunning)
+            {
+                if (counter < 270 || player.IsGrounded())
+                    isWallRunning = false;
+                else if (!player.IsClimbing() && !isWallJumping)
+                {
+                    Vector3 newVel = rb.velocity;
+                    newVel.y = 0.15f;
+                    rb.velocity = newVel;
+                }
+            }
             //Debug.Log(rb.velocity.magnitude);
             if (!player.IsClimbing())
             {
@@ -163,6 +180,31 @@ namespace Autohand {
         public void LowerMagnitudeThreshhold()
         {
             magnitudePercentThreshhold = 0.5f;
+        }
+
+        private void OnCollisionEnter(Collision col)
+        {
+            if (Mathf.Abs(Vector3.Dot(col.GetContact(0).normal, Vector3.up)) < 0.1f)// && canWallRun)
+            {
+                //Wallrun Start
+                isWallJumping = false;
+                Vector3 newVel = rb.velocity;
+                newVel.y = 0f;
+                rb.velocity = newVel;
+                isWallRunning = true;
+                Debug.Log("WallRunning");
+                runningWall = col.collider.gameObject;
+            }
+        }
+
+        private void OnCollisionExit(Collision col)
+        {
+            if (runningWall == col.collider.gameObject)
+            {
+                Debug.Log("CollisionExit");
+                runningWall = null;
+                isWallRunning = false;
+            }
         }
     }
 }
