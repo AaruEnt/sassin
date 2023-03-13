@@ -51,6 +51,7 @@ public class PrimaryButton : MonoBehaviour
 
     private bool jumpRoutineRunning = false;
     private bool jumpCD = false;
+    private bool hasWallRunJumped = false;
 
     void Update() {
         //if (!isSliding && player.IsCrouching())
@@ -64,7 +65,11 @@ public class PrimaryButton : MonoBehaviour
         }
 
         if (player.IsGrounded())
+        {
             jumpCD = false;
+            hasWallRunJumped = false;
+            momentum.isWallJumping = false;
+        }
     }
 
     public void OnPrimaryButton() {
@@ -80,8 +85,14 @@ public class PrimaryButton : MonoBehaviour
         if (player.IsGrounded()) {
             rb.AddForce(new Vector3(0, blendJumpHeight, 0), ForceMode.Impulse);
             //rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(rb.velocity.x, blendJumpHeight, rb.velocity.z), 40f);
+        } else if (canJump && !hasWallRunJumped)
+        {
+            hasWallRunJumped = true;
+            momentum.isWallJumping = true;
+            rb.AddForce(new Vector3(0, blendJumpHeight * 1.5f, 0), ForceMode.Impulse);
+
         }
-        else if (false) // replace with canJump to enable wall jumping
+        else if (false) // replace canJump above to enable wall jumping
         {
             jumpCD = true;
             if (Physics.Raycast(playerFacingTransform.transform.position, playerFacingTransform.transform.right, 1f, wallJumpMask))

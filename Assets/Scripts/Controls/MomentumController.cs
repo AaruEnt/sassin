@@ -51,6 +51,8 @@ namespace Autohand {
 
         private GameObject runningWall;
 
+        internal bool isWallJumping = false;
+
         void Start()
         {
             startSpeed = player.maxMoveSpeed;
@@ -64,7 +66,7 @@ namespace Autohand {
             {
                 if (counter < 270 || player.IsGrounded())
                     isWallRunning = false;
-                else if (!player.IsClimbing())
+                else if (!player.IsClimbing() && !isWallJumping)
                 {
                     Vector3 newVel = rb.velocity;
                     newVel.y = 0.15f;
@@ -185,6 +187,7 @@ namespace Autohand {
             if (Mathf.Abs(Vector3.Dot(col.GetContact(0).normal, Vector3.up)) < 0.1f)// && canWallRun)
             {
                 //Wallrun Start
+                isWallJumping = false;
                 Vector3 newVel = rb.velocity;
                 newVel.y = 0f;
                 rb.velocity = newVel;
