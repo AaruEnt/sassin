@@ -140,7 +140,7 @@ namespace JointVR
             {
                 if (collision.collider.attachedRigidbody.isKinematic)
                 {
-                    maintainParent = collision.collider.transform;
+                    maintainParent = collision.body.transform;
                 }
                 stab.Stab(stabJoint, collision.collider);
             }

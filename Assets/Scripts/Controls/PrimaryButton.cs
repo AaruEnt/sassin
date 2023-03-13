@@ -11,6 +11,9 @@ public class PrimaryButton : MonoBehaviour
     [SerializeField, Tooltip("Reference to the player rigidbody")]
     private Rigidbody rb;
 
+    [SerializeField, Tooltip("Reference to the 'tracked objects' or similar gameObject, used to determine the direction the player is facing")]
+    private GameObject playerFacingTransform;
+
     [SerializeField, Tooltip("Reference to the player")]
     private AutoHandPlayer player;
 
@@ -30,6 +33,12 @@ public class PrimaryButton : MonoBehaviour
     [ShowIf("jumpOnPress")]
     [SerializeField, Tooltip("The maximum jump height after momentum")]
     private float maxJumpHeight = 50;
+    [ShowIf("jumpOnPress")]
+    [SerializeField, Tooltip("The mask for detecting wall direction")]
+    private LayerMask wallJumpMask;
+    [ShowIf("jumpOnPress")]
+    [SerializeField, Tooltip("The outward force used when wall jumping")]
+    private float wallJumpForce = 5f;
 
     [Header("Variables")]
     [HideIf("jumpOnPress")]
@@ -38,9 +47,29 @@ public class PrimaryButton : MonoBehaviour
 
     private bool isSliding = false;
 
+    internal bool canJump = false;
+
+    private bool jumpRoutineRunning = false;
+    private bool jumpCD = false;
+    private bool hasWallRunJumped = false;
+
     void Update() {
         //if (!isSliding && player.IsCrouching())
         //    Slide();
+        if (momentum.isWallRunning)
+            canJump = true;
+        else if (jumpRoutineRunning == false)
+        {
+            jumpRoutineRunning = true;
+            StartCoroutine(JumpRoutine());
+        }
+
+        if (player.IsGrounded())
+        {
+            jumpCD = false;
+            hasWallRunJumped = false;
+            momentum.isWallJumping = false;
+        }
     }
 
     public void OnPrimaryButton() {
@@ -55,6 +84,29 @@ public class PrimaryButton : MonoBehaviour
         float blendJumpHeight = jumpHeight + (((maxJumpHeight - jumpHeight) / 14) * ((momentum.counter >= 900 ? 630 : momentum.counter - 270) / 45));
         if (player.IsGrounded()) {
             rb.AddForce(new Vector3(0, blendJumpHeight, 0), ForceMode.Impulse);
+            //rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(rb.velocity.x, blendJumpHeight, rb.velocity.z), 40f);
+        } else if (canJump && !hasWallRunJumped)
+        {
+            hasWallRunJumped = true;
+            momentum.isWallJumping = true;
+            rb.AddForce(new Vector3(0, blendJumpHeight * 1.5f, 0), ForceMode.Impulse);
+
+        }
+        else if (false) // replace canJump above to enable wall jumping
+        {
+            jumpCD = true;
+            if (Physics.Raycast(playerFacingTransform.transform.position, playerFacingTransform.transform.right, 1f, wallJumpMask))
+            {
+                rb.AddForce(new Vector3(0, 1f, 0) + (playerFacingTransform.transform.right * -wallJumpForce) + (playerFacingTransform.transform.forward * wallJumpForce), ForceMode.Impulse);
+            }
+            if (Physics.Raycast(playerFacingTransform.transform.position, -playerFacingTransform.transform.right, 1f, wallJumpMask))
+            {
+                rb.AddForce(new Vector3(0, blendJumpHeight / 4, 0) + (playerFacingTransform.transform.right * wallJumpForce) + (playerFacingTransform.transform.forward * wallJumpForce), ForceMode.Impulse);
+            }
+            if (Physics.Raycast(playerFacingTransform.transform.position, playerFacingTransform.transform.forward, 1f, wallJumpMask))
+            {
+                rb.AddForce(new Vector3(0, blendJumpHeight / 4, 0) + (playerFacingTransform.transform.forward * -wallJumpForce) + (playerFacingTransform.transform.forward * wallJumpForce), ForceMode.Impulse);
+            }
         }
     }
 
@@ -74,5 +126,12 @@ public class PrimaryButton : MonoBehaviour
         isSliding = false;
         player.crouching = false;
         momentum.maxSpeedScale = tmp;
+    }
+
+    private IEnumerator JumpRoutine()
+    {
+        yield return new WaitForSeconds(0.25f);
+        jumpRoutineRunning = false;
+        canJump = false;
     }
 }
