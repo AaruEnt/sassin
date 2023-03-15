@@ -127,6 +127,8 @@ namespace Autohand {
         [EnableIf("useGrounding"), Tooltip("The layers that platforming will be enabled on, will not work with layers that the HandPlayer can't collide with")]
         public LayerMask platformingLayerMask = ~0;
 
+        public bool stickMovementDisabled = false;
+
 
         float movementDeadzone = 0.1f;
         float turnDeadzone = 0.4f;
@@ -497,7 +499,7 @@ namespace Autohand {
         }
 
         protected virtual bool CanInputMove() {
-            return (allowClimbingMovement || !IsClimbing());
+            return ((allowClimbingMovement || !IsClimbing()) && !stickMovementDisabled);
         }
 
         protected virtual void InterpolateMovement() {
