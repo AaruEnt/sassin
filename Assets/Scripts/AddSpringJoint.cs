@@ -36,7 +36,7 @@ public class AddSpringJoint : MonoBehaviour
         momentum = parentObj.GetComponentInChildren<MomentumController>();
 
 
-        player.stickMovementDisabled = true;
+        //player.stickMovementDisabled = true;
         savedMomentum = momentum.GetMomentum();
 
         joint = targetRB.gameObject.AddComponent<SpringJoint>();
@@ -53,7 +53,7 @@ public class AddSpringJoint : MonoBehaviour
             grabbingHands.Remove(h);
         if (grabbingHands.Count > 0)
             return;
-        player.stickMovementDisabled = false;
+        //player.stickMovementDisabled = false;
         momentum.SetMomentum(savedMomentum);
         Destroy(joint);
     }
