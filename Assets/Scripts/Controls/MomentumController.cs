@@ -206,5 +206,15 @@ namespace Autohand {
                 isWallRunning = false;
             }
         }
+
+        public float GetMomentum()
+        {
+            return counter;
+        }
+
+        public void SetMomentum(float newMomentum)
+        {
+            counter = newMomentum;
+        }
     }
 }
