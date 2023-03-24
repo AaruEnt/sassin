@@ -39,6 +39,9 @@ public class PrimaryButton : MonoBehaviour
     [ShowIf("jumpOnPress")]
     [SerializeField, Tooltip("The outward force used when wall jumping")]
     private float wallJumpForce = 5f;
+    [ShowIf("jumpOnPress")]
+    [SerializeField, Tooltip("The audiosource for jump sounds")]
+    private AudioSource jumpSound;
 
     [Header("Variables")]
     [HideIf("jumpOnPress")]
@@ -84,12 +87,14 @@ public class PrimaryButton : MonoBehaviour
         float blendJumpHeight = jumpHeight + (((maxJumpHeight - jumpHeight) / 14) * ((momentum.counter >= 900 ? 630 : momentum.counter - 270) / 45));
         if (player.IsGrounded()) {
             rb.AddForce(new Vector3(0, blendJumpHeight, 0), ForceMode.Impulse);
+            jumpSound.Play();
             //rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(rb.velocity.x, blendJumpHeight, rb.velocity.z), 40f);
         } else if (canJump && !hasWallRunJumped)
         {
             hasWallRunJumped = true;
             momentum.isWallJumping = true;
             rb.AddForce(new Vector3(0, blendJumpHeight * 1.5f, 0), ForceMode.Impulse);
+            jumpSound.Play();
 
         }
         else if (false) // replace canJump above to enable wall jumping

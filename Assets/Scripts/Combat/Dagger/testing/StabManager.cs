@@ -1,8 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using NaughtyAttributes;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 
 namespace JointVR
@@ -16,6 +19,11 @@ namespace JointVR
         private Rigidbody rb;
 
         internal Transform maintainParent;
+
+        public StabEvent OnStabEnter;
+        public StabEvent OnStabExit;
+
+        private bool stabExitCalled = false;
         
         // Start is called before the first frame update
         void Start()
@@ -143,6 +151,7 @@ namespace JointVR
                     maintainParent = collision.body.transform;
                 }
                 stab.Stab(stabJoint, collision.collider);
+                OnStabEnter.Invoke(collision.gameObject);
             }
         }
 
@@ -160,9 +169,12 @@ namespace JointVR
                                 {
                                     stab.IgnoreCollision(contact.thisCollider);
                                     joint.unstabbedCollider = null;
+                                    OnStabExit.Invoke(collision.gameObject);
+                                    stabExitCalled = true;
                                 }                       
                             }
             }
+            stabExitCalled = false;
         }
 
         private bool IsValidTarget(Collider hitCollider) {
@@ -201,3 +213,5 @@ namespace JointVR
         }
     }
 }
+
+public delegate void StabEvent(GameObject other);

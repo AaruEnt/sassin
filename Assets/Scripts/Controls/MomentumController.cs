@@ -192,7 +192,7 @@ namespace Autohand {
                 newVel.y = 0f;
                 rb.velocity = newVel;
                 isWallRunning = true;
-                Debug.Log("WallRunning");
+                //Debug.Log("WallRunning");
                 runningWall = col.collider.gameObject;
             }
         }
@@ -201,7 +201,7 @@ namespace Autohand {
         {
             if (runningWall == col.collider.gameObject)
             {
-                Debug.Log("CollisionExit");
+                //Debug.Log("CollisionExit");
                 runningWall = null;
                 isWallRunning = false;
             }
