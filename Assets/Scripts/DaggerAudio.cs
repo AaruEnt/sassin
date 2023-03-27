@@ -21,21 +21,23 @@ public class DaggerAudio : MonoBehaviour
         manager.OnStabExit += StabExitEvent;
     }
 
+    public void OnDisable()
+    {
+        manager.OnStabEnter -= PlayStabAudio;
+        manager.OnStabExit -= StabExitEvent;
+    }
+
     public void PlayStabAudio(GameObject target)
     {
-        if (stabbed != null)
-            return;
         if (target.CompareTag("Enemy"))
             audio.PlayOneShot(guardStab, 1f);
+        else if (target.CompareTag("Wall"))
+            audio.PlayOneShot(wallStab, 1f);
         else
             audio.PlayOneShot(defaultStab, 1f);
-
-        stabbed = target;
     }
 
     public void StabExitEvent(GameObject target)
     {
-        if (stabbed == target)
-            stabbed = null;
     }
 }

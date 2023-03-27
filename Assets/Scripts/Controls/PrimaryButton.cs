@@ -42,6 +42,9 @@ public class PrimaryButton : MonoBehaviour
     [ShowIf("jumpOnPress")]
     [SerializeField, Tooltip("The audiosource for jump sounds")]
     private AudioSource jumpSound;
+    [ShowIf("jumpOnPress")]
+    [SerializeField, Tooltip("The audiosource for jump sounds")]
+    private AudioSource landSound;
 
     [Header("Variables")]
     [HideIf("jumpOnPress")]
@@ -56,6 +59,10 @@ public class PrimaryButton : MonoBehaviour
     private bool jumpCD = false;
     private bool hasWallRunJumped = false;
 
+    private bool hasJumped = false;
+
+    private float fallTracker = 0f;
+
     void Update() {
         //if (!isSliding && player.IsCrouching())
         //    Slide();
@@ -67,11 +74,23 @@ public class PrimaryButton : MonoBehaviour
             StartCoroutine(JumpRoutine());
         }
 
-        if (player.IsGrounded())
+        if (player.IsGrounded() && hasJumped)
         {
             jumpCD = false;
             hasWallRunJumped = false;
             momentum.isWallJumping = false;
+            hasJumped = false;
+        }
+
+        if (!player.IsGrounded() && jumpOnPress)
+        {
+            fallTracker += Time.deltaTime;
+        }
+        else
+        {
+            if (fallTracker >= 1f)
+                landSound.Play();
+            fallTracker = 0f;
         }
     }
 
@@ -88,6 +107,7 @@ public class PrimaryButton : MonoBehaviour
         if (player.IsGrounded()) {
             rb.AddForce(new Vector3(0, blendJumpHeight, 0), ForceMode.Impulse);
             jumpSound.Play();
+            hasJumped = true;
             //rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(rb.velocity.x, blendJumpHeight, rb.velocity.z), 40f);
         } else if (canJump && !hasWallRunJumped)
         {
@@ -95,7 +115,7 @@ public class PrimaryButton : MonoBehaviour
             momentum.isWallJumping = true;
             rb.AddForce(new Vector3(0, blendJumpHeight * 1.5f, 0), ForceMode.Impulse);
             jumpSound.Play();
-
+            hasJumped = true;
         }
         else if (false) // replace canJump above to enable wall jumping
         {
