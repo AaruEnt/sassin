@@ -11,10 +11,14 @@ public class Climber : MonoBehaviour
     public AutoHandPlayer player;
     public Climbable c;
 
+    private bool climbStarted = false;
+
     // Start is called before the first frame update
 
     public void RemoveClimb(Hand hand, Grabbable grab) {
-        player.EndClimb(hand, grab);
+        if (climbStarted)
+            player.EndClimb(hand, grab);
+        climbStarted = false;
         c.enabled = false;
     }
 
@@ -22,6 +26,7 @@ public class Climber : MonoBehaviour
         if (s.CheckKinematicStab()) {
             c.enabled = true;
             player.StartClimb(hand, grab);
+            climbStarted = true;
         }
     }
 }

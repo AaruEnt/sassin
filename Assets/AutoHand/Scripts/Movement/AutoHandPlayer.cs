@@ -109,6 +109,8 @@ namespace Autohand {
         public float climbingDrag = 5f;
         [Tooltip("Inscreases the step height while climbing up to make it easier to step up onto a surface")]
         public float climbUpStepHeightMultiplier = 1;
+        [Tooltip("Multiplies the body's velocity on ending climb, allowing the player to fling themselves easier")]
+        public float climbFlingForceMultiplier = 1.2f;
 
         [AutoToggleHeader("Enable Pushing")]
         [Tooltip("Whether or not the player can use Pushable objects (Objects with the Pushable component)")]
@@ -966,11 +968,19 @@ namespace Autohand {
             if(!allowClimbing)
                 return;
 
+            bool multiplyForce = climbing.Count > 0 ? true : false;
+
             if(climbing.ContainsKey(hand))
                 climbing.Remove(hand);
 
             foreach(var climb in climbing)
                 climb.Key.ResetGrabOffset();
+
+            if (multiplyForce && climbing.Count == 0)
+            {
+                Debug.Log("multiply");
+                body.velocity *= climbFlingForceMultiplier;
+            }
         }
 
         protected virtual void ApplyClimbingForce() {
