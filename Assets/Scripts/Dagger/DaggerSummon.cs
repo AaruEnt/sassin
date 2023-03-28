@@ -35,6 +35,7 @@ public class DaggerSummon : MonoBehaviour
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         transform.position = place.placedOffset.position;
+        transform.parent = place.transform;
         place.Place(g);
         if (dAnim)
             dAnim.ToggleOff();
@@ -43,5 +44,11 @@ public class DaggerSummon : MonoBehaviour
     public void SetIsHeld(bool held)
     {
         isHeld = held;
+    }
+
+    public void OverrideParent()
+    {
+        if (transform.parent == place.transform)
+            transform.parent = null;
     }
 }
