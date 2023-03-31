@@ -17,7 +17,6 @@ public class EnemyAnimationEvent : MonoBehaviour
 
     public void RunStep()
     {
-        Debug.Log("RunCall");
         runAudio.Play();
     }
 }
