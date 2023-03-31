@@ -23,7 +23,6 @@ namespace JointVR
         public StabEvent OnStabEnter;
         public StabEvent OnStabExit;
 
-        private bool stabExitCalled = false;
         
         // Start is called before the first frame update
         void Start()
@@ -170,11 +169,9 @@ namespace JointVR
                                     stab.IgnoreCollision(contact.thisCollider);
                                     joint.unstabbedCollider = null;
                                     OnStabExit.Invoke(collision.gameObject);
-                                    stabExitCalled = true;
                                 }                       
                             }
             }
-            stabExitCalled = false;
         }
 
         private bool IsValidTarget(Collider hitCollider) {

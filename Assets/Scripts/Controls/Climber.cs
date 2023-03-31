@@ -7,13 +7,17 @@ using JointVR;
 
 public class Climber : MonoBehaviour
 {
-    public StabManager s;
-    public AutoHandPlayer player;
-    public Climbable c;
+    [SerializeField, Tooltip("The stab manager on the dagger, used to check if stabbing a kinematic object")]
+    private StabManager s;
+
+    [SerializeField, Tooltip("The player component, used to start and end climbing")]
+    private AutoHandPlayer player;
+
+    [SerializeField, Tooltip("The climbable on the dagger")]
+    private Climbable c;
 
     private bool climbStarted = false;
 
-    // Start is called before the first frame update
 
     public void RemoveClimb(Hand hand, Grabbable grab) {
         if (climbStarted)

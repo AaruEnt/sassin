@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class ToggleCollision : MonoBehaviour
 {
-    public Rigidbody rb;
+    [SerializeField, Tooltip("The rigidbody to toggle collision on")]
+    private Rigidbody rb;
 
     public void EnableAllCollision()
     {

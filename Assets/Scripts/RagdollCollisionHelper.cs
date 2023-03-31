@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class RagdollCollisionHelper : MonoBehaviour
 {
-    public Stats stats;
-    // Start is called before the first frame update
+    [SerializeField, Tooltip("The 'stats' component in a parent object")]
+    private Stats stats;
+
+    // Passes the collision on to the parent
     void OnCollisionEnter(Collision col)
     {
-        //if (col.body as Rigidbody)
-        //    Debug.Log(string.Format("{0} hit {1}", col.gameObject.name, gameObject.name));
         stats.OnCollisionEnter(col);
     }
 

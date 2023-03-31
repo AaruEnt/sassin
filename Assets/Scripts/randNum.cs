@@ -3,6 +3,6 @@ using UnityEngine;
 
 public class randNum : MonoBehaviour
 {
-    // rand num generator for use during runtime
-    public System.Random rand = new System.Random();
+    [SerializeField, Tooltip("rand num generator for use during runtime")]
+    internal System.Random rand = new System.Random();
 }

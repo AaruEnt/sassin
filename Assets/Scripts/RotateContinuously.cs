@@ -5,21 +5,29 @@ using UnityEngine;
 public class RotateContinuously : MonoBehaviour
 {
     [Range(-1, 1)]
-    public float xRot = 0f;
+    [SerializeField, Tooltip("Rotation on the x axis")]
+    private float xRot = 0f;
+
     [Range(-1, 1)]
-    public float yRot = 0f;
+    [SerializeField, Tooltip("Rotation on the y axis")]
+    private float yRot = 0f;
+
     [Range(-1, 1)]
-    public float zRot = 0f;
-    public float rotSpeed = 1f;
+    [SerializeField, Tooltip("Rotation along the z axis")]
+    private float zRot = 0f;
+
+    [SerializeField, Tooltip("Speed of rotation")]
+    private float rotSpeed = 1f;
 
     private Vector3 rotVector;
-    // Start is called before the first frame update
+
+    // Creates the rotation vector from the <axis>Rot variables
     void Start()
     {
         rotVector = new Vector3(xRot, yRot, zRot);
     }
 
-    // Update is called once per frame
+    // Continuously rotates the object using the rotation vector
     void Update()
     {
         transform.Rotate(rotVector * (rotSpeed * Time.deltaTime), Space.Self);
