@@ -6,20 +6,14 @@ public class ColliderUpdater : MonoBehaviour
 {
 
     public SkinnedMeshRenderer meshRenderer;
-    public MeshCollider collider;
+    public MeshCollider col;
 
     public void UpdateCollider()
     {
         Mesh colliderMesh = new Mesh();
         meshRenderer.BakeMesh(colliderMesh);
-        collider.sharedMesh = null;
-        collider.sharedMesh = colliderMesh;
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+        col.sharedMesh = null;
+        col.sharedMesh = colliderMesh;
     }
 
     // Update is called once per frame

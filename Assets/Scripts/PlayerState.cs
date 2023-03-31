@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerState : MonoBehaviour
 {
+    // disables the variable unused warning
 #pragma warning disable 0414
     [SerializeField, Tooltip("The current state of the player")]
     internal PlayerStates state = PlayerStates.innocuous;

@@ -5,8 +5,9 @@ using Autohand;
 
 public class SetHeightByCC : MonoBehaviour
 {
+    [SerializeField, Tooltip("The place point attached to the player")]
+    private PlacePoint place;
 
-    public PlacePoint place;
     internal Grabbable placedObj = null;
 
     private float yOffset;

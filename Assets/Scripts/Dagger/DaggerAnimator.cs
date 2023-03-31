@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class DaggerAnimator : MonoBehaviour
 {
-    public Animator anim;
+    [SerializeField, Tooltip("The animator for the dagger")]
+    private Animator anim;
 
+    // Toggles on the spinning animation
     public void ToggleOn()
     {
         var tmp = GetComponent<ConfigurableJoint>();
@@ -13,11 +15,13 @@ public class DaggerAnimator : MonoBehaviour
             anim.SetBool("isSpinning", true);
     }
 
+    // Toggles off the spin animation
     public void ToggleOff()
     {
         anim.SetBool("isSpinning", false);
     }
 
+    // Calls ToggleOff on hitting anything
     void OnCollisionEnter(Collision col)
     {
         ToggleOff();

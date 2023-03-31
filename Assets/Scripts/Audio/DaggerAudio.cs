@@ -5,36 +5,45 @@ using JointVR;
 
 public class DaggerAudio : MonoBehaviour
 {
-    public AudioSource audio;
+    [SerializeField, Tooltip("The audio source used for all dagger sounds")]
+    private AudioSource audioS;
 
-    public AudioClip guardStab;
-    public AudioClip wallStab;
-    public AudioClip defaultStab;
+    [SerializeField, Tooltip("The audio clip for stabbing an enemy")]
+    private AudioClip guardStab;
 
-    public StabManager manager;
+    [SerializeField, Tooltip("The audio clip for stabbing a wall")]
+    private AudioClip wallStab;
 
-    private GameObject stabbed;
+    [SerializeField, Tooltip("Default stab sound")]
+    private AudioClip defaultStab;
 
+    [SerializeField, Tooltip("The stabmanager on the dagger, used to subscribe to stab events.")]
+    private StabManager manager;
+
+
+    // Subscribe to stab events
     public void OnEnable()
     {
         manager.OnStabEnter += PlayStabAudio;
         manager.OnStabExit += StabExitEvent;
     }
 
+    // Unsubscribe to stab events
     public void OnDisable()
     {
         manager.OnStabEnter -= PlayStabAudio;
         manager.OnStabExit -= StabExitEvent;
     }
 
+    // Determine which stab audio to use, then play
     public void PlayStabAudio(GameObject target)
     {
         if (target.CompareTag("Enemy"))
-            audio.PlayOneShot(guardStab, 1f);
+            audioS.PlayOneShot(guardStab, 1f);
         else if (target.CompareTag("Wall"))
-            audio.PlayOneShot(wallStab, 1f);
+            audioS.PlayOneShot(wallStab, 1f);
         else
-            audio.PlayOneShot(defaultStab, 1f);
+            audioS.PlayOneShot(defaultStab, 1f);
     }
 
     public void StabExitEvent(GameObject target)

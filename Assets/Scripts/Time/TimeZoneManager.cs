@@ -11,7 +11,7 @@ public class TimeZoneManager : MonoBehaviour
     internal GameObject particles;
 
     [SerializeField, Tooltip("Audio played on timezone change")]
-    internal AudioSource audio;
+    internal AudioSource audioS;
 
 
     // Unserialized vars
@@ -50,8 +50,8 @@ public class TimeZoneManager : MonoBehaviour
         if (!isFirstEnable) {
             if (particles)
                 particles.SetActive(true);
-            if (audio)
-                audio.Play();
+            if (audioS)
+                audioS.Play();
         }
         foreach(var obj in objsWithTime) {
             if (!obj) {

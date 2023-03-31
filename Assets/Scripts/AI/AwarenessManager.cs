@@ -7,7 +7,8 @@ public class AwarenessManager : MonoBehaviour
     [SerializeField, Tooltip("The enemy attached to the current object. If unset, will attempt to find on its own.")]
     internal Enemy enemy;
 
-    public GameObject alertAwareTrigger;
+    [SerializeField, Tooltip("The awareness trigger for when the enemy is alert or higher")]
+    private GameObject alertAwareTrigger;
     // Start is called before the first frame update
     void Start()
     {

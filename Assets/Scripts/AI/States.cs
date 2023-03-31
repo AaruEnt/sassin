@@ -6,6 +6,7 @@ using System.Collections.Generic;
 // alert - enhanced version of patrol with faster movespeed and lower suspicion thresholds
 // search - when the guard has seen or heard something suspicious and is actively looking for the source
 // chase - when the guard is currently chasing the player
+// wounded - transitory state for when the guard should be stunned by a hit to the knee
 public enum EnemyState {
     patrol,
     alert,

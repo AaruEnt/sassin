@@ -20,18 +20,25 @@ public class Stats : MonoBehaviour
     public UnityEvent OnTakeDamage;
     public UnityEvent OnDeath;
 
-    public bool destroyOnDeath = true;
-    public bool reloadSceneOnDeath = false;
+    [SerializeField, Tooltip("Destroy the gameObject immediately on death")]
+    private bool destroyOnDeath = true;
 
-    public Text debugText;
+    [SerializeField, Tooltip("Reload the scene immediately on death. Used mainly for the player.")]
+    private bool reloadSceneOnDeath = false;
+
+    [SerializeField, Tooltip("Optional, used to visually display health")]
+    private Text debugText;
 
     private List<GameObject> currCollisions = new List<GameObject>();
 
-    public SkinnedMeshRenderer mesh;
+    [SerializeField, Tooltip("Optional, sets the mesh to be soft red on death")]
+    private SkinnedMeshRenderer mesh;
 
-    public Animator anim;
+    [SerializeField, Tooltip("Optional animator, used to stop all animations on death")]
+    private Animator anim;
 
-    public Rigidbody[] ragdoll;
+    [SerializeField, Tooltip("Optional, used to set isKinematic false on death")]
+    private Rigidbody[] ragdoll;
 
     private float stabCD = 0f;
 
@@ -67,9 +74,14 @@ public class Stats : MonoBehaviour
     // When health reaches 0 or less
     void OnKill()
     {
+        // Invoke the OnDeath event before anything is destroyed
         OnDeath.Invoke();
+
+        // Set the animator to start the death animation, if applicable
         if (anim)
             anim.SetBool("IsDead", true);
+
+        // Start processing death events
         if (destroyOnDeath)
             Destroy(this.gameObject);
         else if (reloadSceneOnDeath)
@@ -125,16 +137,11 @@ public class Stats : MonoBehaviour
     {
         if (col.body as Rigidbody == null)
             return;
-        //Debug.Log("Collision enter " + col.gameObject.name);
-
-        //if (col.body)
-        //    Debug.Log(col.body.gameObject.name);
 
         if (col.gameObject.tag == "Effect" || col.body.gameObject.tag == "Effect" || (col.gameObject.tag == "Enemy" && gameObject.tag != "Enemy"))
         { // Includes spells and weapons that deal damage, heal, or create some form of effect
             Collider hitCol = col.contacts[0].thisCollider;
             WeakPoint w = hitCol.gameObject.GetComponent<WeakPoint>();
-            //Debug.Log(string.Format("collider a: {0}, collider b: {2}", one.gameObject.name, two.gameObject.name));
 
             if ((currCollisions.Contains(col.body.gameObject) && !w) || stabCD > 0)
                 return;
@@ -183,8 +190,6 @@ public class Stats : MonoBehaviour
     {
         if (col.body as Rigidbody == null)
             return;
-        if (currCollisions.Contains(col.body.gameObject))
-            Debug.Log("Collision exit " + col.gameObject.name);
         if (currCollisions.Contains(col.body.gameObject))
             currCollisions.Remove(col.body.gameObject);
         stabCD = 0.25f;

@@ -37,6 +37,13 @@ public class Enemy : MonoBehaviour
     [SerializeField, Tooltip("")]
     private float spellDamage = 1f;
 
+    [SerializeField, Tooltip("Should random waypoints be used")]
+    private bool pickRandomWaypoint = false;
+
+    [ShowIf("pickRandomWaypoint")]
+    [SerializeField, Tooltip("The scene's random rumber generator, used for picking a random waypoint")]
+    private randNum randomNumberGenerator;
+
 
     [Header("Variables")]
     [SerializeField, Tooltip("index of current waypoint")]
@@ -65,15 +72,14 @@ public class Enemy : MonoBehaviour
     [SerializeField, Tooltip("Last position player was seen")]
     private Transform lastDetectedArea;
 
-    public Animator anim;
+    [SerializeField, Tooltip("The animator for the enemy")]
+    private Animator anim;
 
-    public randNum randomNumberGenerator;
+    [SerializeField, Tooltip("The origin point for eyeline checks")]
+    private GameObject eyeLinePosition;
 
-    public bool pickRandomWaypoint = false;
-
-    public GameObject eyeLinePosition;
-
-    public Stats stats;
+    [SerializeField, Tooltip("The stats of the enemy")]
+    private Stats stats;
 
 
     // Unserialized vars
@@ -95,9 +101,6 @@ public class Enemy : MonoBehaviour
 
     // Player - used for smoother chasing
     private GameObject player;
-
-    // spin timer
-    private float t = 0f;
 
     // used for cancelling coroutines
     private Coroutine c;
@@ -258,7 +261,6 @@ public class Enemy : MonoBehaviour
         // and check if navMeshAgent can reach its target
         if (agent.CalculatePath(point, navMeshPath) && navMeshPath.status == NavMeshPathStatus.PathComplete)
         {
-            //Debug.Log(navMeshPath.corners.Length);
             //move to target
             agent.SetPath(navMeshPath);
             isWaiting = false;
@@ -388,7 +390,6 @@ public class Enemy : MonoBehaviour
                 }
                 return;
             }
-            //Debug.Log("Waypoint set");
             SetNextWaypoint(player.transform.position);
         }
         else {
@@ -403,7 +404,6 @@ public class Enemy : MonoBehaviour
     void OnTriggerEnter(Collider col)
     {
         RaycastHit hitinfo;
-        //Debug.Log(col.gameObject.transform.root.gameObject.name);
         if (col.attachedRigidbody && col.attachedRigidbody.gameObject.tag == "Player")
         { // If player in look cone
             Physics.Linecast(eyeLinePosition.transform.position, col.transform.position, out hitinfo);
@@ -431,7 +431,6 @@ public class Enemy : MonoBehaviour
     // When something enters the look trigger
     void OnTriggerStay (Collider col) {
         RaycastHit hitinfo;
-        //Debug.Log(col.gameObject.transform.root.gameObject.name);
         if (col.attachedRigidbody && col.attachedRigidbody.gameObject.tag == "Player") { // If player in look cone
             if (chasedThisFrame)
                 return;
@@ -463,42 +462,8 @@ public class Enemy : MonoBehaviour
             anim.SetBool("IsLooking", true);
         agent.updateRotation = false;
         cr_running = true;
-        t = 0;
         yield return new WaitForSeconds(4.5f);
-        //float RotationSpeed = 90f;
-        //Waypoint wp = null;
-        //if (state == EnemyState.patrol || state == EnemyState.alert)
-        //    wp = wayPoints[currWaypoint].GetComponent<Waypoint>();
-        //yield return new WaitForSeconds(0.2f);
-        //if (!wp || wp.turnLeft) {
-         //   while (t <= 90) {
-         //       transform.Rotate (Vector3.up * (RotationSpeed * Time.deltaTime));
-         //       t += RotationSpeed * Time.deltaTime;
-        //yield return null;
-           // }
-           // t = 0;
-        //yield return new WaitForSeconds(0.5f);
-           // while (t <= 90) {
-           //     transform.Rotate (-Vector3.up * (RotationSpeed * Time.deltaTime));
-           //     t += RotationSpeed * Time.deltaTime;
-           //     yield return null;
-           // }
-        //}
-       // t = 0;
-        //if (!wp || wp.turnRight) {
-        //    while (t <= 90) {
-        //        transform.Rotate (-Vector3.up * (RotationSpeed * Time.deltaTime));
-        //        t += RotationSpeed * Time.deltaTime;
-        //yield return null;
-        //    }
-        //    t = 0;
-        //yield return new WaitForSeconds(0.5f);
-       //     while (t <= 90) {
-        //        transform.Rotate (Vector3.up * (RotationSpeed * Time.deltaTime));
-         //       t += RotationSpeed * Time.deltaTime;
-        //yield return null;
-         //   }
-       // }
+
         agent.updateRotation = true;
         DoAnAction();
         cr_running = false;
@@ -509,7 +474,7 @@ public class Enemy : MonoBehaviour
 
     // When the enemy bumps into something
     void OnCollisionEnter(Collision col) {
-        if (col.gameObject.tag == "Player") { // Needs changing, reboots the scene for now
+        if (col.gameObject.tag == "Player") { // Needs debug, does not seem to be dealing damage
             if (col.gameObject.GetComponent<PlayerState>().state == PlayerStates.suspicious)
             {
                 var s = col.gameObject.GetComponent<Stats>();
@@ -569,18 +534,16 @@ public class Enemy : MonoBehaviour
         return state;
     }
 
+    // Makes enemy keep chasing during brief losses of line of sight, so turning a corner doesn't immediately make the enemy drop aggro
     private IEnumerator LoSLostCheck()
     {
-        //Debug.Log("LoS lost");
         scr_running = true;
         yield return new WaitForSeconds(1.5f);
         if (state == EnemyState.chase)
         {
-            //Debug.Log("In check");
             RaycastHit hitinfo;
             Physics.Linecast(transform.position, player.transform.position, out hitinfo, mask);
             if (hitinfo.collider.gameObject.tag == "Player") { // if line of sight present from enemy to player
-                //Debug.Log("Player seen");
                 scr_running = false;
                 yield break;
             }
@@ -588,11 +551,11 @@ public class Enemy : MonoBehaviour
             reachedThreshhold = true;
             isChasing = false;
             DoAnAction();
-            //Debug.Log("Did an action");
         }
         scr_running = false;
     }
 
+    // manually sets the layer of all child objects, used on death
     public void SetLayer(int layer)
     {
         Transform[] children = gameObject.GetComponentsInChildren<Transform>(includeInactive: true);
@@ -612,7 +575,6 @@ public class Enemy : MonoBehaviour
 
     public void Kneel()
     {
-        //Debug.Log("Kneel");
         anim.SetBool("WoundedKnee", true);
         suspicion = maxSuspicion;
         savedState = state;

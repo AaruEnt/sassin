@@ -5,7 +5,8 @@ using Autohand;
 
 public class AddSpringJoint : MonoBehaviour
 {
-    public float releaseThrust = 3f;
+    [SerializeField, Tooltip("The force to add to the player on letting go")]
+    private float releaseThrust = 3f;
     private SpringJoint joint;
 
     private List<Hand> grabbingHands = new List<Hand>();
@@ -17,7 +18,8 @@ public class AddSpringJoint : MonoBehaviour
 
     private float savedMomentum = 0f;
 
-    public void CreateSpringJoint(Hand h, Grabbable g) // Temp arg, need to replace with finding from hand grabbing
+    // Creates a spring joint between this object and the player
+    public void CreateSpringJoint(Hand h, Grabbable g)
     {
         grabbingHands.Add(h);
         if (joint != null)
@@ -47,6 +49,7 @@ public class AddSpringJoint : MonoBehaviour
         joint.maxDistance = 0.2f;
     }
 
+    // Removes the spring joint if all hands are removed from this object
     public void DeleteJoint(Hand h, Grabbable g)
     {
         if (grabbingHands.Contains(h))
@@ -58,6 +61,7 @@ public class AddSpringJoint : MonoBehaviour
         Destroy(joint);
     }
 
+    // Sends the player flying away from this object on the joint being deleted
     public void AddForce()
     {
         if (grabbingHands.Count > 0)

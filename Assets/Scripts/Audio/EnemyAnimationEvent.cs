@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class EnemyAnimationEvent : MonoBehaviour
 {
-    public AudioSource audio;
-    public AudioSource runAudio;
+    [SerializeField, Tooltip("The audio used to play walk footsteps")]
+    private AudioSource audioS;
+
+    [SerializeField, Tooltip("The audio source used to play running footsteps")]
+    private AudioSource runAudio;
 
     public void Footstep (int index)
     {
-        audio.Play();
+        audioS.Play();
     }
 
     public void RunStep()
     {
-        Debug.Log("RunCall");
         runAudio.Play();
     }
 }
