@@ -98,8 +98,9 @@ public class Stats : MonoBehaviour
 
             if (rb)
             {
-                rb.isKinematic = false;
-                rb.constraints = RigidbodyConstraints.None;
+                //rb.isKinematic = false;
+                //rb.constraints = RigidbodyConstraints.None;
+                Destroy(rb);
             }
 
             if (mesh)
