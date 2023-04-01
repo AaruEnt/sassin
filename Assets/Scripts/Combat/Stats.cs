@@ -26,6 +26,9 @@ public class Stats : MonoBehaviour
     [SerializeField, Tooltip("Reload the scene immediately on death. Used mainly for the player.")]
     private bool reloadSceneOnDeath = false;
 
+    [SerializeField, Tooltip("If the character only takes damage from hits to weak points.")]
+    private bool weakpointDamageOnly = false;
+
     [SerializeField, Tooltip("Optional, used to visually display health")]
     private Text debugText;
 
@@ -144,6 +147,9 @@ public class Stats : MonoBehaviour
             WeakPoint w = hitCol.gameObject.GetComponent<WeakPoint>();
 
             if ((currCollisions.Contains(col.body.gameObject) && !w) || stabCD > 0)
+                return;
+
+            if (!w && weakpointDamageOnly)
                 return;
 
             currCollisions.Add(col.body.gameObject);
