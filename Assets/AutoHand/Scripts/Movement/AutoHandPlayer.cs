@@ -978,7 +978,6 @@ namespace Autohand {
 
             if (multiplyForce && climbing.Count == 0)
             {
-                Debug.Log("multiply");
                 Vector3 newVel = body.velocity;
                 newVel.x *= 0.5f;
                 newVel.z *= 0.5f;

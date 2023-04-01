@@ -26,6 +26,9 @@ public class Stats : MonoBehaviour
     [SerializeField, Tooltip("Reload the scene immediately on death. Used mainly for the player.")]
     private bool reloadSceneOnDeath = false;
 
+    [SerializeField, Tooltip("If the character only takes damage from hits to weak points.")]
+    private bool weakpointDamageOnly = false;
+
     [SerializeField, Tooltip("Optional, used to visually display health")]
     private Text debugText;
 
@@ -95,8 +98,9 @@ public class Stats : MonoBehaviour
 
             if (rb)
             {
-                rb.isKinematic = false;
-                rb.constraints = RigidbodyConstraints.None;
+                //rb.isKinematic = false;
+                //rb.constraints = RigidbodyConstraints.None;
+                Destroy(rb);
             }
 
             if (mesh)
@@ -146,6 +150,9 @@ public class Stats : MonoBehaviour
             if ((currCollisions.Contains(col.body.gameObject) && !w) || stabCD > 0)
                 return;
 
+            if (!w && weakpointDamageOnly)
+                return;
+
             currCollisions.Add(col.body.gameObject);
 
             Spell s = col.gameObject.GetComponent<Spell>();
@@ -154,8 +161,8 @@ public class Stats : MonoBehaviour
                 if (w)
                 {
                     w.OnWeakPointHit.Invoke();
-                    OnDamageReceived(s.damage * w.damageMod);
-                    Debug.Log("Hit weakpoint");
+                    float tmpDamage = s.damage * w.damageMod;
+                    OnDamageReceived(tmpDamage > w.minDamage ? tmpDamage : w.minDamage);
                 }
                 else
                     OnDamageReceived(s.damage);
@@ -168,7 +175,6 @@ public class Stats : MonoBehaviour
                 if (velRB)
                 {
                     vel = velRB.velocity.magnitude;
-                    //Debug.Log(vel);
                 }
                 vel = vel > 2 ? 2 : vel;
                 if (we)
@@ -176,8 +182,8 @@ public class Stats : MonoBehaviour
                     if (w)
                     {
                         w.OnWeakPointHit.Invoke();
-                        OnDamageReceived(we.damage * w.damageMod * vel);
-                        Debug.Log("Hit weakpoint");
+                        float tmpDamage = we.damage * w.damageMod;
+                        OnDamageReceived(tmpDamage > w.minDamage ? tmpDamage : w.minDamage);
                     }
                     else
                         OnDamageReceived(we.damage * vel);

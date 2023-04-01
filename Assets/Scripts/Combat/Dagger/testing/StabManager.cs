@@ -82,7 +82,6 @@ namespace JointVR
 
         bool SuccessfulAngleOfApproach(Vector3 stabDirection, Vector3 relativeVelocity, float angleThreshold) {
             float tmp = Vector3.Dot(-relativeVelocity.normalized, stabDirection);
-            //Debug.Log(tmp > angleThreshold);
             return tmp > angleThreshold;
         }
 
@@ -204,7 +203,6 @@ namespace JointVR
             {
                 s.ForceUnstab();
             }
-            Debug.Log("parent removed");
             maintainParent = null;
             transform.parent = null;
         }

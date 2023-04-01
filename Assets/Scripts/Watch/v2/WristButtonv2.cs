@@ -56,6 +56,7 @@ public class WristButtonv2 : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
 
         rb.isKinematic = false;
+        StartCoroutine(IgnoreAllCollision(0.25f));
 
         rb.AddRelativeForce(dir * thrust, ForceMode.Impulse);
         isPressed = false;
@@ -84,5 +85,12 @@ public class WristButtonv2 : MonoBehaviour
     public void Released()
     {
         isReleased = true;
+    }
+
+    private IEnumerator IgnoreAllCollision(float iTime)
+    {
+        rb.detectCollisions = false;
+        yield return new WaitForSeconds(iTime);
+        rb.detectCollisions = true;
     }
 }
