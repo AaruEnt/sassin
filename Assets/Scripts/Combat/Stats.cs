@@ -161,7 +161,8 @@ public class Stats : MonoBehaviour
                 if (w)
                 {
                     w.OnWeakPointHit.Invoke();
-                    OnDamageReceived(s.damage * w.damageMod);
+                    float tmpDamage = s.damage * w.damageMod;
+                    OnDamageReceived(tmpDamage > w.minDamage ? tmpDamage : w.minDamage);
                 }
                 else
                     OnDamageReceived(s.damage);
@@ -181,7 +182,8 @@ public class Stats : MonoBehaviour
                     if (w)
                     {
                         w.OnWeakPointHit.Invoke();
-                        OnDamageReceived(we.damage * w.damageMod * vel);
+                        float tmpDamage = we.damage * w.damageMod;
+                        OnDamageReceived(tmpDamage > w.minDamage ? tmpDamage : w.minDamage);
                     }
                     else
                         OnDamageReceived(we.damage * vel);
