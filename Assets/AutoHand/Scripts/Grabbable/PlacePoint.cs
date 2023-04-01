@@ -307,13 +307,11 @@ namespace Autohand {
         }
 
         public void Remove() {
-            Debug.Log("SuperRemove called");
             if (placedObject != null)
                 Remove(placedObject);
         }
 
         public virtual void Remove(Grabbable placeObj) {
-            //Debug.Log("Remove called: " + canRelease.ToString());
             if (placeObj == null || placeObj != placedObject || disablePlacePointOnPlace || !canRelease)
                 return;
 

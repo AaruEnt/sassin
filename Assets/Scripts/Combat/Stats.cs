@@ -162,7 +162,6 @@ public class Stats : MonoBehaviour
                 {
                     w.OnWeakPointHit.Invoke();
                     OnDamageReceived(s.damage * w.damageMod);
-                    Debug.Log("Hit weakpoint");
                 }
                 else
                     OnDamageReceived(s.damage);
@@ -175,7 +174,6 @@ public class Stats : MonoBehaviour
                 if (velRB)
                 {
                     vel = velRB.velocity.magnitude;
-                    //Debug.Log(vel);
                 }
                 vel = vel > 2 ? 2 : vel;
                 if (we)
@@ -184,7 +182,6 @@ public class Stats : MonoBehaviour
                     {
                         w.OnWeakPointHit.Invoke();
                         OnDamageReceived(we.damage * w.damageMod * vel);
-                        Debug.Log("Hit weakpoint");
                     }
                     else
                         OnDamageReceived(we.damage * vel);
