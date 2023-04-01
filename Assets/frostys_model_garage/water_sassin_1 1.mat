@@ -9,9 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: water_sassin_1 1
   m_Shader: {fileID: 4800000, guid: f04c9486b297dd848909db26983c9ddb, type: 3}
-  m_ShaderKeywords: ADVANCED_LIGHTING _CROSSPAN_INTERSECTION _DEPTH_TEX _FOAM _NORMALMAP
-    _RECEIVE_SHADOWS_OFF _SHARP_INERSECTION _SIMPLE_LIGHTING _SPECULARHIGHLIGHTS_OFF
-    _TRANSLUCENCY _WORLDSPACEUV_ON
+  m_ShaderKeywords: ADVANCED_LIGHTING _CROSSPAN_INTERSECTION _DEPTH_TEX _FOAM _RECEIVE_SHADOWS_OFF
+    _SHARP_INERSECTION _SIMPLE_LIGHTING _SPECULARHIGHLIGHTS_OFF _TRANSLUCENCY _WORLDSPACEUV_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -134,7 +133,7 @@ Material:
     - _FoamOpacity: 0.253
     - _FoamSize: 0.154
     - _FoamSpeed: 0.05
-    - _FoamTiling: 0.0002
+    - _FoamTiling: 35
     - _FoamWaveMask: 0.087
     - _FoamWaveMaskExp: 3.87
     - _GlossMapScale: 0
@@ -150,7 +149,7 @@ Material:
     - _IntersectionSource: 0
     - _IntersectionSpeed: 0.06000001
     - _IntersectionStyle: 1
-    - _IntersectionTiling: 0.0002
+    - _IntersectionTiling: 35
     - _IntersectionWaveDist: 33.28
     - _LightingMode: 0
     - _LightingOn: 1
@@ -158,10 +157,10 @@ Material:
     - _Metallicness: 0.1
     - _NORMALMAPOn: 1
     - _NormalMap: 1
-    - _NormalMapOn: 1
-    - _NormalSpeed: 0.05999998
-    - _NormalStrength: 1
-    - _NormalTiling: 0.0002
+    - _NormalMapOn: 0
+    - _NormalSpeed: 0.049999982
+    - _NormalStrength: 0.259
+    - _NormalTiling: 32
     - _OcclusionStrength: 1
     - _PlanarReflectionsEnabled: 0
     - _PlanarReflectionsParams: 0
@@ -197,7 +196,7 @@ Material:
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SparkleIntensity: 0.36
-    - _SparkleSize: 0.666
+    - _SparkleSize: 0.231
     - _SpecularHighlights: 1
     - _SpecularReflectionsOn: 0
     - _Speed: 1
@@ -236,7 +235,7 @@ Material:
     - _BaseColor: {r: 0, g: 0.16451614, b: 0.34, a: 0.9647059}
     - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _DepthMapBounds: {r: -402.3, g: -459.43, b: 0.0012693577, a: 0}
-    - _Direction: {r: 1, g: 1, b: 0, a: 0}
+    - _Direction: {r: 18, g: 1.23, b: 0, a: 0}
     - _DistanceNormalsFadeDist: {r: 300, g: 0.25, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 0.09803922}

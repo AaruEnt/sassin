@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: sassin_sand_01
   m_Shader: {fileID: 4800000, guid: 0b3b724415bf63443b7e1674bfbdd321, type: 3}
-  m_ShaderKeywords: USE_AL USE_FOG USE_LS USE_RT USE_VR _TESSELLATION_EDGE
+  m_ShaderKeywords: IS_SAND USE_AL USE_FOG USE_LS USE_PR USE_RT USE_VR _TESSELLATION_EDGE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -264,16 +264,16 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _AddSandStrength: 1.18
+    - _AddSandStrength: 0.82
     - _AddSnowStrength: 0.52
     - _BumpScale: 3.44
     - _Cutoff: 0.361
     - _DetailBumpScale: 3.07
     - _DetailNormalMapScale: 1
-    - _DisplacementColorMult: 0.07
-    - _DisplacementOffset: -0.14
-    - _DisplacementShadowMult: 1.01
-    - _DisplacementStrength: 0.54
+    - _DisplacementColorMult: 0.25
+    - _DisplacementOffset: 0
+    - _DisplacementShadowMult: 0.16
+    - _DisplacementStrength: 1.42
     - _DstBlend: 0
     - _EffectDisplacementStrength: 0.5
     - _Emission: 0.25
@@ -282,7 +282,7 @@ Material:
     - _FishMaskIntensity: 0.073
     - _FishScale: 0.64
     - _FishSpeed: 0.85
-    - _FlowMultiplier: 0.3
+    - _FlowMultiplier: 0.241
     - _FogIntensity: 0.618
     - _FogScale: 0.28
     - _GlitterSpeed: 2
@@ -290,22 +290,22 @@ Material:
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _HeightMultiplier: 0.5
-    - _HeightScale: 1.05
+    - _HeightScale: 3.63
     - _ISADD: 0
     - _ISICE: 0
     - _ISROCK: 0
-    - _ISSAND: 0
+    - _ISSAND: 1
     - _IST: 0
     - _ISUNLIT: 0
     - _IceScale: 1
     - _IndentDepth: 0.25
     - _IndentStrength: 1.5
-    - _LightHardness: 0.636
-    - _LightIntensity: 1.24
-    - _LightOffset: 0.224
+    - _LightHardness: 0
+    - _LightIntensity: 0
+    - _LightOffset: 0
     - _LittleSpecForce: 0.1
-    - _LittleSpecSize: 27.08
-    - _MainTexMult: 0.98
+    - _LittleSpecSize: 1.83
+    - _MainTexMult: 0.89
     - _Metallic: 0
     - _Metallic0: 0
     - _Metallic1: 0
@@ -316,10 +316,10 @@ Material:
     - _Metallic6: 0
     - _Metallic7: 0
     - _Mode: 0
-    - _NormalMultiplier: 3.19
-    - _NormalRTDepth: 1.17
-    - _NormalRTStrength: 2.01
-    - _NormalScale: 1
+    - _NormalMultiplier: 0.58
+    - _NormalRTDepth: 0.78
+    - _NormalRTStrength: 1.26
+    - _NormalScale: 0.56
     - _NormalScale0: 1
     - _NormalScale1: 1
     - _NormalScale2: 1
@@ -331,47 +331,47 @@ Material:
     - _NormalVector: 0
     - _OcclusionStrength: 1
     - _OffsetScale: 0.14
-    - _OverallScale: 2.16
+    - _OverallScale: 1.74
     - _ParalaxColorScale: -0.88
     - _Parallax: 0.005
     - _ParallaxColorScale: 0
     - _ParallaxMaxSamples: 50
     - _ParallaxMinSamples: 50
     - _ParallaxStrength: 0
-    - _ParallaxValue: 0.005
+    - _ParallaxValue: 0.00332
     - _ParallaxValueMaxSamples: 20
-    - _ParallaxValueMinSamples: 4
-    - _ProceduralDistance: 5.5
-    - _ProceduralStrength: 1.5
+    - _ParallaxValueMinSamples: 13.7
+    - _ProceduralDistance: 11.87
+    - _ProceduralStrength: 29.01
     - _ReflectionOpacity: 0
     - _ReflectionStrength: 0.21
-    - _RemoveSandStrength: 2.02
+    - _RemoveSandStrength: 0.71
     - _RemoveSnowStrength: 0.5
     - _RockSaturation: 1.1
     - _RockScale: 1.53
-    - _RoughnessStrength: 0.56
-    - _SandNormalScale: 1.09
+    - _RoughnessStrength: 0.5
+    - _SandNormalScale: 0.5
     - _SandScale: 0.61
     - _Shininess: 17.3
     - _ShininessIce: 10
-    - _ShininessRock: 5.67
-    - _ShininessSand: 9.15
+    - _ShininessRock: 4.92
+    - _ShininessSand: 6.04
     - _ShininessSnow: 6.77
     - _Smoothness: 0.817
     - _SmoothnessTextureChannel: 0
     - _SnowNormalScale: 0.26
     - _SnowScale: 1
-    - _SpecForce: 1
+    - _SpecForce: 0.54
     - _SpecGlossMap: 1
     - _SpecMult: 0.1
     - _Specular: -7.29
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Tess: 6.7
-    - _TessellationEdgeLength: 50
+    - _TessellationEdgeLength: 77.8
     - _TessellationUniform: 1
-    - _TransitionPower: 0.13
-    - _TransitionScale: -0.63
+    - _TransitionPower: 0.2
+    - _TransitionScale: 0
     - _TransparencyValue: 1
     - _USEDECAL: 0
     - _USEFOG: 1
@@ -381,34 +381,34 @@ Material:
     - _USEWC: 0
     - _USEWT: 0
     - _UVSec: 0
-    - _UpVector: 0.83
+    - _UpVector: 0
     - _UseAmbientLight: 1
-    - _UsePR: 0
+    - _UsePR: 1
     - _UseSunReflection: 1
     - _UseVR: 1
     - _WireframeSmoothing: 1
     - _WireframeThickness: 1
     - _ZWrite: 1
     m_Colors:
-    - _BotColor: {r: 0.8113208, g: 0.49937898, b: 0.3099858, a: 1}
-    - _Color: {r: 0.83699995, g: 0.61162347, b: 0.255285, a: 1}
+    - _BotColor: {r: 0.18823531, g: 0.28235295, b: 0.3803922, a: 1}
+    - _Color: {r: 0.6603774, g: 0.24906361, b: 0.2024742, a: 1}
     - _CracksStrength: {r: -1.04, g: 0.125, b: -0.13, a: 0.1}
     - _Emission: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FogColor: {r: 1, g: 0.6586302, b: 0, a: 1}
+    - _FogColor: {r: 0.60784316, g: 0.6, b: 0.62352943, a: 1}
     - _FogDirection: {r: 1, g: 0.3, b: -4.58, a: 0}
     - _IceTint: {r: 0.6745098, g: 0.47506455, b: 0.34901962, a: 1}
     - _IceTrail: {r: 1, g: 0.83357865, b: 0.7688679, a: 1}
-    - _MountColor: {r: 0.37599996, g: 0.37599996, b: 0.37599996, a: 1}
+    - _MountColor: {r: 0.31764707, g: 0.47450984, b: 0.5803922, a: 1}
     - _ParalaxColor: {r: 0, g: 0, b: 0, a: 1}
     - _ParallaxColor: {r: 1, g: 1, b: 1, a: 1}
     - _ParallaxStrength: {r: 0, g: 0.125, b: -0.13, a: 0.1}
-    - _ProjectedShadowColor: {r: 0.745283, g: 0.099371284, b: 0, a: 1}
+    - _ProjectedShadowColor: {r: 0.043137256, g: 0.13725491, b: 0.21568629, a: 1}
     - _ReflectionColor: {r: 0.009433985, g: 0.009433985, b: 0.009433985, a: 0.8}
-    - _RimColor: {r: 0.6415094, g: 0.29895586, b: 0, a: 1}
-    - _RockTint: {r: 0.94509804, g: 0.6733689, b: 0.22745097, a: 1}
+    - _RimColor: {r: 0.16470589, g: 0.40784317, b: 0.5254902, a: 1}
+    - _RockTint: {r: 0.038204376, g: 0.022173883, b: 0.048171833, a: 1}
     - _RockTrail: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecColor: {r: 0.99343175, g: 0.9575472, b: 1, a: 1}
+    - _SpecColor: {r: 0.3803922, g: 0.45882356, b: 0.6117647, a: 1}
     - _Specular0: {r: 1, g: 1, b: 1, a: 1}
     - _Specular1: {r: 1, g: 1, b: 1, a: 1}
     - _Specular2: {r: 1, g: 1, b: 1, a: 1}
@@ -423,6 +423,6 @@ Material:
     - _Splat7_STn: {r: 1, g: 1, b: 0, a: 1}
     - _TerrainScale: {r: 1, g: 1, b: 0, a: 1}
     - _TopColor: {r: 1, g: 1, b: 1, a: 1}
-    - _TransitionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _TransitionColor: {r: 0.40784317, g: 0.49411768, b: 0.63529414, a: 1}
     - _WireframeColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
