@@ -6,22 +6,39 @@ using Autohand;
 // Controlls collision between hands and watches, as well as the visibility of models attached to watch
 public class SwapDominantHand : MonoBehaviour
 {
-    public bool WatchLeftHand = true; // assumes watch on left hand
-    public GameObject leftWatch;
-    public GameObject rightWatch;
-    public GameObject leftHand;
-    public GameObject rightHand;
-    public GameObject leftModels;
-    public GameObject rightModels;
-    public Grabbable leftGrab;
-    public Grabbable rightGrab;
+    [SerializeField, Tooltip("Is the watch currently on the left hand")]
+    private bool WatchLeftHand = true; // assumes watch on left hand
+
+    [SerializeField, Tooltip("The left watch")]
+    private GameObject leftWatch;
+
+    [SerializeField, Tooltip("The right watch")]
+    private GameObject rightWatch;
+
+    [SerializeField, Tooltip("The left hand")]
+    private GameObject leftHand;
+
+    [SerializeField, Tooltip("The right hand")]
+    private GameObject rightHand;
+
+    [SerializeField, Tooltip("The gameobject parented to all visible left watch models")]
+    private GameObject leftModels;
+
+    [SerializeField, Tooltip("The gameobject parented to all visible right watch models")]
+    private GameObject rightModels;
+
+    [SerializeField, Tooltip("The grabbable component on the left watch")]
+    private Grabbable leftGrab;
+
+    [SerializeField, Tooltip("The grabbable component on the right watch")]
+    private Grabbable rightGrab;
 
     private Collider[] leftHandColliders;
     private Collider[] rightHandColliders;
     private Collider[] leftWatchColliders;
     private Collider[] rightWatchColliders;
 
-    // Start is called before the first frame update
+    // Grab all unserialized vars, and set visible watch to correct hand
     void Start()
     {
         leftHandColliders = leftHand.GetComponentsInChildren<Collider>();
@@ -45,8 +62,6 @@ public class SwapDominantHand : MonoBehaviour
         }
         if (WatchLeftHand)
         {
-            //EnableAllChildren(leftWatch);
-            //DisableAllChildren(rightWatch);
             SwapToLeft();
         } else
         {
@@ -54,6 +69,7 @@ public class SwapDominantHand : MonoBehaviour
         }
     }
 
+    // Toggle watch between left/right hands
     public void OnSwapCalled()
     {
         if (WatchLeftHand)
@@ -62,11 +78,10 @@ public class SwapDominantHand : MonoBehaviour
             SwapToLeft();
     }
 
+    // DIsable right watch and enable left watch
     void SwapToLeft()
     {
         WatchLeftHand = true;
-        //EnableAllChildren(leftWatch);
-        //DisableAllChildren(rightWatch);
         EnableAllModels(leftModels);
         DisableAllModels(rightModels);
         rightGrab.enabled = false;
@@ -75,11 +90,10 @@ public class SwapDominantHand : MonoBehaviour
         StartCoroutine(DisableCollision(rightWatchColliders, leftHandColliders));
     }
 
+    // Disable left watch and enable right watch
     void SwapToRight()
     {
         WatchLeftHand = false;
-        //EnableAllChildren(rightWatch);
-        //DisableAllChildren(leftWatch);
         DisableAllModels(leftModels);
         EnableAllModels(rightModels);
         rightGrab.enabled = true;
@@ -88,6 +102,7 @@ public class SwapDominantHand : MonoBehaviour
         StartCoroutine(DisableCollision(leftWatchColliders, rightHandColliders));
     }
 
+    // disable all mesh renderers in children of target object
     void DisableAllModels(GameObject obj)
     {
         Renderer[] rList = obj.GetComponentsInChildren<Renderer>(true);
@@ -97,6 +112,7 @@ public class SwapDominantHand : MonoBehaviour
         }
     }
 
+    // enable all mesh renderers in children of target object
     void EnableAllModels(GameObject obj)
     {
         Renderer[] rList = obj.GetComponentsInChildren<Renderer>(true);
@@ -106,6 +122,7 @@ public class SwapDominantHand : MonoBehaviour
         }
     }
 
+    // Disable collision between watch and hand for disabled watch
     private IEnumerator DisableCollision(Collider[] watch, Collider[] hand)
     {
         foreach (Collider c in watch)
@@ -118,6 +135,7 @@ public class SwapDominantHand : MonoBehaviour
         yield return null;
     }
 
+    // ENable collision between watch and hand for enabled watch
     private IEnumerator EnableCollision(Collider[] watch, Collider[] hand)
     {
         foreach (Collider c in watch)

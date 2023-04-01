@@ -4,15 +4,9 @@ using UnityEngine;
 
 public class UnparentOnStart : MonoBehaviour
 {
-    // Start is called before the first frame update
+    // Sets parent to be null on start
     void Start()
     {
         transform.parent = null;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

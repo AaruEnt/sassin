@@ -5,20 +5,12 @@ using UnityEngine.Events;
 
 public class WatchRelease : MonoBehaviour
 {
-    public Rigidbody exitRB;
-    public UnityEvent OnRelease;
+    [SerializeField, Tooltip("When this rigidbody enters the trigger, calls the OnRelease")]
+    private Rigidbody exitRB;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField, Tooltip("Called when above rigidbody enters this trigger")]
+    private UnityEvent OnRelease;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     void OnTriggerEnter(Collider col)
     {

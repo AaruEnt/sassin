@@ -10,14 +10,18 @@ using Valve.VR;
 namespace Autohand {
     public class MomentumController : MonoBehaviour
     {
-        public AutoHandPlayer player;
-        public SteamVRHandPlayerLink link;
-        public Rigidbody rb; //Debug
+        [SerializeField, Tooltip("The player component, used to check/set current max movespeed and if the player is climbing")]
+        private AutoHandPlayer player;
 
-        public float maxSpeedScale;
-        public float momentumScale;
+        [SerializeField, Tooltip("Used to check current speed and prevent falling while wall running")]
+        private Rigidbody rb;
 
-        public Text debugText;
+        [SerializeField, Tooltip("The max speed at max momentum")]
+        internal float maxSpeedScale;
+
+        [SerializeField, Tooltip("The max acceleration at max momentum")]
+        private float momentumScale;
+
         [Header("Particles")]
         public bool displayParticleAtSpeed = false;
 
@@ -32,7 +36,8 @@ namespace Autohand {
         [ShowIf("displayParticleAtSpeed")]
         public float maxParticlesPerSecond = 0.85f;
 
-        public SteamVR_Action_Vector2 moveAction;
+        [SerializeField, Tooltip("Used to check movement axis")]
+        private SteamVR_Action_Vector2 moveAction;
 
 
         private float startSpeed;
@@ -47,6 +52,12 @@ namespace Autohand {
 
         private float magnitudePercentThreshhold = 0.95f;
 
+        internal bool isWallRunning = false;
+
+        private GameObject runningWall;
+
+        internal bool isWallJumping = false;
+
         void Start()
         {
             startSpeed = player.maxMoveSpeed;
@@ -56,11 +67,20 @@ namespace Autohand {
         // Update is called once per frame
         void FixedUpdate()
         {
-            //Debug.Log(rb.velocity.magnitude);
+            if (isWallRunning)
+            {
+                if (counter < 270 || player.IsGrounded())
+                    isWallRunning = false;
+                else if (!player.IsClimbing() && !isWallJumping)
+                {
+                    Vector3 newVel = rb.velocity;
+                    newVel.y = 0.15f;
+                    rb.velocity = newVel;
+                }
+            }
             if (!player.IsClimbing())
             {
                 moveAxis = moveAction.axis;
-                //Debug.Log(moveAxis);
                 // one or both axis are registering input
                 if ((Mathf.Abs(moveAxis.x) > deadzone) || (Mathf.Abs(moveAxis.y) > deadzone))
                 {
@@ -68,23 +88,27 @@ namespace Autohand {
                     Vector3 dir = transform.forward;
                     Vector3 move = new Vector3(moveAxis.x, 0f, moveAxis.y);
                     dir.y = 0f;
+                    // If moving roughly forward
                     if (Vector3.Dot(dir, move) > 0 && counter < 900)
                     {
                         counter += 1;
                     }
-                    else
+                    else // If moving roughly backwards or at max momentum
                     {
                         counter -= 4;
                     }
                 }
-                else
+                else // If not moving at all
                 {
                     counter -= 2;
                 }
+                // If speed is magnitudePercentThreshhold of max speed or less
                 if (rb.velocity.magnitude < player.maxMoveSpeed * magnitudePercentThreshhold)
                     counter -= 3;
+                // clamp counter to prevent negative values
                 if (counter <= 0)
                     counter = 0;
+                // If momentum has built up for roughly 3 seconds of continuous forward movement or an equivalent
                 if (counter >= 270)
                 {
                    float diff1 = maxSpeedScale - startSpeed;
@@ -97,7 +121,7 @@ namespace Autohand {
                     player.maxMoveSpeed = startSpeed + ((maxSpeedScale / 14) * ((counter >= 900 ? 630 : counter - 270) / 45));
                     player.moveAcceleration = startMomentum + ((momentumScale / 14) * ((counter >= 900 ? 630 : counter - 270) / 45));
                 }
-                else
+                else // reset movespeed if momentum lost
                 {
                     player.maxMoveSpeed = startSpeed;
                     player.moveAcceleration = startMomentum;
@@ -126,8 +150,6 @@ namespace Autohand {
             {
                 counter = counter < 0 ? 0 : counter - 0.5f;
             }
-            if (debugText)
-                debugText.text = string.Format("Speed: {0}\nAccel: {1}\nCounter: {2}\nVelocity: {3}", player.maxMoveSpeed, player.moveAcceleration, counter, rb.velocity.magnitude);
         }
 
         float CalculateEmissionRate(float speed = -1f)
@@ -163,6 +185,41 @@ namespace Autohand {
         public void LowerMagnitudeThreshhold()
         {
             magnitudePercentThreshhold = 0.5f;
+        }
+
+        private void OnCollisionEnter(Collision col)
+        {
+            // If player has collided with a wall
+            if (Mathf.Abs(Vector3.Dot(col.GetContact(0).normal, Vector3.up)) < 0.1f)
+            {
+                //Wallrun Start
+                isWallJumping = false;
+                Vector3 newVel = rb.velocity;
+                newVel.y = 0f;
+                rb.velocity = newVel;
+                isWallRunning = true;
+                runningWall = col.collider.gameObject;
+            }
+        }
+
+        private void OnCollisionExit(Collision col)
+        {
+            // Wallrun end
+            if (runningWall == col.collider.gameObject)
+            {
+                runningWall = null;
+                isWallRunning = false;
+            }
+        }
+
+        public float GetMomentum()
+        {
+            return counter;
+        }
+
+        public void SetMomentum(float newMomentum)
+        {
+            counter = newMomentum;
         }
     }
 }

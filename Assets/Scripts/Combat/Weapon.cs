@@ -4,16 +4,6 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    public float damage;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [SerializeField, Tooltip("The base damage dealt by this object")]
+    internal float damage;
 }

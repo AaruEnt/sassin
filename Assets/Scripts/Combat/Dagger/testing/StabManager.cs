@@ -1,8 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using NaughtyAttributes;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 
 namespace JointVR
@@ -14,6 +17,12 @@ namespace JointVR
         [SerializeField] public List<Rigidbody> ignoreStab = new List<Rigidbody>();
         [Tag] public string ignoreStabTag;
         private Rigidbody rb;
+
+        internal Transform maintainParent;
+
+        public StabEvent OnStabEnter;
+        public StabEvent OnStabExit;
+
         
         // Start is called before the first frame update
         void Start()
@@ -35,6 +44,12 @@ namespace JointVR
                     joint.jointRb = rb;
 
             
+        }
+
+        void Update()
+        {
+            if (maintainParent)
+                transform.parent = maintainParent;
         }
 
         bool AttemptStab(Stabber stabber, Collider hitCollider, Vector3 relativeVelocity)
@@ -67,7 +82,6 @@ namespace JointVR
 
         bool SuccessfulAngleOfApproach(Vector3 stabDirection, Vector3 relativeVelocity, float angleThreshold) {
             float tmp = Vector3.Dot(-relativeVelocity.normalized, stabDirection);
-            //Debug.Log(tmp > angleThreshold);
             return tmp > angleThreshold;
         }
 
@@ -130,7 +144,12 @@ namespace JointVR
 
             if (stab != null && stabJoint != null)
             {
+                if (collision.collider.attachedRigidbody.isKinematic)
+                {
+                    maintainParent = collision.body.transform;
+                }
                 stab.Stab(stabJoint, collision.collider);
+                OnStabEnter.Invoke(collision.gameObject);
             }
         }
 
@@ -148,6 +167,7 @@ namespace JointVR
                                 {
                                     stab.IgnoreCollision(contact.thisCollider);
                                     joint.unstabbedCollider = null;
+                                    OnStabExit.Invoke(collision.gameObject);
                                 }                       
                             }
             }
@@ -183,6 +203,10 @@ namespace JointVR
             {
                 s.ForceUnstab();
             }
+            maintainParent = null;
+            transform.parent = null;
         }
     }
 }
+
+public delegate void StabEvent(GameObject other);

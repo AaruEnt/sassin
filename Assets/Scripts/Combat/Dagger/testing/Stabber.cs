@@ -10,6 +10,7 @@ namespace JointVR {
     public class Stabber : MonoBehaviour
     {
         public Transform root;
+        private StabManager manager;
         public Transform stabDirectionTransform;
         public StabDirection stabDirection;
         public Rigidbody rb;
@@ -65,7 +66,9 @@ namespace JointVR {
             for (int i = 0; i < stabAmount; i++)
                 stabJoints.Add(new StabJoint());
 
-            if (!root) root = GetComponentInParent<StabManager>().transform;
+            manager = GetComponentInParent<StabManager>();
+
+            if (!root) root = manager.transform;
 
             if (stabDirectionTransform == null)
                 stabDirectionTransform = root;
@@ -132,6 +135,12 @@ namespace JointVR {
         }
 
         public void Unstab(StabJoint stabJoint) {
+
+            if (root.parent == stabJoint.stabbedCollider.transform)
+            {
+                manager.maintainParent = null;
+                root.parent = null;
+            }
             foreach (Stabber disableGroup in disableStabJointGroupsOnStab)
             {
                 foreach (Collider collider in disableGroup.colliders)
@@ -215,7 +224,9 @@ namespace JointVR {
             stabJoint.joint.connectedMassScale = stabbedConnectedMassScale;
 
             if (stabbedCollider.attachedRigidbody.isKinematic)
+            {
                 stabJoint.kinematicStab = true;
+            }
 
             StartCoroutine(SetDampOverTime(stabJoint));
         }
@@ -281,7 +292,12 @@ namespace JointVR {
             foreach (StabJoint j in stabJoints)
             {
                 if (j.joint)
+                {
+                    Stats s = j.stabbedCollider.transform.root.GetComponent<Stats>();
+                    if (s)
+                        s.ManuallyRemoveCollision(root.gameObject);
                     Unstab(j);
+                }
             }
         }
     }

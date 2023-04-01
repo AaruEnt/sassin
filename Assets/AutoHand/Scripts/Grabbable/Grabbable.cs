@@ -130,6 +130,8 @@ namespace Autohand {
         [ShowIf("showEvents")]
         public UnityHandGrabEvent OnJointBreak = new UnityHandGrabEvent();
 
+        public bool breakHoldWhenGrabActive = true;
+
 
         //Advanced Hidden Settings
         [HideInInspector, Tooltip("Lock hand in place on grab (This is a legacy setting, set hand kinematic on grab/release instead)")]

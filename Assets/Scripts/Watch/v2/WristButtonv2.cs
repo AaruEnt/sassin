@@ -6,12 +6,14 @@ using NaughtyAttributes;
 
 public class WristButtonv2 : MonoBehaviour
 {
-    public float thrust = 2f;
+    [SerializeField, Tooltip("The thrust used to push up the button")]
+    private float thrust = 2f;
     [Button]
     private void moveUp() { MoveUp(); }
     public UnityEvent OnPressed;
     public GameObject hint;
-    public Rigidbody rb;
+    [SerializeField, Tooltip("The rigidbody of the button")]
+    private Rigidbody rb;
 
     private Vector3 _startPos;
     [SerializeField]
@@ -26,13 +28,11 @@ public class WristButtonv2 : MonoBehaviour
     void Start()
     {
         _startPos = transform.localPosition;
-        OnPressed.AddListener(Ping);
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log(transform.localPosition);
         if (cd > 0)
             cd -= Time.deltaTime;
         if (cd2 > 0)
@@ -47,6 +47,7 @@ public class WristButtonv2 : MonoBehaviour
         }
     }
     
+    // Moves the button up
     public void MoveUp()
     {
         Vector3 dir = new Vector3(0, 0, 1);
@@ -55,34 +56,22 @@ public class WristButtonv2 : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
 
         rb.isKinematic = false;
+        StartCoroutine(IgnoreAllCollision(0.25f));
 
         rb.AddRelativeForce(dir * thrust, ForceMode.Impulse);
         isPressed = false;
         cd = 0.5f;
     }
 
+    // locks the button to the local start position (down/pressed)
     public void SetToStartPos()
     {
-        //Debug.Log("Called");
         if (isReleased)
             return;
         transform.localPosition = _startPos;
     }
 
-    void OnCollisionEnter(Collision col)
-    {
-        //Debug.Log(col.gameObject.name);
-        //if (col.gameObject.tag != "Watch")
-       //     return;
-       // if (isPressed)
-        //    return;
-        //if (cd > 0)
-        //{
-        //    isPressed = true;
-        //    OnPressed.Invoke();
-        //}
-    }
-
+    // returns if the button is currently pressed
     internal bool GetIsPressed()
     {
         if (cd2 > 0f)
@@ -92,13 +81,16 @@ public class WristButtonv2 : MonoBehaviour
         return isPressed;
     }
 
-    private void Ping()
-    {
-        //Debug.Log("Pressed");
-    }
-
+    // releases the button from the press lock
     public void Released()
     {
         isReleased = true;
+    }
+
+    private IEnumerator IgnoreAllCollision(float iTime)
+    {
+        rb.detectCollisions = false;
+        yield return new WaitForSeconds(iTime);
+        rb.detectCollisions = true;
     }
 }

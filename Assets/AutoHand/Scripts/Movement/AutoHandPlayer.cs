@@ -109,6 +109,8 @@ namespace Autohand {
         public float climbingDrag = 5f;
         [Tooltip("Inscreases the step height while climbing up to make it easier to step up onto a surface")]
         public float climbUpStepHeightMultiplier = 1;
+        [Tooltip("Multiplies the body's velocity on ending climb, allowing the player to fling themselves easier")]
+        public float climbFlingForceMultiplier = 1.2f;
 
         [AutoToggleHeader("Enable Pushing")]
         [Tooltip("Whether or not the player can use Pushable objects (Objects with the Pushable component)")]
@@ -126,6 +128,8 @@ namespace Autohand {
         public bool allowPlatforms = true;
         [EnableIf("useGrounding"), Tooltip("The layers that platforming will be enabled on, will not work with layers that the HandPlayer can't collide with")]
         public LayerMask platformingLayerMask = ~0;
+
+        public bool stickMovementDisabled = false;
 
 
         float movementDeadzone = 0.1f;
@@ -497,7 +501,7 @@ namespace Autohand {
         }
 
         protected virtual bool CanInputMove() {
-            return (allowClimbingMovement || !IsClimbing());
+            return ((allowClimbingMovement || !IsClimbing()) && !stickMovementDisabled);
         }
 
         protected virtual void InterpolateMovement() {
@@ -964,11 +968,22 @@ namespace Autohand {
             if(!allowClimbing)
                 return;
 
+            bool multiplyForce = climbing.Count > 0 ? true : false;
+
             if(climbing.ContainsKey(hand))
                 climbing.Remove(hand);
 
             foreach(var climb in climbing)
                 climb.Key.ResetGrabOffset();
+
+            if (multiplyForce && climbing.Count == 0)
+            {
+                Vector3 newVel = body.velocity;
+                newVel.x *= 0.5f;
+                newVel.z *= 0.5f;
+                newVel.y *= climbFlingForceMultiplier;
+                body.velocity = newVel;
+            }
         }
 
         protected virtual void ApplyClimbingForce() {

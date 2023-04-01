@@ -10,6 +10,9 @@ public class TimeZoneManager : MonoBehaviour
     [SerializeField, Tooltip("Particles played on timezone change")]
     internal GameObject particles;
 
+    [SerializeField, Tooltip("Audio played on timezone change")]
+    internal AudioSource audioS;
+
 
     // Unserialized vars
 
@@ -44,8 +47,12 @@ public class TimeZoneManager : MonoBehaviour
 
     // Update the timezone viewed by the player
     private void UpdateTimeZone() {
-        if (!isFirstEnable && particles)
-            particles.SetActive(true);
+        if (!isFirstEnable) {
+            if (particles)
+                particles.SetActive(true);
+            if (audioS)
+                audioS.Play();
+        }
         foreach(var obj in objsWithTime) {
             if (!obj) {
                 continue;

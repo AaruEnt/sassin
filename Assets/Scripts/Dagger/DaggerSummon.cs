@@ -6,24 +6,18 @@ using NaughtyAttributes;
 
 public class DaggerSummon : MonoBehaviour
 {
-    public PlacePoint place;
+    [SerializeField, Tooltip("The place point that the dagger is positioned on")]
+    private PlacePoint place;
+
+    [SerializeField, Tooltip("The animation manager for the dagger")]
+    private DaggerAnimator dAnim;
 
     internal bool isHeld = false; 
 
     [Button]
     public void SummonKnife() { SummonToPlacePoint(); }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    // voids momentum and prepares dagger to be put in placepoint
     public void SummonToPlacePoint()
     {
         if (isHeld)
@@ -33,11 +27,22 @@ public class DaggerSummon : MonoBehaviour
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         transform.position = place.placedOffset.position;
+        transform.parent = place.transform;
         place.Place(g);
+        if (dAnim)
+            dAnim.ToggleOff();
     }
 
+    // Used to track if the dagger is held, to prevent summoning
     public void SetIsHeld(bool held)
     {
         isHeld = held;
+    }
+
+    // Overrides the parent to null
+    public void OverrideParent()
+    {
+        if (transform.parent == place.transform)
+            transform.parent = null;
     }
 }

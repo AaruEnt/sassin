@@ -361,7 +361,7 @@ namespace Autohand {
 
         /// <summary>This will force release the hand without throwing or calling OnRelease\n like losing grip on something instead of throwing</summary>
         public virtual void ForceReleaseGrab() {
-            if(holdingObj != null) {
+            if(holdingObj != null && holdingObj.breakHoldWhenGrabActive) {
                 OnForcedRelease?.Invoke(this, holdingObj);
                 holdingObj?.ForceHandRelease(this);
             }

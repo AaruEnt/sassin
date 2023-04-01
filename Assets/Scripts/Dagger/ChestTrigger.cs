@@ -7,20 +7,23 @@ using JointVR;
 
 public class ChestTrigger : MonoBehaviour
 {
-    public SteamVR_Action_Boolean triggerAction;
+    [SerializeField, Tooltip("The trigger button")]
+    private SteamVR_Action_Boolean triggerAction;
 
-    public DaggerSummon ds;
+    [SerializeField, Tooltip("The dagger summon component on the dagger to be summoned")]
+    private DaggerSummon ds;
 
-    public List<Hand> hands = new List<Hand>();
+    // The hands currently within the trigger area. Was originally public to debug
+    private List<Hand> hands = new List<Hand>();
 
-    public StabManager stabM;
+    [SerializeField, Tooltip("The stab manager on the dagger, used to remove all stabs on summon")]
+    private StabManager stabM;
+
+    [SerializeField, Tooltip("The placepoint where the dagger goes on summon")]
+    private PlacePoint place;
 
     private bool actionSet = false;
 
-    void Update()
-    {
-        //Debug.Log(hands.Count);
-    }
 
     void OnTriggerEnter(Collider col)
     {
@@ -35,6 +38,8 @@ public class ChestTrigger : MonoBehaviour
             }
             hands.Add(h);
         }
+        //if (!place.enabled)
+        //    place.enabled = true;
     }
 
     void OnTriggerExit(Collider col)
@@ -51,6 +56,8 @@ public class ChestTrigger : MonoBehaviour
                 triggerAction.onStateDown -= SummonDagger;
             }
         }
+        //if (place.enabled && place.placedObject)
+        //    place.enabled = false;
     }
 
     void SummonDagger(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
