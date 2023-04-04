@@ -44,6 +44,7 @@ namespace Autohand {
         private float startMomentum;
         private float deadzone = 0.1f;
         private Vector2 moveAxis;
+        [ShowNonSerializedField]
         internal float counter = 0;
         private Vector2 lastMoveDir;
         private bool overrideParticle = false;
