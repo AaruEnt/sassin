@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Autohand;
+using Valve.VR;
 using NaughtyAttributes;
 
 public class DaggerSummon : MonoBehaviour
@@ -12,7 +13,7 @@ public class DaggerSummon : MonoBehaviour
     [SerializeField, Tooltip("The animation manager for the dagger")]
     private DaggerAnimator dAnim;
 
-    internal bool isHeld = false; 
+    internal bool isHeld = false;
 
     [Button]
     public void SummonKnife() { SummonToPlacePoint(); }
@@ -44,5 +45,20 @@ public class DaggerSummon : MonoBehaviour
     {
         if (transform.parent == place.transform)
             transform.parent = null;
+    }
+
+    public void SummonToGrabPoint(Hand hand, Grabbable gb = null)
+    {
+        if (isHeld)
+            return;
+        Rigidbody rb = GetComponent<Rigidbody>();
+        Grabbable g = GetComponent<Grabbable>();
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        
+        transform.position = hand.transform.position;
+        hand.TryGrab(g);
+        if (dAnim)
+            dAnim.ToggleOff();
     }
 }
