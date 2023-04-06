@@ -227,6 +227,7 @@ namespace Autohand {
         }
 
         public virtual void TryPlace(Grabbable placeObj) {
+            Debug.Log("TryPlace");
             if(CanPlace(placeObj))
                 Place(placeObj);
         }
