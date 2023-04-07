@@ -68,6 +68,8 @@ namespace Autohand {
         // Update is called once per frame
         void FixedUpdate()
         {
+            if (rb.transform.localRotation != Quaternion.identity)
+                rb.transform.localRotation = Quaternion.identity;
             if (isWallRunning)
             {
                 if (counter < 270 || player.IsGrounded())
@@ -103,6 +105,7 @@ namespace Autohand {
                 {
                     counter -= 2;
                 }
+                Debug.Log(string.Format("MoveAxis: {0}, Dot: {1}, Magnitude: {2}", moveAxis, Vector3.Dot(transform.forward, new Vector3(moveAxis.x, 0f, moveAxis.y)), rb.velocity.magnitude));
                 // If speed is magnitudePercentThreshhold of max speed or less
                 if (rb.velocity.magnitude < player.maxMoveSpeed * magnitudePercentThreshhold)
                     counter -= 3;
