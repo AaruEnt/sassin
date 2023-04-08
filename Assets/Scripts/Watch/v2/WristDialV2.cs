@@ -17,6 +17,9 @@ public class WristDialV2 : PhysicsGadgetHingeAngleReader
     [SerializeField, Tooltip("The audio source that plays the click sound")]
     private AudioSource click;
 
+    public WristButtonv2 btn;
+    public Rigidbody rb;
+
     [SerializeField, Tooltip("Reference to the time zone manager in the scene")]
     private TimeZoneManager manager;
 
@@ -24,6 +27,8 @@ public class WristDialV2 : PhysicsGadgetHingeAngleReader
     private List<Collider> ignoreColliders;
     private HingeJoint hJoint;
     private int lastDialPos;
+
+    private bool savedKinematicStatus = false;
 
     // Sets a bunch of collision ignores, grabs private vars, and sets timezone
     protected override void Start()
@@ -89,5 +94,17 @@ public class WristDialV2 : PhysicsGadgetHingeAngleReader
     public void OnSetTimeZone()
     {
         manager.SetTimeZone(dialPosToTimezone);
+    }
+
+    public void SetKinematic()
+    {
+        savedKinematicStatus = btn.rb.isKinematic;
+        btn.rb.isKinematic = true;
+    }
+
+    public void UnsetKinematic()
+    {
+        btn.rb.isKinematic = savedKinematicStatus;
+        btn.MoveUp();
     }
 }

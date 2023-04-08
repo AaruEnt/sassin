@@ -22,10 +22,10 @@ public class SwapDominantHand : MonoBehaviour
     private GameObject rightHand;
 
     [SerializeField, Tooltip("The gameobject parented to all visible left watch models")]
-    private GameObject leftModels;
+    private GameObject[] leftModels;
 
     [SerializeField, Tooltip("The gameobject parented to all visible right watch models")]
-    private GameObject rightModels;
+    private GameObject[] rightModels;
 
     [SerializeField, Tooltip("The grabbable component on the left watch")]
     private Grabbable leftGrab;
@@ -82,8 +82,10 @@ public class SwapDominantHand : MonoBehaviour
     void SwapToLeft()
     {
         WatchLeftHand = true;
-        EnableAllModels(leftModels);
-        DisableAllModels(rightModels);
+        foreach (var model in rightModels)
+            DisableAllModels(model);
+        foreach (var model in leftModels)
+            EnableAllModels(model);
         rightGrab.enabled = false;
         leftGrab.enabled = true;
         StartCoroutine(EnableCollision(leftWatchColliders, rightHandColliders));
@@ -94,8 +96,10 @@ public class SwapDominantHand : MonoBehaviour
     void SwapToRight()
     {
         WatchLeftHand = false;
-        DisableAllModels(leftModels);
-        EnableAllModels(rightModels);
+        foreach (var model in leftModels)
+            DisableAllModels(model);
+        foreach (var model in rightModels)
+            EnableAllModels(model);
         rightGrab.enabled = true;
         leftGrab.enabled = false;
         StartCoroutine(EnableCollision(rightWatchColliders, leftHandColliders));
