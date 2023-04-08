@@ -56,7 +56,7 @@ public class PrimaryButton : MonoBehaviour
     internal bool canJump = false;
 
     private bool jumpRoutineRunning = false;
-    private bool jumpCD = false;
+    internal float jumpCD = 0f;
     private bool hasWallRunJumped = false;
 
     private bool hasJumped = false;
@@ -76,7 +76,6 @@ public class PrimaryButton : MonoBehaviour
 
         if (player.IsGrounded() && hasJumped)
         {
-            jumpCD = false;
             hasWallRunJumped = false;
             momentum.isWallJumping = false;
             hasJumped = false;
@@ -92,6 +91,8 @@ public class PrimaryButton : MonoBehaviour
                 landSound.Play();
             fallTracker = 0f;
         }
+        if (jumpCD > 0f)
+            jumpCD -= Time.deltaTime;
     }
 
     public void OnPrimaryButton() {
@@ -103,23 +104,26 @@ public class PrimaryButton : MonoBehaviour
     }
 
     private void Jump() {
+        if (jumpCD > 0)
+            return;
         float blendJumpHeight = jumpHeight + (((maxJumpHeight - jumpHeight) / 14) * ((momentum.counter >= 900 ? 630 : momentum.counter - 270) / 45));
         if (player.IsGrounded()) {
             rb.AddForce(new Vector3(0, blendJumpHeight, 0), ForceMode.Impulse);
             jumpSound.Play();
             hasJumped = true;
+            jumpCD = 0.5f;
             //rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(rb.velocity.x, blendJumpHeight, rb.velocity.z), 40f);
         } else if (canJump && !hasWallRunJumped)
         {
             hasWallRunJumped = true;
             momentum.isWallJumping = true;
-            rb.AddForce(new Vector3(0, blendJumpHeight * 1.5f, 0), ForceMode.Impulse);
+            rb.AddForce(new Vector3(0, blendJumpHeight * 0.9f, 0), ForceMode.Impulse);
             jumpSound.Play();
             hasJumped = true;
+            jumpCD = 1f;
         }
         else if (false) // replace canJump above to enable wall jumping
         {
-            jumpCD = true;
             if (Physics.Raycast(playerFacingTransform.transform.position, playerFacingTransform.transform.right, 1f, wallJumpMask))
             {
                 rb.AddForce(new Vector3(0, 1f, 0) + (playerFacingTransform.transform.right * -wallJumpForce) + (playerFacingTransform.transform.forward * wallJumpForce), ForceMode.Impulse);

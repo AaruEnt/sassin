@@ -39,6 +39,8 @@ namespace Autohand {
         [SerializeField, Tooltip("Used to check movement axis")]
         private SteamVR_Action_Vector2 moveAction;
 
+        public PrimaryButton jumpButton;
+
 
         private float startSpeed;
         private float startMomentum;
@@ -74,7 +76,7 @@ namespace Autohand {
             {
                 if (counter < 270 || player.IsGrounded())
                     isWallRunning = false;
-                else if (!player.IsClimbing() && !isWallJumping)
+                else if (!player.IsClimbing() && !isWallJumping && jumpButton.jumpCD <= 0f)
                 {
                     Vector3 newVel = rb.velocity;
                     newVel.y = 0.15f;
