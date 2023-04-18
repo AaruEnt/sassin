@@ -13,13 +13,13 @@ public class WristButtonv2 : MonoBehaviour
     public UnityEvent OnPressed;
     public GameObject hint;
     [SerializeField, Tooltip("The rigidbody of the button")]
-    private Rigidbody rb;
+    internal Rigidbody rb;
 
     private Vector3 _startPos;
     [SerializeField]
     private bool isPressed = true; // watch starts pressed
     [SerializeField]
-    private bool isReleased = false;
+    internal bool isReleased = false;
     private float cd = 0f; // moveup cd
     private float cd2 = 0f; // movedown cd
 

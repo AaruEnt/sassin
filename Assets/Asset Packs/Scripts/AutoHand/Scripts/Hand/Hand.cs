@@ -52,6 +52,8 @@ namespace Autohand {
         [Tooltip("This is used in conjunction with custom poses. For a custom pose to work it must has the same PoseIndex as the hand. Used for when your game has multiple hands")]
         public int poseIndex = 0;
 
+        public ChestTrigger ct;
+
         [AutoLine]
         public bool ignoreMe1;
 
@@ -276,6 +278,10 @@ namespace Autohand {
                         newGrabType = grabbable.grabType == HandGrabType.GrabbableToHand ? GrabType.GrabbableToHand : GrabType.HandToGrabbable;
                     if(grabbable != null)
                         grabRoutine = StartCoroutine(GrabObject(closestHit, grabbable, newGrabType));
+                }
+                else
+                {
+                    ct.SummonDagger(this);
                 }
             }
             else if(holdingObj != null && holdingObj.CanGetComponent(out GrabLock grabLock)) {

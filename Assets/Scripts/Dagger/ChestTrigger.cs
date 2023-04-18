@@ -22,7 +22,27 @@ public class ChestTrigger : MonoBehaviour
     [SerializeField, Tooltip("The placepoint where the dagger goes on summon")]
     private PlacePoint place;
 
-    private bool actionSet = false;
+    [SerializeField, Tooltip("The right AUtohand hand")]
+    private Hand rHand;
+
+    [SerializeField, Tooltip("The left Autohand hand")]
+    private Hand lHand;
+
+
+    private bool actionSetRight = false;
+    private bool actionSetLeft = false;
+
+    void Update()
+    {
+        //if (actionSetRight && triggerAction.GetStateDown(SteamVR_Input_Sources.RightHand))
+        //{
+        //    SummonDagger(rHand);
+        //}
+        //if (actionSetLeft && triggerAction.GetStateDown(SteamVR_Input_Sources.LeftHand))
+        //{
+        //    SummonDagger(lHand);
+        //}
+    }
 
 
     void OnTriggerEnter(Collider col)
@@ -31,11 +51,10 @@ public class ChestTrigger : MonoBehaviour
             return;
         Hand h = col.attachedRigidbody.transform.GetComponent<Hand>();
         if (h && !hands.Contains(h)) {
-            if (!actionSet)
-            {
-                actionSet = true;
-                triggerAction.onStateDown += SummonDagger;
-            }
+            if (h == rHand)
+                actionSetRight = true;
+            if (h == lHand)
+                actionSetLeft = true;
             hands.Add(h);
         }
         //if (!place.enabled)
@@ -50,20 +69,28 @@ public class ChestTrigger : MonoBehaviour
         if (h && hands.Contains(h))
         {
             hands.Remove(h);
-            if (hands.Count == 0)
-            {
-                actionSet = false;
-                triggerAction.onStateDown -= SummonDagger;
-            }
+            if (h == rHand)
+                actionSetRight = false;
+            if (h == lHand)
+                actionSetLeft = false;
         }
         //if (place.enabled && place.placedObject)
         //    place.enabled = false;
     }
 
-    void SummonDagger(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
+    public void SummonDagger(Hand hand)
     {
-        //Debug.Log(fromSource);
-        stabM.UnstabAll();
-        ds.SummonToPlacePoint();
+        if (actionSetRight && hand == rHand)
+        {
+            stabM.UnstabAll();
+            //ds.SummonToPlacePoint();
+            ds.SummonToGrabPoint(hand);
+        }
+        if (actionSetLeft && hand == lHand)
+        {
+            stabM.UnstabAll();
+            //ds.SummonToPlacePoint();
+            ds.SummonToGrabPoint(hand);
+        }
     }
 }

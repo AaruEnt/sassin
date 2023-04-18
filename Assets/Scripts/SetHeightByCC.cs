@@ -16,8 +16,8 @@ public class SetHeightByCC : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        place.OnPlaceEvent += OnPlaced;
-        place.OnRemoveEvent += OnRemoved;
+        //place.OnPlaceEvent += OnPlaced;
+        //place.OnRemoveEvent += OnRemoved;
         yOffset = Camera.main.transform.localPosition.y - transform.localPosition.y;
     }
 

@@ -39,11 +39,14 @@ namespace Autohand {
         [SerializeField, Tooltip("Used to check movement axis")]
         private SteamVR_Action_Vector2 moveAction;
 
+        public PrimaryButton jumpButton;
+
 
         private float startSpeed;
         private float startMomentum;
         private float deadzone = 0.1f;
         private Vector2 moveAxis;
+        [ShowNonSerializedField]
         internal float counter = 0;
         private Vector2 lastMoveDir;
         private bool overrideParticle = false;
@@ -67,11 +70,13 @@ namespace Autohand {
         // Update is called once per frame
         void FixedUpdate()
         {
+            if (rb.transform.localRotation != Quaternion.identity)
+                rb.transform.localRotation = Quaternion.identity;
             if (isWallRunning)
             {
                 if (counter < 270 || player.IsGrounded())
                     isWallRunning = false;
-                else if (!player.IsClimbing() && !isWallJumping)
+                else if (!player.IsClimbing() && !isWallJumping && jumpButton.jumpCD <= 0f)
                 {
                     Vector3 newVel = rb.velocity;
                     newVel.y = 0.15f;

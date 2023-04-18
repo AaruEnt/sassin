@@ -17,13 +17,13 @@ public class WatchFace : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!btn.GetIsPressed() && anim.GetBool("ToggleOn"))
+        if (btn.GetIsPressed() && anim.GetBool("ToggleOn"))
             anim.SetBool("ToggleOn", false);
     }
 
     void OnCollisionEnter(Collision col)
     {
-        if (btn.GetIsPressed() == false || col.body != handMatch)
+        if (btn.GetIsPressed() == true || col.body != handMatch)
             return;
         anim.SetBool("ToggleOn", true);
     }
