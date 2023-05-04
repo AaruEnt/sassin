@@ -43,7 +43,7 @@ namespace Autohand.Demo{
                 pButton.OnPrimaryButton();
             }
             
-            if(grabAction != null && grabAction.GetState(handType) && !grabbing) {
+            if(grabAction != null && grabAction.GetState(handType) && hand.GetHeld() == null) {
                 grabbing = true;
                 hand.Grab();
             }
