@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Autohand;
 using NaughtyAttributes;
+using System.Diagnostics;
 
 public class PrimaryButton : MonoBehaviour
 {
@@ -45,11 +46,15 @@ public class PrimaryButton : MonoBehaviour
     [ShowIf("jumpOnPress")]
     [SerializeField, Tooltip("The audiosource for jump sounds")]
     private AudioSource landSound;
+    [ShowIf("jumpOnPress")]
+    [SerializeField, Tooltip("The time after leaving the ground where the player can still jump")]
+    private float coyoteTime = 0.25f;
 
     [Header("Variables")]
     [HideIf("jumpOnPress")]
     [SerializeField, Tooltip("The additional force applied while sliding")]
     private float slideForce = 10f;
+
 
     private bool isSliding = false;
 
@@ -63,9 +68,18 @@ public class PrimaryButton : MonoBehaviour
 
     private float fallTracker = 0f;
 
+    private float jumpTime = 0f;
+
     void Update() {
         //if (!isSliding && player.IsCrouching())
         //    Slide();
+        if (jumpOnPress)
+        {
+            if (player.IsGrounded())
+                jumpTime = 0f;
+            else
+                jumpTime += Time.deltaTime;
+        }
         if (momentum.isWallRunning)
             canJump = true;
         else if (jumpRoutineRunning == false)
@@ -74,7 +88,7 @@ public class PrimaryButton : MonoBehaviour
             StartCoroutine(JumpRoutine());
         }
 
-        if (player.IsGrounded() && hasJumped)
+        if (player.IsGrounded() && hasJumped && jumpCD <= 0f)
         {
             hasWallRunJumped = false;
             momentum.isWallJumping = false;
@@ -107,7 +121,7 @@ public class PrimaryButton : MonoBehaviour
         if (jumpCD > 0)
             return;
         float blendJumpHeight = jumpHeight + (((maxJumpHeight - jumpHeight) / 14) * ((momentum.counter >= 900 ? 630 : momentum.counter - 270) / 45));
-        if (player.IsGrounded()) {
+        if (hasJumped == false && jumpTime < coyoteTime) {
             rb.AddForce(new Vector3(0, blendJumpHeight, 0), ForceMode.Impulse);
             jumpSound.Play();
             hasJumped = true;
@@ -115,6 +129,7 @@ public class PrimaryButton : MonoBehaviour
             //rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(rb.velocity.x, blendJumpHeight, rb.velocity.z), 40f);
         } else if (canJump && !hasWallRunJumped)
         {
+            hasJumped = true;
             hasWallRunJumped = true;
             momentum.isWallJumping = true;
             rb.AddForce(new Vector3(0, blendJumpHeight * 0.9f, 0), ForceMode.Impulse);
