@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-1758010252597070496
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 4
 --- !u!21 &2100000
 Material:
   serializedVersion: 6
@@ -8,17 +21,22 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: sassin_sand_01
-  m_Shader: {fileID: 4800000, guid: 0b3b724415bf63443b7e1674bfbdd321, type: 3}
-  m_ShaderKeywords: IS_SAND USE_AL USE_FOG USE_LS USE_PR USE_RT USE_VR _TESSELLATION_EDGE
+  m_Shader: {fileID: 4800000, guid: 8d2bb70cbf9db8d4da26e15b26e74248, type: 3}
+  m_ShaderKeywords: _NORMALMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 2000
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: 6d9b35469c3349948903581dd70563ce, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 2800000, guid: 325f752697df729448d7e5ee95d3916a, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -263,10 +281,25 @@ Material:
         m_Texture: {fileID: 2800000, guid: 720d82cf97471064989c4473b4475e8f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - _AddSandStrength: 0.82
     - _AddSnowStrength: 0.52
+    - _AlphaClip: 0
+    - _Blend: 0
     - _BumpScale: 3.44
+    - _Cull: 2
     - _Cutoff: 0.361
     - _DetailBumpScale: 3.07
     - _DetailNormalMapScale: 1
@@ -288,6 +321,7 @@ Material:
     - _GlitterSpeed: 2
     - _GlossMapScale: 1
     - _Glossiness: 0.5
+    - _GlossinessSource: 0
     - _GlossyReflections: 1
     - _HeightMultiplier: 0.5
     - _HeightScale: 3.63
@@ -343,6 +377,8 @@ Material:
     - _ParallaxValueMinSamples: 13.7
     - _ProceduralDistance: 11.87
     - _ProceduralStrength: 29.01
+    - _QueueOffset: 0
+    - _ReceiveShadows: 1
     - _ReflectionOpacity: 0
     - _ReflectionStrength: 0.21
     - _RemoveSandStrength: 0.71
@@ -358,15 +394,18 @@ Material:
     - _ShininessSand: 6.04
     - _ShininessSnow: 6.77
     - _Smoothness: 0.817
+    - _SmoothnessSource: 0
     - _SmoothnessTextureChannel: 0
     - _SnowNormalScale: 0.26
     - _SnowScale: 1
     - _SpecForce: 0.54
     - _SpecGlossMap: 1
     - _SpecMult: 0.1
+    - _SpecSource: 0
     - _Specular: -7.29
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _Surface: 0
     - _Tess: 6.7
     - _TessellationEdgeLength: 77.8
     - _TessellationUniform: 1
@@ -390,6 +429,7 @@ Material:
     - _WireframeThickness: 1
     - _ZWrite: 1
     m_Colors:
+    - _BaseColor: {r: 0.9150943, g: 0.8632965, b: 0.70502543, a: 1}
     - _BotColor: {r: 0.18823531, g: 0.28235295, b: 0.3803922, a: 1}
     - _Color: {r: 0.6603774, g: 0.24906361, b: 0.2024742, a: 1}
     - _CracksStrength: {r: -1.04, g: 0.125, b: -0.13, a: 0.1}

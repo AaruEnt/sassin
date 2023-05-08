@@ -440,10 +440,10 @@ namespace Autohand {
 
                 body.velocity = newVel;
             }
-
+            // TEMP COMMENTED
             //4. This creates extra drag when grounded to simulate foot strength, or if flying greats drag in every direction when not moving
-            if (move.magnitude <= movementDeadzone && isGrounded)
-                body.velocity *= (1 - Mathf.Clamp01(groundedDrag * (Time.fixedDeltaTime - lastUpdateTime)));
+            //if (move.magnitude <= movementDeadzone && isGrounded)
+            //    body.velocity *= (1 - Mathf.Clamp01(groundedDrag * (Time.fixedDeltaTime - lastUpdateTime)));
 
 
             //5. Checks if gravity should be turned off
@@ -979,8 +979,8 @@ namespace Autohand {
             if (multiplyForce && climbing.Count == 0)
             {
                 Vector3 newVel = body.velocity;
-                newVel.x *= 0.5f;
-                newVel.z *= 0.5f;
+                newVel.x *= 0.25f;
+                newVel.z *= 0.25f;
                 newVel.y *= climbFlingForceMultiplier;
                 body.velocity = newVel;
             }
