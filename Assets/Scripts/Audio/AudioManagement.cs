@@ -7,8 +7,34 @@ using UnityEngine.UI;
 public class AudioManagement : MonoBehaviour
 {
     public AudioMixer mixer;
-    
-    
+    public Slider BGMSlider;
+    public Slider SFXSlider;
+    public Slider AmbianceSlider;
+    public Slider VoiceSlider;
+
+    public void Start()
+    {
+        if (PlayerPrefs.HasKey("BGM"))
+        {
+            float bgm = PlayerPrefs.GetFloat("BGM");
+            mixer.SetFloat("BGMVolume", bgm);
+            BGMSlider.value = bgm;
+        }
+        if (PlayerPrefs.HasKey("SFX"))
+        {
+            float sfx = PlayerPrefs.GetFloat("SFX");
+            mixer.SetFloat("SFXVolume", sfx);
+            BGMSlider.value = sfx;
+        }
+
+        this.gameObject.SetActive(false);
+    }
+    public void OnDisable()
+    {
+        PlayerPrefs.SetFloat("BGM", BGMSlider.value);
+    }
+
+
     public void SetBGMVolume(Slider slider)
     {
         mixer.SetFloat("BGMVolume", slider.value);
