@@ -6,6 +6,8 @@ using Autohand.Demo;
 using UnityEngine.UI;
 using NaughtyAttributes;
 using Valve.VR;
+using UnityEngine.UI;
+using System.Diagnostics;
 
 namespace Autohand {
     public class MomentumController : MonoBehaviour
@@ -40,6 +42,7 @@ namespace Autohand {
         private SteamVR_Action_Vector2 moveAction;
 
         public PrimaryButton jumpButton;
+        public float climbMomentumLoss = 0.15f;
 
 
         private float startSpeed;
@@ -61,6 +64,13 @@ namespace Autohand {
 
         internal bool isWallJumping = false;
 
+        public Text txt; //debug
+
+        private bool lastFrameClimbing = false;
+        private bool loseMomentumClimbing = false;
+        private float lastClimbCD = 0.75f;
+        private bool lostClimbCheck = false;
+
         void Start()
         {
             startSpeed = player.maxMoveSpeed;
@@ -70,6 +80,24 @@ namespace Autohand {
         // Update is called once per frame
         void FixedUpdate()
         {
+            if ((lastFrameClimbing && !player.IsClimbing()) || lostClimbCheck)
+            {
+                lostClimbCheck = true;
+                lastClimbCD -= Time.deltaTime;
+                if (lastClimbCD <= 0)
+                {
+                    loseMomentumClimbing = false;
+                    lostClimbCheck = false;
+                }
+                else
+                    loseMomentumClimbing = true;
+            }
+            if (player.IsClimbing())
+            {
+                lostClimbCheck = false;
+                lastClimbCD = 0.75f;
+            }
+            lastFrameClimbing = player.IsClimbing();
             if (rb.transform.localRotation != Quaternion.identity)
                 rb.transform.localRotation = Quaternion.identity;
             if (isWallRunning)
@@ -100,16 +128,25 @@ namespace Autohand {
                     }
                     else // If moving roughly backwards or at max momentum
                     {
-                        counter -= 4;
+                        if (!loseMomentumClimbing)
+                            counter -= 4;
+                        else
+                            counter -= climbMomentumLoss;
                     }
                 }
                 else // If not moving at all
                 {
-                    counter -= 2;
+                    if (!loseMomentumClimbing)
+                        counter -= 2;
+                    else
+                        counter -= 0.15f;
                 }
                 // If speed is magnitudePercentThreshhold of max speed or less
                 if (rb.velocity.magnitude < player.maxMoveSpeed * magnitudePercentThreshhold)
-                    counter -= 3;
+                {
+                    if (!loseMomentumClimbing)
+                        counter -= 3;
+                }
                 // clamp counter to prevent negative values
                 if (counter <= 0)
                     counter = 0;
@@ -120,7 +157,7 @@ namespace Autohand {
                    float diff2 = momentumScale - startMomentum;
                    if (diff1 <= 0 || diff2 <= 0)
                     {
-                        Debug.LogWarning("Error: maxspeedscale and momentumscale cannot be lower than the starting values in AutoHandPlayer");
+                        UnityEngine.Debug.LogWarning("Error: maxspeedscale and momentumscale cannot be lower than the starting values in AutoHandPlayer");
                         return;
                     }
                     player.maxMoveSpeed = startSpeed + ((maxSpeedScale / 14) * ((counter >= 900 ? 630 : counter - 270) / 45));
@@ -153,8 +190,10 @@ namespace Autohand {
             }
             else
             {
-                counter = counter < 0 ? 0 : counter - 0.5f;
+                counter = counter < 0 ? 0 : counter - climbMomentumLoss;
             }
+            if (txt)
+                txt.text = counter.ToString();
         }
 
         float CalculateEmissionRate(float speed = -1f)
