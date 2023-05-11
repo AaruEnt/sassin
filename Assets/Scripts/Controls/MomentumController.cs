@@ -226,6 +226,7 @@ namespace Autohand {
                 txt.text = strBuilder;
         }
 
+
         float CalculateEmissionRate(float speed = -1f)
         {
            float final;

@@ -211,6 +211,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: d342172b9cebd3e47bbdcc5df565a413, type: 3}
   m_PrefabInstance: {fileID: 517330796772342206}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &517330796762942686 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 9500000, guid: d342172b9cebd3e47bbdcc5df565a413, type: 3}
+  m_PrefabInstance: {fileID: 517330796772342206}
+  m_PrefabAsset: {fileID: 0}
 --- !u!54 &517330796772342203
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -227,6 +232,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1245611033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 517330796772441886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2df0e139a83fe9e4bbfc02b0273fb9ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toDestroy: {fileID: 517330796528900854}
+  delay: 1
 --- !u!114 &517330796772342202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281,6 +300,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 517330796762942686}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onRelease:
     m_PersistentCalls:
       m_Calls: []
@@ -301,17 +332,3 @@ MonoBehaviour:
       m_Calls: []
   breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
---- !u!114 &1245611033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 517330796772441886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2df0e139a83fe9e4bbfc02b0273fb9ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  toDestroy: {fileID: 517330796528900854}
-  delay: 1
