@@ -19,6 +19,8 @@ namespace Autohand {
         private Rigidbody rb;
 
         [SerializeField, Tooltip("The max speed at max momentum")]
+        internal float maxSpeedBonus;
+
         internal float maxSpeedScale;
 
         [SerializeField, Tooltip("The max acceleration at max momentum")]
@@ -41,8 +43,16 @@ namespace Autohand {
         [SerializeField, Tooltip("Used to check movement axis")]
         private SteamVR_Action_Vector2 moveAction;
 
+        [SerializeField, Tooltip("Used to check sprint")]
+        private SteamVR_Action_Boolean moveClick;
+
+        internal bool isSprinting = false;
+
         public PrimaryButton jumpButton;
         public float climbMomentumLoss = 0.15f;
+
+        [Range(0, 4)]
+        public float sprintSpeedBonus = 1f;
 
 
         private float startSpeed;
@@ -75,11 +85,25 @@ namespace Autohand {
         {
             startSpeed = player.maxMoveSpeed;
             startMomentum = player.moveAcceleration;
+            maxSpeedScale = maxSpeedBonus;
         }
 
         // Update is called once per frame
         void FixedUpdate()
         {
+            if (moveClick.state)
+            {
+                if (counter >= 600)
+                    maxSpeedScale = maxSpeedBonus + sprintSpeedBonus;
+                isSprinting = true;
+            }
+            else
+            {
+                maxSpeedScale = maxSpeedBonus;
+                isSprinting = false;
+            }
+            string strBuilder = "";
+            strBuilder += rb.velocity.magnitude.ToString() + '\n';
             if ((lastFrameClimbing && !player.IsClimbing()) || lostClimbCheck)
             {
                 lostClimbCheck = true;
@@ -125,6 +149,11 @@ namespace Autohand {
                     if (Vector3.Dot(dir, move) > 0 && counter < 900)
                     {
                         counter += 1;
+                        if (moveClick.state && rb.velocity.magnitude >= player.maxMoveSpeed * magnitudePercentThreshhold)
+                        {
+                            counter += 4;
+                            strBuilder += "Sprinting\n";
+                        }
                     }
                     else // If moving roughly backwards or at max momentum
                     {
@@ -192,8 +221,9 @@ namespace Autohand {
             {
                 counter = counter < 0 ? 0 : counter - climbMomentumLoss;
             }
+            strBuilder += counter.ToString() + '\n';
             if (txt)
-                txt.text = counter.ToString();
+                txt.text = strBuilder;
         }
 
         float CalculateEmissionRate(float speed = -1f)
