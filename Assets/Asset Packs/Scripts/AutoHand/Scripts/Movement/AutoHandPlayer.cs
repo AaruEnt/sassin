@@ -979,8 +979,8 @@ namespace Autohand {
             if (multiplyForce && climbing.Count == 0)
             {
                 Vector3 newVel = body.velocity;
-                newVel.x *= 0.25f;
-                newVel.z *= 0.25f;
+                newVel.x *= 0.15f;
+                newVel.z *= 0.15f;
                 newVel.y *= climbFlingForceMultiplier;
                 body.velocity = newVel;
             }
