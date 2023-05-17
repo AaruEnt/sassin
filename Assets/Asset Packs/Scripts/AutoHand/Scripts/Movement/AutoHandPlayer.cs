@@ -440,10 +440,9 @@ namespace Autohand {
 
                 body.velocity = newVel;
             }
-            // TEMP COMMENTED
             //4. This creates extra drag when grounded to simulate foot strength, or if flying greats drag in every direction when not moving
-            //if (move.magnitude <= movementDeadzone && isGrounded)
-            //    body.velocity *= (1 - Mathf.Clamp01(groundedDrag * (Time.fixedDeltaTime - lastUpdateTime)));
+            if (move.magnitude <= movementDeadzone && isGrounded)
+                body.velocity *= (1 - Mathf.Clamp01(groundedDrag * (Time.fixedDeltaTime - lastUpdateTime)));
 
 
             //5. Checks if gravity should be turned off
@@ -564,10 +563,10 @@ namespace Autohand {
                 trackingContainer.position = flatPos;
 
                 //This slow moves the head + controllers on the Y-axis so it doesn't jump when stepping up
-                if (isGrounded)
-                    trackingContainer.position = Vector3.MoveTowards(trackingContainer.position, targetTrackedPos + Vector3.up * heightOffset, (Mathf.Abs(trackingContainer.position.y - targetTrackedPos.y) + 0.1f) * Time.deltaTime * heightSmoothSpeed);
-                else
-                    trackingContainer.position = targetTrackedPos + Vector3.up * heightOffset;
+                //if (isGrounded)
+                //trackingContainer.position = Vector3.MoveTowards(trackingContainer.position, targetTrackedPos + Vector3.up * heightOffset, (Mathf.Abs(trackingContainer.position.y - targetTrackedPos.y) + 0.1f) * Time.deltaTime * heightSmoothSpeed);
+                //else
+                trackingContainer.position = targetTrackedPos + Vector3.up * heightOffset;
 
 
                 //This code will move the tracking objects to match the body collider position when moving
