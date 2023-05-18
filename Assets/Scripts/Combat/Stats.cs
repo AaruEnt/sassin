@@ -4,6 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+using NaughtyAttributes;
+using Autohand;
 
 public class Stats : MonoBehaviour
 {
@@ -19,12 +23,30 @@ public class Stats : MonoBehaviour
 
     public UnityEvent OnTakeDamage;
     public UnityEvent OnDeath;
+    public AutoHandPlayer player;
 
     [SerializeField, Tooltip("Destroy the gameObject immediately on death")]
     private bool destroyOnDeath = true;
 
     [SerializeField, Tooltip("Reload the scene immediately on death. Used mainly for the player.")]
     private bool reloadSceneOnDeath = false;
+
+    [SerializeField, Tooltip("Move to spawn on death, with a short stun. Used mainly for the player.")]
+    private bool moveToSpawnOnDeath = false;
+
+    [SerializeField, ShowIf("moveToSpawnOnDeath")]
+    private float respawnTimer = 5f;
+
+    [SerializeField, ShowIf("moveToSpawnOnDeath")]
+    private GameObject trackedObjects;
+
+    [SerializeField, ShowIf("moveToSpawnOnDeath")]
+    private GameObject respawnBarrier;
+
+    private Vector3 _trackedObjectsStartPos;
+
+    [SerializeField, ShowIf("moveToSpawnOnDeath")]
+    private Volume volume;
 
     [SerializeField, Tooltip("If the character only takes damage from hits to weak points.")]
     private bool weakpointDamageOnly = false;
@@ -44,6 +66,16 @@ public class Stats : MonoBehaviour
     private Rigidbody[] ragdoll;
 
     private float stabCD = 0f;
+
+    private Vector3 _startPos;
+
+    private float timer = 0f;
+
+    void Start()
+    {
+        _startPos = transform.position;
+        _trackedObjectsStartPos = trackedObjects.transform.position;
+    }
 
     void Update()
     {
@@ -89,6 +121,25 @@ public class Stats : MonoBehaviour
             Destroy(this.gameObject);
         else if (reloadSceneOnDeath)
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        else if (moveToSpawnOnDeath)
+        {
+            transform.position = _startPos;
+            trackedObjects.transform.position = _trackedObjectsStartPos;
+            var profile = volume?.profile;
+            if (!profile)
+                throw new System.NullReferenceException(nameof(UnityEngine.Rendering.VolumeProfile));
+            ColorAdjustments CA;
+            if (profile.TryGet<ColorAdjustments>(out CA))
+            {
+                VolumeParameter<float> sat = new VolumeParameter<float>();
+                sat.value = -100f;
+                CA.saturation.SetValue(sat);
+                health = maxHealth;
+            }
+            player.useMovement = false;
+            timer = 0f;
+            StartCoroutine(Respawn());
+        }
         else
         {
             var rb = GetComponent<Rigidbody>();
@@ -213,5 +264,36 @@ public class Stats : MonoBehaviour
     {
         if (currCollisions.Contains(gm))
             currCollisions.Remove(gm);
+    }
+
+    public void DebugKill()
+    {
+        OnDamageReceived(health);
+    }
+
+    public IEnumerator Respawn()
+    {
+        var profile = volume?.profile;
+        ColorAdjustments CA;
+        profile.TryGet<ColorAdjustments>(out CA);
+
+        VolumeParameter<float> sat = new VolumeParameter<float>();
+
+        if (respawnBarrier)
+            respawnBarrier.SetActive(true);
+            
+        while (timer < respawnTimer)
+        {
+            float blendVal = ((timer / respawnTimer) * 50);
+            timer += Time.deltaTime;
+            sat.value = -100f + blendVal;
+            CA.saturation.SetValue(sat);
+            yield return null;
+        }
+        player.useMovement = true;
+        sat.value = 0f;
+        CA.saturation.SetValue(sat);
+        if (respawnBarrier)
+            respawnBarrier.SetActive(false);
     }
 }

@@ -36,7 +36,7 @@ public class PlayerFootstepPlayer : MonoBehaviour
     // The max movespeed at 0 momentum, grabbed from player, used to calculate scale from 0 momentum to max momentum
     private float baseMaxMovespeed;
 
-    // See above, but manually calculated (bad) instead of grabbed from anywhere. Actual max is something like 7.998f, but 8 is close enough.
+    // See above, but manually calculated (bad) instead of grabbed from anywhere. Actual max is something like 7.998f while sprinting, but 8 is close enough.
     private float trueMaxMovespeed = 8f;
 
     // Soft min time, was manually set to what felt good.
@@ -70,7 +70,7 @@ public class PlayerFootstepPlayer : MonoBehaviour
             // clamp scale to 0 and 1, sanity check
             tmp = tmp < 0 ? 0 : tmp > 1 ? 1 : tmp;
             // Set footstep time based using the relevant minimum time
-            if (momentum.isWallRunning)
+            if (momentum.isWallRunning || momentum.isSprinting)
                 nextFootstepTime = baseFootstepTime - (tmp * (baseFootstepTime - minFootstepTimeWallrunning));
             else
                 nextFootstepTime = baseFootstepTime - (tmp * (baseFootstepTime - minFootstepTimeRunning));

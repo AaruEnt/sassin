@@ -129,11 +129,11 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Boolean Pause
+        public virtual SteamVR_Action_Boolean Sprint
         {
             get
             {
-                return SteamVR_Actions.default_Pause;
+                return SteamVR_Actions.default_Sprint;
             }
         }
         
