@@ -184,6 +184,7 @@ namespace JointVR {
 
             stabJoint.stabDirection = root.InverseTransformDirection(transform.TransformDirection(newAnchor));
 
+
             foreach (Stabber disableGroup in disableStabJointGroupsOnStab)
             {
                if(!disableGroup.isStabbing)

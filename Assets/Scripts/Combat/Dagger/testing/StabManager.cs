@@ -23,6 +23,9 @@ namespace JointVR
         public StabEvent OnStabEnter;
         public StabEvent OnStabExit;
 
+        public GameObject stabEffect;
+        public bool createOneEffect = true;
+
         
         // Start is called before the first frame update
         void Start()
@@ -150,6 +153,25 @@ namespace JointVR
                 }
                 stab.Stab(stabJoint, collision.collider);
                 OnStabEnter.Invoke(collision.gameObject);
+                if (stabEffect)
+                {
+                    if (createOneEffect)
+                    {
+                        ContactPoint tmp = collision.GetContact(0);
+                        Vector3 point = collision.collider.ClosestPoint(tmp.point);
+                        var tmp2 = Instantiate(stabEffect, point + (tmp.normal * 0.005f), Quaternion.FromToRotation(Vector3.up, tmp.normal), null);
+                        tmp2.transform.parent = collision.collider.transform;
+                    }
+                    else
+                    {
+                        foreach (var tmp in collision.contacts)
+                        {
+                            Vector3 point = collision.collider.ClosestPoint(tmp.point);
+                            var tmp2 = Instantiate(stabEffect, point + (tmp.normal * 0.005f), Quaternion.FromToRotation(Vector3.up, tmp.normal), null);
+                            tmp2.transform.parent = collision.collider.transform;
+                        }
+                    }
+                }
             }
         }
 
