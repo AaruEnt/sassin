@@ -135,7 +135,8 @@ namespace JointVR {
         }
 
         public void Unstab(StabJoint stabJoint) {
-
+            if (!stabJoint.stabbedCollider)
+                return;
             if (root.parent == stabJoint.stabbedCollider.transform)
             {
                 manager.maintainParent = null;

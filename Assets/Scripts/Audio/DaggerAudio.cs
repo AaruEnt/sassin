@@ -36,7 +36,7 @@ public class DaggerAudio : MonoBehaviour
     }
 
     // Determine which stab audio to use, then play
-    public void PlayStabAudio(GameObject target)
+    public void PlayStabAudio(GameObject target, StabManager m)
     {
         if (target.CompareTag("Enemy"))
             audioS.PlayOneShot(guardStab, 1f);
@@ -46,7 +46,7 @@ public class DaggerAudio : MonoBehaviour
             audioS.PlayOneShot(defaultStab, 1f);
     }
 
-    public void StabExitEvent(GameObject target)
+    public void StabExitEvent(GameObject target, StabManager m)
     {
     }
 }

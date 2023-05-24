@@ -6,6 +6,7 @@ using UnityEngine;
 using NaughtyAttributes;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
+using JointVR;
 
 
 namespace JointVR
@@ -152,7 +153,12 @@ namespace JointVR
                     maintainParent = collision.body.transform;
                 }
                 stab.Stab(stabJoint, collision.collider);
-                OnStabEnter.Invoke(collision.gameObject);
+                OnStabEnter.Invoke(collision.gameObject, this);
+                AdditionalStabEvents ase = collision.gameObject.GetComponent<AdditionalStabEvents>();
+                if (ase)
+                {
+                    ase.OnStabEnter(this, collision.gameObject);
+                }
                 if (stabEffect)
                 {
                     if (createOneEffect)
@@ -189,7 +195,12 @@ namespace JointVR
                                 {
                                     stab.IgnoreCollision(contact.thisCollider);
                                     joint.unstabbedCollider = null;
-                                    OnStabExit.Invoke(collision.gameObject);
+                                    OnStabExit.Invoke(collision.gameObject, this);
+                                    AdditionalStabEvents ase = collision.gameObject.GetComponent<AdditionalStabEvents>();
+                                    if (ase)
+                                    {
+                                        ase.OnStabExit(this, collision.gameObject);
+                                    }
                                 }                       
                             }
             }
@@ -228,7 +239,21 @@ namespace JointVR
             maintainParent = null;
             transform.parent = null;
         }
+
+        public void UnstabTarget(Collider col)
+        {
+            if (!col)
+                return;
+            foreach (Stabber s in stabbers)
+            {
+                foreach (StabJoint j in s.stabJoints)
+                {
+                    if (j.stabbedCollider == col)
+                        s.Unstab(j);
+                }
+            }
+        }
     }
 }
 
-public delegate void StabEvent(GameObject other);
+public delegate void StabEvent(GameObject other, StabManager manager);
