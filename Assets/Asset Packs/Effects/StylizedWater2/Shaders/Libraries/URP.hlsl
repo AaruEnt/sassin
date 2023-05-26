@@ -11,6 +11,13 @@
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl"
 
+#if !defined(SAMPLERS_DEFINED) && !defined(UNITY_CORE_SAMPLERS_INCLUDED) && !defined(UNITY_CORE_BLIT_INCLUDED) && (!defined(POST_PROCESSING) && UNITY_VERSION >= 202320)
+#define SAMPLERS_DEFINED
+SamplerState sampler_LinearClamp;
+SamplerState sampler_PointClamp;
+SamplerState sampler_LinearRepeat;
+#endif
+
 #ifndef _DISABLE_DEPTH_TEX
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
 #endif
@@ -29,15 +36,20 @@ float4 ComputeScreenPos(float4 positionCS)
 #endif
 #endif
 
-#if UNITY_VERSION <= 202010
+#if UNITY_VERSION <= 202010 //Unity 2019 (URP v7)
 //Not available in older versions
 float3 GetCurrentViewPosition()
 {
 	return _WorldSpaceCameraPos.xyz;
 }
+
+float3 GetWorldSpaceViewDir(float3 positionWS)
+{
+	return normalize(GetCurrentViewPosition() - positionWS);
+}
 #endif
 
-#if UNITY_VERSION < 202120
+#if UNITY_VERSION < 202120 //Unity 2020.3 (URP 10)
 //Already declared in ShaderVariablesFunctions.hlsl
 float LinearDepthToEyeDepth(float rawDepth)
 {
@@ -49,7 +61,7 @@ float LinearDepthToEyeDepth(float rawDepth)
 }
 #endif
 
-#if UNITY_VERSION < 202220
+#if UNITY_VERSION <= 202130
 #define LIGHT_LOOP_BEGIN(lightCount) \
 for (uint lightIndex = 0; lightIndex < pixelLightCount; ++lightIndex) { \
 if (lightIndex >= (uint)lightCount) break;

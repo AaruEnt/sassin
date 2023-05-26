@@ -8,12 +8,12 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: StylizedWater2_Lowpoly
-  m_Shader: {fileID: 4800000, guid: f04c9486b297dd848909db26983c9ddb, type: 3}
-  m_ShaderKeywords: _ADVANCED_SHADING _CROSSPAN_INTERSECTION _DEPTH_TEX _FLAT_SHADING
-    _NORMALMAP _RECEIVE_SHADOWS_OFF _REFRACTION _SHARP_INERSECTION _TRANSLUCENCY
-    _WAVES
+  m_Shader: {fileID: -6465566751694194690, guid: d7b0192b9bf19c949900035fa781fdc4, type: 3}
+  m_ShaderKeywords: _ADVANCED_SHADING _CAUSTICS _CROSSPAN_INTERSECTION _DEPTHEXP_ON
+    _DEPTH_TEX _FLAT_SHADING _FOAM _NORMALMAP _RECEIVE_SHADOWS_OFF _REFRACTION _SHARP_INERSECTION
+    _TRANSLUCENCY _WAVES
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -88,7 +88,7 @@ Material:
     - _BumpScale: 1
     - _CausticsBrightness: 2
     - _CausticsDistortion: 1
-    - _CausticsOn: 0
+    - _CausticsOn: 1
     - _CausticsSpeed: 0.1
     - _CausticsTiling: 0.5
     - _CrossPan_IntersectionOn: 1
@@ -108,13 +108,13 @@ Material:
     - _EnvironmentReflections: 1
     - _EnvironmentReflectionsOn: 1
     - _FlatShadingOn: 1
-    - _FoamOn: 0
+    - _FoamOn: 1
     - _FoamOpacity: 1
-    - _FoamSize: 0.695
+    - _FoamSize: 0.882
     - _FoamSpeed: 0.1
     - _FoamTiling: 0.39999992
-    - _FoamWaveMask: 1
-    - _FoamWaveMaskExp: 1
+    - _FoamWaveMask: 0.989
+    - _FoamWaveMaskExp: 3.7
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -149,7 +149,7 @@ Material:
     - _ReflectionLighting: 1
     - _ReflectionStrength: 0.147
     - _RefractionOn: 1
-    - _RefractionStrength: 0.401
+    - _RefractionStrength: 0.25
     - _RiverModeOn: 0
     - _SHARP_INERSECTIONOn: 1
     - _ShadingMode: 1
@@ -157,6 +157,7 @@ Material:
     - _ShoreLineLength: 2
     - _ShoreLineWaveDistance: 64
     - _ShoreLineWaveStr: 0.008
+    - _SlopeFoam: 1
     - _SlopeSpeed: 4
     - _SlopeStretching: 0.5
     - _SlopeThreshold: 0.25
@@ -195,6 +196,7 @@ Material:
     - _WavesOn: 1
     - _WorkflowMode: 1
     - _WorldSpaceUV: 1
+    - _ZClip: 1
     - _ZWrite: 0
     m_Colors:
     - _BaseColor: {r: 0, g: 0.3510604, b: 1, a: 1}

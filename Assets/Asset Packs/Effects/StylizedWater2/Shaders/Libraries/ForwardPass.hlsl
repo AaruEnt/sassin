@@ -14,6 +14,9 @@
 
 #define COLLAPSIBLE_GROUP 1
 
+//Normalize the amount of normal-based distortion between reflection probes and screen-space reflections
+#define PLANAR_REFLECTION_DISTORTION_MULTIPLIER 0.25
+
 struct SceneData
 {
 	float4 positionSS;
@@ -36,20 +39,35 @@ struct SceneData
 	#if UNDERWATER_ENABLED
 	float skyMask;
 	#endif
+
+	//More easy debugging
+	half refractionMask;
 };
 
-void PopulateSceneData(inout SceneData scene, Varyings input, WaterSurface water)
+void PopulateSceneData(inout SceneData scene, Varyings input, WaterSurface water, Light mainLight)
 {
 	scene.positionSS = input.screenPos;
 	
 	#if _REFRACTION || UNDERWATER_ENABLED
-	scene.pixelOffset.xy = water.tangentWorldNormal.xz * (_RefractionStrength * lerp(0.1, 0.01,  unity_OrthoParams.w));
+	float2 viewNormal = water.tangentWorldNormal.xz;
+	
+	#if _ADVANCED_SHADING
+	//Use view-space normals to take actual curvature into account
+	//Leave for now, further flesh out in refraction feature update
+	//viewNormal = TransformWorldToViewDir(water.tangentWorldNormal).xy;
+	#endif
+	
+	scene.pixelOffset.xy = viewNormal * (_RefractionStrength * lerp(0.1, 0.01,  unity_OrthoParams.w));
 	scene.pixelOffset.zw = 0;
 	#endif
 
 	//Default for disabled depth texture
 	scene.viewDepth = 1;
 	scene.verticalDepth = 1;
+
+	#ifdef CAUSTICS_SHADOWMASK
+	scene.shadowMask = mainLight.shadowAttenuation;
+	#endif
 
 	#if !_DISABLE_DEPTH_TEX
 	SceneDepth depth = SampleDepth(scene.positionSS);
@@ -70,15 +88,9 @@ void PopulateSceneData(inout SceneData scene, Varyings input, WaterSurface water
 		float3 opaqueWorldPosRefracted = ReconstructViewPos(scene.positionSS + scene.pixelOffset, water.viewDir, depthRefracted);
 
 		//Reject any offset pixels in front of the water surface
-		half refractionMask = saturate(SurfaceDepth(depthRefracted, input.positionCS));
-
-		#if UNDERWATER_ENABLED
-		//Flip mask for backfaces
-		refractionMask = lerp(saturate((opaqueWorldPosRefracted.y - water.positionWS.y)), refractionMask, water.vFace);
-		#endif
-
-		//Lerp to un-refracted screen-position for pixels above water
-		scene.pixelOffset = lerp(0, scene.pixelOffset, refractionMask);
+		scene.refractionMask = saturate(SurfaceDepth(depthRefracted, input.positionCS));
+		//Lerp to un-refracted screen-position
+		scene.pixelOffset *= scene.refractionMask;
 	
 		#ifdef RESAMPLE_REFRACTION_DEPTH
 		//With the current screen-space UV known, re-compose the water density
@@ -86,32 +98,15 @@ void PopulateSceneData(inout SceneData scene, Varyings input, WaterSurface water
 		opaqueWorldPosRefracted = ReconstructViewPos(scene.positionSS + scene.pixelOffset, water.viewDir, depthRefracted);
 
 		//Use this sample as the representation of the underwater geometry position (more accurate)
-		//scene.positionWS = lerp(scene.positionWS, opaqueWorldPosRefracted, refractionMask);
+		//scene.positionWS = lerp(scene.positionWS, opaqueWorldPosRefracted, scene.refractionMask);
 	
 		scene.viewDepthRefracted = SurfaceDepth(depthRefracted, input.positionCS);
 		scene.verticalDepthRefracted = DepthDistance(water.positionWS, opaqueWorldPosRefracted, water.waveNormal * normalSign);
 		#endif
-	
-	#endif
-
-	#if _REFRACTION || UNDERWATER_ENABLED
-	scene.color = SampleOpaqueTexture(scene.positionSS + scene.pixelOffset, water.vFace);
-	#endif
-
-	#ifdef CAUSTICS_SHADOWMASK
-	float4 shadowCoords = TransformWorldToShadowCoord(scene.positionWS);
-
-	#if UNITY_VERSION >= 202020
-	Light sceneLight = GetMainLight(shadowCoords, scene.positionWS, 1.0);
-	#else
-	Light sceneLight = GetMainLight(shadowCoords);
-	#endif
-
-	scene.shadowMask = sceneLight.shadowAttenuation;
 	#endif
 
 	#if !_RIVER && _ADVANCED_SHADING
-		half VdotN = 1.0 - saturate(dot(SafeNormalize(water.viewDir), water.waveNormal));
+		half VdotN = 1.0 - saturate(dot(normalize(water.viewDir), water.waveNormal));
 		float grazingTerm = saturate(pow(VdotN, 64));
 	
 		//Resort to z-depth at surface edges. Otherwise makes intersection/edge fade visible through the water surface
@@ -122,6 +117,10 @@ void PopulateSceneData(inout SceneData scene, Varyings input, WaterSurface water
 		#endif
 	#endif
 	
+	#endif
+
+	#if _REFRACTION || UNDERWATER_ENABLED
+	scene.color = SampleOpaqueTexture(scene.positionSS, scene.pixelOffset.xy, water.vFace);
 	#endif
 
 	//Scene mask is used for backface reflections, to blend between refraction and reflection probes
@@ -192,7 +191,7 @@ half4 ForwardPassFragment(Varyings input, FRONT_FACE_TYPE vertexFace : FRONT_FAC
 	water.vFace = IS_FRONT_VFACE(vertexFace, true, false); //0 = back face
 	//return float4(lerp(float3(1,0,0), float3(0,1,0), water.vFace), 1.0);
 	int faceSign = water.vFace > 0 ? 1 : -1;
-
+	
 	/* ========
 	// GEOMETRY DATA
 	=========== */
@@ -370,10 +369,11 @@ half4 ForwardPassFragment(Varyings input, FRONT_FACE_TYPE vertexFace : FRONT_FAC
 	#endif
 
 	//Normals can perturb the screen coordinates, so needs to be calculated first
-	PopulateSceneData(scene, input, water);
-
+	PopulateSceneData(scene, input, water, mainLight);
+	
 	//return float4(scene.positionSS.xy + scene.pixelOffset.xy, 0, 1.0);
-
+	//return float4(scene.refractionMask.xxx, 1.0);
+	
 	#if UNDERWATER_ENABLED
 	ClipSurface(scene.positionSS.xyzw, positionWS, input.positionCS.xyz, water.vFace);
 	#endif
@@ -446,22 +446,20 @@ half4 ForwardPassFragment(Varyings input, FRONT_FACE_TYPE vertexFace : FRONT_FAC
 
 	#if !_RIVER
 	//Composed mask for foam caps, based on wave height
-	float foamMask = lerp(1, saturate(water.offset.y), _FoamWaveMask);
-	foamMask = pow(abs(foamMask), _FoamWaveMaskExp);
+	float foamCrestMask = lerp(1, saturate(water.offset.y), _FoamWaveMask);
+	foamCrestMask = pow(abs(foamCrestMask), _FoamWaveMaskExp);
 	//return float4(foamMask.xxx, 1.0);
+
+	float foamSlopeMask = 1;
 	#else
 	//Rivers don't have waves
-	float foamMask = 1;
+	float foamCrestMask = 1;
+	float foamSlopeMask = water.slope * _SlopeFoam;
 	#endif
 
-	water.foam = SampleFoam(uv * _FoamTiling, TIME, _FoamSize, foamMask, water.slope);
+	float foamMask = saturate((foamCrestMask * _FoamColor.a));
 	
-	//Add foam based on vertex color alpha channel
-	#if _RIVER
-	water.foam *= saturate(_FoamColor.a + water.slope + vertexColor.a);
-	#else
-	water.foam *= saturate(_FoamColor.a + vertexColor.a);
-	#endif
+	water.foam = SampleFoam(uv * _FoamTiling, TIME, _FoamSize, saturate(foamMask + vertexColor.a), saturate(foamSlopeMask + vertexColor.a));
 
 	#if MODIFIERS_ENABLED
 	float4 foamMod = SampleFoamModifiers(cascades);
@@ -469,7 +467,7 @@ half4 ForwardPassFragment(Varyings input, FRONT_FACE_TYPE vertexFace : FRONT_FAC
 	water.foam = lerp(water.foam, foamMod.r, foamMod.a);
 	#endif
 	
-	//return float4(water.foam.xxx, 1);
+	//return float4(foamMask.xxx, 1);
 	#endif
 
 	#if WAVE_SIMULATION
@@ -484,9 +482,17 @@ half4 ForwardPassFragment(Varyings input, FRONT_FACE_TYPE vertexFace : FRONT_FAC
 
 	#if _CAUSTICS
 	float2 causticsProjection = scene.positionWS.xz;
-	//return float4(frac(scene.positionWS.xyz), 1.0);
+
+	#if _DISABLE_DEPTH_TEX
+	causticsProjection = water.positionWS.xz;
+	#endif
+
+	#if UNITY_VERSION >= 202130
 	//causticsProjection = mul((float4x4)_MainLightWorldToLight, float4(scene.positionWS, 1.0)).xy;
-	water.caustics = SampleCaustics(causticsProjection + lerp(water.waveNormal.xz, water.tangentNormal.xy, _CausticsDistortion), TIME * _CausticsSpeed, _CausticsTiling);
+	#endif
+	//return float4(frac(causticsProjection.xy), 0, 1.0);
+	
+	water.caustics = SampleCaustics(causticsProjection + lerp(water.waveNormal.xz, water.tangentWorldNormal.xz, _CausticsDistortion), TIME * _CausticsSpeed, _CausticsTiling);
 
 	//Caustics based on normals?
 	//float3 causticsTangentNormals = SampleNormals(scene.positionWS.xz * _NormalTiling, scene.positionWS, TIME, _NormalSpeed, water.slope, water.vFace);
@@ -552,9 +558,9 @@ half4 ForwardPassFragment(Varyings input, FRONT_FACE_TYPE vertexFace : FRONT_FAC
 	#endif
 	
 	//Pixel offset for planar reflection, sampled in screen-space
-	float2 reflectionPerturbation = lerp(water.waveNormal.xz, water.tangentNormal.xy, _ReflectionDistortion).xy;
+	float2 reflectionPixelOffset = lerp(water.vertexNormal.xz, water.tangentWorldNormal.xz, _ReflectionDistortion * scene.positionSS.w * PLANAR_REFLECTION_DISTORTION_MULTIPLIER).xy;
 	
-	water.reflections = SampleReflections(reflectionVector, _ReflectionBlur, _PlanarReflectionsEnabled, scene.positionSS.xyzw, positionWS, refWorldTangentNormal, viewDirNorm, reflectionPerturbation);
+	water.reflections = SampleReflections(reflectionVector, _ReflectionBlur, _PlanarReflectionsEnabled, scene.positionSS.xyzw, positionWS, refWorldTangentNormal, viewDirNorm, reflectionPixelOffset);
 	
 	half reflectionFresnel = ReflectionFresnel(refWorldTangentNormal, viewDirNorm * faceSign, _ReflectionFresnel);
 	//return float4(reflectionFresnel.xxx, 1.0);
@@ -742,7 +748,10 @@ half4 ForwardPassFragment(Varyings input, FRONT_FACE_TYPE vertexFace : FRONT_FAC
 	ApplyFog(finalColor.rgb, inputData.fogCoord, scene.positionSS, positionWS, water.vFace);
 	
 	#if UNDERWATER_ENABLED
-	float3 underwaterColor = ShadeUnderwaterSurface(surfaceData.albedo.rgb, surfaceData.emission.rgb, surfaceData.specular.rgb, scene.color.rgb, scene.skyMask, backfaceShadows, inputData.positionWS, inputData.normalWS, water.tangentWorldNormal, viewDirNorm, scene.positionSS.xy, _ShallowColor.rgb, _BaseColor.rgb, water.vFace);
+	float3 underwaterColor = ShadeUnderwaterSurface(surfaceData.albedo.rgb, surfaceData.emission.rgb, surfaceData.specular.rgb, scene.color.rgb, scene.skyMask,
+		backfaceShadows, inputData.positionWS, inputData.normalWS, water.tangentWorldNormal, viewDirNorm, scene.positionSS.xy,
+		_ShallowColor.rgb, _BaseColor.rgb, water.vFace, _UnderwaterSurfaceSmoothness, _UnderwaterRefractionOffset);
+	
 	finalColor.rgb = lerp(underwaterColor, finalColor.rgb, water.vFace);
 	water.alpha = lerp(1.0, water.alpha, water.vFace);
 	#endif

@@ -1,19 +1,20 @@
-﻿Shader "Universal Render Pipeline/FX/Stylized Water 2 (Hole)" {
+﻿Shader "Stylized Water 2/Cutout" 
+{
 	Properties
 	{
 		//[CurvedWorldBendSettings] _CurvedWorldBendSettings("0|1|1", Vector) = (0, 0, 0, 0)
 	}
-	SubShader{
+	SubShader
+	{
 		Tags { "RenderPipeline" = "UniversalPipeline" "Queue" = "Transparent-1" }
 		ColorMask 0
 		ZWrite On
 		
-		Pass {
+		Pass 
+		{
 			Name "Depth mask"
 			
 			HLSLPROGRAM
-			#pragma prefer_hlslcc gles
-            #pragma exclude_renderers d3d11_9x
 			#pragma multi_compile_instancing
 			
 			#include "Libraries/URP.hlsl"

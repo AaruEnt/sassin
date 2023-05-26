@@ -73,6 +73,8 @@ namespace StylizedWater2
 
         public override void OnInspectorGUI()
         {
+            UI.DrawHeader();
+            
             using (new EditorGUILayout.HorizontalScope())
             {
                 GUILayout.Space(EditorGUIUtility.labelWidth);

@@ -5,88 +5,9 @@ float _WaterFogDisabled;
 
 //Authors of third-party fog solutions can reach out to have their method integrated here
 
-/* start UnityFog */
-#define UnityFog
-/* end UnityFog */
-
-/* start Colorful */
-//#define Colorful
-/* end Colorful */
-
-/* start Enviro */
-//#define Enviro
-/* end Enviro */
-
-/* start Enviro3 */
-//#define Enviro3
-/* end Enviro3 */
-
-/* start Azure */
-//#define Azure
-/* end Azure */
-
-/* start AtmosphericHeightFog */
-//#define AtmosphericHeightFog
-/* end AtmosphericHeightFog */
-
-/* start SCPostEffects */
-//#define SCPostEffects
-/* end SCPostEffects */
-
-/* start COZY */
-//#define COZY
-/* end COZY */
-
-/* start Buto */
-//#define Buto
-/* end Buto */
-
-#ifdef Colorful
-/* include Colorful */
-#include "Assets/ColorfulSky/Shaders/Libraries/Fog.hlsl"
-#endif
-
-#ifdef Enviro
-/* include Enviro */
-#include "Assets/Enviro - Sky and Weather/Core/Resources/Shaders/Core/EnviroFogCore.hlsl"
-#endif
-
-#ifdef Enviro3
-/* include Enviro3 */
-#include "Assets/Enviro 3 - Sky and Weather/Resources/Shader/Includes/FogIncludeHLSL.hlsl"
-#endif
-
-#ifdef Azure
-/* include Azure */
-#include "Assets/Azure[Sky] Dynamic Skybox/Shaders/Transparent/AzureFogCore.cginc"
-#endif
-
-#ifdef AtmosphericHeightFog
-/* include AtmosphericHeightFog */
-#include "Assets/BOXOPHOBIC/Atmospheric Height Fog/Core/Includes/AtmosphericHeightFog.cginc"
-#endif
-
 #ifdef SCPostEffects
 //Macros normally used for cross-RP compatibility
 #define LINEAR_DEPTH(depth) Linear01Depth(depth, _ZBufferParams)
-SamplerState sampler_LinearClamp;
-SamplerState sampler_LinearRepeat;
-
-#define Clamp sampler_LinearClamp
-#define Repeat sampler_LinearRepeat
-
-/* include SCPostEffects */
-#include "Assets/SC Post Effects/Runtime/Fog/Fog.hlsl"
-#endif
-
-#ifdef COZY
-/* include COZY */
-#include "Assets/Distant Lands/Cozy Weather/Contents/Materials/Shaders/Includes/StylizedFogIncludes.cginc"
-#endif
-
-#ifdef Buto
-/* include Buto */
-#include "Assets/OccaSoftware/Buto/AssetResources/Shaders/Resources/Buto.hlsl"
 #endif
 
 //Executed in vertex stage
@@ -104,7 +25,7 @@ void ApplyFog(inout float3 color, float fogFactor, float4 screenPos, float3 posi
 #endif
 
 #ifdef Colorful
-	foggedColor.rgb = ApplyFog(color.rgb, fogFactor, positionWS, screenPos.xy / screenPos.w);
+	if(_DensityParams.x > 0) foggedColor.rgb = ApplyFog(color.rgb, fogFactor, positionWS, screenPos.xy / screenPos.w);
 #endif
 	
 #ifdef Enviro
@@ -125,11 +46,15 @@ void ApplyFog(inout float3 color, float fogFactor, float4 screenPos, float3 posi
 #endif
 
 #ifdef SCPostEffects
-	//The screen position input is used when the fog color source is set to "Skybox". If never in use, you can set it to 0
-	float4 fogColor = ComputeTransparentFog(positionWS, screenPos.xy);
+	//Distance or height fog enabled
+	if(_DistanceParams.z == 1 || _DistanceParams.w == 1)
+	{
+		//The screen position input is used when the fog color source is set to "Skybox". If never in use, you can set it to 0
+		float4 fogColor = ComputeTransparentFog(positionWS, screenPos.xy);
 
-	//The alpha channel will hold the density of the fog, use it as a lerp factor
-	foggedColor.rgb = lerp(fogColor.rgb, foggedColor.rgb, fogColor.a);
+		//The alpha channel will hold the density of the fog, use it as a lerp factor
+		foggedColor.rgb = lerp(fogColor.rgb, foggedColor.rgb, fogColor.a);
+	}
 #endif
 
 #ifdef COZY

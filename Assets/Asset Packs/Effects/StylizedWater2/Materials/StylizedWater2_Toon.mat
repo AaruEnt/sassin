@@ -8,12 +8,13 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: StylizedWater2_Toon
-  m_Shader: {fileID: 4800000, guid: f04c9486b297dd848909db26983c9ddb, type: 3}
-  m_ShaderKeywords: ADVANCED_LIGHTING _ADVANCED_SHADING _DEPTH_TEX _ENVIRONMENTREFLECTIONS_OFF
+  m_Shader: {fileID: -6465566751694194690, guid: d7b0192b9bf19c949900035fa781fdc4,
+    type: 3}
+  m_ShaderKeywords: ADVANCED_LIGHTING _ADVANCED_SHADING _DEPTHEXP_ON _DEPTH_TEX _ENVIRONMENTREFLECTIONS_OFF
     _FOAM _NORMALMAP _RECEIVE_SHADOWS_OFF _SHARP_INERSECTION _SPECULARHIGHLIGHTS_OFF
     _UNLIT _WORLDSPACEUV_ON
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 1
+  m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -189,9 +190,10 @@ Material:
     - _ShoreLineWaveDistance: 12
     - _ShoreLineWaveStr: 0.386
     - _SimpleLighting: 0
-    - _SlopeSpeed: 0.71
-    - _SlopeStretching: 0.07
-    - _SlopeThreshold: 0.08
+    - _SlopeFoam: 1
+    - _SlopeSpeed: 4
+    - _SlopeStretching: 0.5
+    - _SlopeThreshold: 0.25
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SparkleIntensity: 3
@@ -229,6 +231,7 @@ Material:
     - _WavesOn: 0
     - _WorkflowMode: 1
     - _WorldSpaceUV: 1
+    - _ZClip: 1
     - _ZWrite: 0
     m_Colors:
     - _BaseColor: {r: 0, g: 0.16451614, b: 0.34, a: 1}

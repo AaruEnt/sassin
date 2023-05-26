@@ -3,6 +3,7 @@
 //Copyright protected under Unity Asset Store EULA
 
 using System;
+using System.Collections.Generic;
 using System.Net;
 using UnityEditor;
 using UnityEditor.PackageManager;
@@ -18,7 +19,8 @@ namespace StylizedWater2
         public const string ASSET_ID = "170386";
         public const string ASSET_ABRV = "SW2";
 
-        public const string INSTALLED_VERSION = "1.3.1";
+        public const string INSTALLED_VERSION = "1.4.0";
+        public const int SHADER_GENERATOR_VERSION = 100;
         public const string MIN_UNITY_VERSION = "2020.3.1f1";
         public const string MIN_URP_VERSION = "10.3.2";
 
@@ -48,26 +50,10 @@ namespace StylizedWater2
                 }
             }
 
-            public const string URP_PACKAGE_ID = "com.unity.render-pipelines.universal";
             private static PackageInfo urpPackage;
 
             private static string lastestURPVersion;
 
-            private static PackageInfo GetURPPackage()
-            {
-                SearchRequest request = Client.Search(URP_PACKAGE_ID);
-                
-                while (request.Status == StatusCode.InProgress) { /* Waiting... */ }
-
-                if (request.Status == StatusCode.Failure)
-                {
-                    Debug.LogError("Failed to retrieve URP package from Package Manager...");
-                    return null;
-                }
-
-                return request.Result[0];
-            }
-            
 #if SWS_DEV
             [MenuItem("SWS/Get latest URP version")]
 #endif
@@ -104,30 +90,168 @@ namespace StylizedWater2
                 //Wait until finished
                 while(!addRequest.IsCompleted || addRequest.Status == StatusCode.InProgress) { }
                 
-                ReimportShader();
-            }
-
-            private const string ShaderGUID = "f04c9486b297dd848909db26983c9ddb";
-
-            //Required after installing the URP package, so references to shader libraries are caught up
-            private static void ReimportShader()
-            {
-                string shaderPath = AssetDatabase.GUIDToAssetPath(ShaderGUID);
-
-                if (shaderPath == string.Empty)
-                {
-                    Debug.LogError("[" + ASSET_NAME + "] Unable to locate shader by GUID, was it changed or not imported?");
-                    return;
-                }
-                EditorUtility.DisplayProgressBar(ASSET_NAME, "Reimporting shaders...", 1f);
-                
-                AssetDatabase.ImportAsset(shaderPath);
-                
-                EditorUtility.ClearProgressBar();
+                WaterShaderImporter.ReimportAll();
             }
         }
 #endif
+        
+        public const string URP_PACKAGE_ID = "com.unity.render-pipelines.universal";
 
+        public static PackageInfo GetURPPackage()
+        {
+            SearchRequest request = Client.Search(URP_PACKAGE_ID);
+                
+            while (request.Status == StatusCode.InProgress) { /* Waiting... */ }
+
+            if (request.Status == StatusCode.Failure)
+            {
+                Debug.LogError("Failed to retrieve URP package from Package Manager...");
+                return null;
+            }
+
+            return request.Result[0];
+        }
+
+        public class ImportOrUpdateAsset : AssetPostprocessor
+        {
+            private static bool OldShadersPresent()
+            {
+                return Shader.Find("Universal Render Pipeline/FX/Stylized Water 2") || Shader.Find("Hidden/StylizedWater2/Deleted");
+            }
+            
+            private void OnPreprocessAsset()
+            {
+                var oldShaders = false;
+                //Importing/updating the Stylized Water 2 asset
+                if (assetPath.EndsWith("StylizedWater2/Editor/AssetInfo.cs") || assetPath.EndsWith("sc.stylizedwater2/Editor/AssetInfo.cs"))
+                {
+                    oldShaders = OldShadersPresent();
+                }
+                //These files change every version, so will trigger when updating or importing the first time
+                if (
+                    //Importing the Underwater Rendering extension
+                    assetPath.EndsWith("UnderwaterRenderer.cs"))
+                    //Any further extensions...
+                {
+                    Debug.Log("[Stylized Water 2] Extension installed/deleted. Reimporting water shader(s) to toggle extension integration.");
+                    
+                    oldShaders = OldShadersPresent();
+
+                    //Re-import any .watershader files, since these depend on the installation state of extensions
+                    WaterShaderImporter.ReimportAll();
+                }
+                
+                if (oldShaders)
+                {
+                    //Old non-templated shader(s) still present.
+                    if (EditorUtility.DisplayDialog(AssetInfo.ASSET_NAME, "Updating to v1.4.0+. Obsolete shader files were detected." +
+                                                                          "\n\n" +
+                                                                          "The water shader(s) are a now C# generated, thus has moved to a different file." +
+                                                                          "\n\n" +
+                                                                          "Materials in your project using the old shader must switch to it." +
+                                                                          "\n\n" +
+                                                                          "This process is automatic. The obsolete files will also be deleted." +
+                                                                          "\n\n" +
+                                                                          "Rest assured, no settings or functionality will be lost!", "OK", "Cancel"))
+                    {
+                        UpgradeMaterials();
+                    }
+                }
+
+            }
+        }
+
+        #if SWS_DEV
+        [MenuItem("SWS/Upgrading/Upgrade materials to 1.4.0+")]
+        #endif
+        private static void UpgradeMaterials()
+        {
+            Shader oldShader = Shader.Find("Universal Render Pipeline/FX/Stylized Water 2");
+            Shader oldShaderTess = Shader.Find("Universal Render Pipeline/FX/Stylized Water 2 (Tessellation)");
+            
+            Shader newShader = Shader.Find("Stylized Water 2/Standard");
+            Shader newShaderTess = Shader.Find("Stylized Water 2/Standard (Tessellation)");
+
+            int upgradedMaterialCount = 0;
+            
+            //Possible the script imported before the water shader even did
+            //Or the water shader was already deleted, yet this function is triggered by an old underwater-rendering shader.
+            if (newShader != null || oldShader != null)
+            {
+                string[] materials = AssetDatabase.FindAssets("t: Material");
+
+                int totalMaterials = materials.Length;
+                
+                for (int i = 0; i < totalMaterials; i++)
+                {
+                    Material mat = AssetDatabase.LoadAssetAtPath<Material>(AssetDatabase.GUIDToAssetPath(materials[i]));
+
+                    EditorUtility.DisplayProgressBar(ASSET_NAME, $"Checking \"{mat.name}\" ({i}/{totalMaterials})", (float)i / (float)totalMaterials);
+                    
+                    if (mat.shader == oldShader)
+                    {
+                        int queue = mat.renderQueue;
+                        mat.shader = newShader;
+                        mat.renderQueue = queue;
+                        EditorUtility.SetDirty(mat);
+                        upgradedMaterialCount++;
+                    }
+                    
+                    if (mat.shader == oldShaderTess)
+                    {
+                        int queue = mat.renderQueue;
+                        mat.shader = newShaderTess;
+                        mat.renderQueue = queue;
+                        
+                        EditorUtility.SetDirty(mat);
+                        upgradedMaterialCount++;
+                    }
+                }
+            }
+            
+            EditorUtility.ClearProgressBar();
+
+            List<string> deletedFiles = new List<string>();
+            //Delete old files
+            {
+                void DeleteFile(string path)
+                {
+                    if (path != string.Empty)
+                    {
+                        deletedFiles.Add(path);
+                        AssetDatabase.DeleteAsset(path);
+                    }
+                }
+
+                DeleteFile(AssetDatabase.GetAssetPath(oldShader));
+                DeleteFile(AssetDatabase.GetAssetPath(oldShaderTess));
+                
+                //UnderwaterMask.shader
+                DeleteFile(AssetDatabase.GUIDToAssetPath("85caab243c23a1e489cd0bdcaf742560"));
+                
+                //UnderwaterShading.shader
+                DeleteFile(AssetDatabase.GUIDToAssetPath("33652c9d694d8004bb649164aafc9ecc"));
+                
+                //Waterline.shader
+                DeleteFile(AssetDatabase.GUIDToAssetPath("aef8d53c098c94044b72ea6bda9bb6bc"));
+                
+                //UnderwaterPost.shader
+                DeleteFile(AssetDatabase.GUIDToAssetPath("7b53b35c69174ce092d2712e3db77f0e"));
+            }
+
+            if (upgradedMaterialCount > 0 || deletedFiles.Count > 0)
+            {
+                if (EditorUtility.DisplayDialog(AssetInfo.ASSET_NAME, $"Converted {upgradedMaterialCount} materials to use the new water shader." + 
+                                                                      $"\n\nObsolete shader files ({deletedFiles.Count}) deleted:\n" +
+                                                                      String.Join(Environment.NewLine, deletedFiles), 
+                    "OK")) { }
+            }
+            
+            AssetDatabase.SaveAssets();
+
+            Debug.Log("<b>[Stylized Water 2]</b> Upgrade of materials and project complete!");
+        }
+        
         public static bool MeetsMinimumVersion(string versionMinimum)
         {
             Version curVersion = new Version(INSTALLED_VERSION);
@@ -136,10 +260,16 @@ namespace StylizedWater2
             return curVersion >= minVersion;
         }
 
-        //Obsolete, kept around for older version of Underwater Rendering
-        public static void OpenStorePage()
+        public static void OpenAssetStore(string url = null)
         {
-            OpenInPackageManager();
+            if (url == string.Empty) url = "https://assetstore.unity.com/packages/slug/" + ASSET_ID;
+            
+            Application.OpenURL(url + "?aid=1011l7Uk8&pubref=sw2editor");
+        }
+
+        public static void OpenReviewsPage()
+        {
+            Application.OpenURL($"https://assetstore.unity.com/packages/slug/{ASSET_ID}?aid=1011l7Uk8&pubref=sw2editor#reviews");
         }
         
         public static void OpenInPackageManager()
@@ -171,6 +301,35 @@ namespace StylizedWater2
 #endif
 
             return PACKAGE_ROOT_FOLDER;
+        }
+
+        public static bool IsAssetStoreLicense()
+        {
+            #if SWS_DEV || !UNITY_2023_1_OR_NEWER
+            return true;
+            #endif
+
+            #pragma warning disable CS0162
+            string marker = $"  productId: {ASSET_ID}";
+
+            string guid = "d5972a1c9cddd9941aec37a3343647aa"; //This file
+            string filePath = AssetDatabase.GUIDToAssetPath(guid);
+
+            //Fallback
+            if (filePath == string.Empty) return true;
+            
+            filePath += ".meta";
+                
+            string[] lines = System.IO.File.ReadAllLines(filePath);
+
+            bool license = false;
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines[i] == marker) license = true;
+            }
+
+            return license;
+            #pragma warning restore CS0162
         }
 
         public static class VersionChecking

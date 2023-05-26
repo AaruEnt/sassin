@@ -102,19 +102,20 @@ float BoundsEdgeMask(float2 rect)
 	return 1-saturate(pos + neg);
 }
 
-float4 PackedUV(float2 sourceUV, float2 time, float speed)
+float4 PackedUV(float2 sourceUV, float2 time, float speed, float subTiling = 0.5, float subSpeed = 0.5)
 {
 	#if _RIVER
 	time.x = 0; //Only move in forward direction
 	#endif
 	
 	float2 uv1 = sourceUV.xy + (time.xy * speed);
+	
 	#ifndef _RIVER
 	//Second UV, 2x larger, twice as slow, in opposite direction
-	float2 uv2 = (sourceUV.xy * 0.5) + ((1 - time.xy) * speed * 0.5);
+	float2 uv2 = (sourceUV.xy * subTiling) - ((time.xy) * speed * subSpeed);
 	#else
 	//2x larger, same direction/speed
-	float2 uv2 = (sourceUV.xy * 0.5) + (time.xy * speed);
+	float2 uv2 = (sourceUV.xy * subTiling) + (time.xy * speed);
 	#endif
 
 	return float4(uv1.xy, uv2.xy);
@@ -127,15 +128,6 @@ struct SurfaceNormalData
 	float lightingStrength;
 	float mask;
 };
-
-float3 BlendTangentNormals(float3 a, float3 b)
-{
-	#if _ADVANCED_SHADING
-	return BlendNormalRNM(a, b);
-	#else
-	return BlendNormal(a, b);
-	#endif
-}
 
 float GetSlope(float3 normalWS, float threshold)
 {
@@ -158,7 +150,7 @@ struct SceneDepth
 float SurfaceDepth(SceneDepth depth, float4 positionCS)
 {
 	const float sceneDepth = (unity_OrthoParams.w == 0) ? depth.eye : LinearDepthToEyeDepth(depth.raw);
-	const float clipSpaceDepth = (unity_OrthoParams.w == 0) ? LinearEyeDepth(positionCS.z, _ZBufferParams) : LinearEyeDepth(positionCS.z / positionCS.w, _ZBufferParams);
+	const float clipSpaceDepth = (unity_OrthoParams.w == 0) ? LinearEyeDepth(positionCS.z, _ZBufferParams) : LinearDepthToEyeDepth(positionCS.z / positionCS.w);
 
 	return sceneDepth - clipSpaceDepth;
 }
@@ -232,16 +224,27 @@ float3 ReconstructViewPos(float4 screenPos, float3 viewDir, SceneDepth sceneDept
 
 #define CHROMATIC_OFFSET 2.0
 
-float3 SampleOpaqueTexture(float4 screenPos, half vFace)
+bool _BlurredWaterDepth;
+TEXTURE2D_X(_BlurredCameraOpaqueTexture);
+SAMPLER(sampler_BlurredCameraOpaqueTexture);
+float3 OpaqueTexture(float2 uv)
+{
+	//return SampleSceneColor(uv).rgb;
+	return SAMPLE_TEXTURE2D_X(_BlurredCameraOpaqueTexture, sampler_BlurredCameraOpaqueTexture, uv.xy).rgb;
+}
+
+float3 SampleOpaqueTexture(float4 screenPos, float2 offset, half vFace)
 {
 	//Normalize for perspective projection
+	screenPos.xy += offset;
 	screenPos.xy /= screenPos.w;
 	
-	float3 sceneColor = SampleSceneColor(screenPos.xy).rgb;
+	float3 sceneColor = OpaqueTexture(screenPos.xy).rgb;
 		
 	#if _ADVANCED_SHADING //Chromatic
-	sceneColor.r = lerp(sceneColor.r, SampleSceneColor(screenPos.xy + float2((_ScreenParams.z - 1.0) * CHROMATIC_OFFSET, 0)).r, vFace);
-	sceneColor.b = lerp(sceneColor.b, SampleSceneColor(screenPos.xy - float2((_ScreenParams.z - 1.0) * CHROMATIC_OFFSET, 0)).b, vFace);
+	float texelOffset = (_ScreenParams.z - 1.0) * CHROMATIC_OFFSET * vFace;
+	sceneColor.r = OpaqueTexture(screenPos.xy + float2(texelOffset, 0)).r;
+	sceneColor.b = OpaqueTexture(screenPos.xy - float2(texelOffset, 0)).b;
 	#endif
 
 	return sceneColor;
