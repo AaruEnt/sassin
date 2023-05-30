@@ -38,6 +38,8 @@ namespace StylizedWater2
         
         public struct BuoyancySample
         {
+            public int hashCode;
+            
             public UnityEngine.Vector3[] inputPositions;
             
             public UnityEngine.Vector3[] outputOffset;
@@ -55,25 +57,7 @@ namespace StylizedWater2
         {
             waveParameters.Update(mat);
         }
-
-        /// <summary>
-        /// Returns the maximum possible wave height set on the material
-        /// </summary>
-        /// <param name="mat"></param>
-        /// <returns></returns>
-        [Obsolete("Use WaveParameters.GetMaxWaveHeight(Material) instead")]
-        public static float GetMaxWaveHeight(Material mat)
-        {
-            if (!mat) return 0f;
-            
-            if (WavesEnabled(mat) == false) return 0f;
-
-            return WaveParameters.GetMaxWaveHeight(mat);
-        }
-
-        [Obsolete("No longer used. Instead use the  \"SetCustomTime\" function with a value higher than 0. " +
-                  "\n\nTo disable its usage, set it to -1 (default value)")]
-        public static bool UseCustomTime = false;
+        
         private static float customTimeValue = -1f;
 
         /// <summary>
@@ -184,6 +168,7 @@ namespace StylizedWater2
         private static Vector2 planarPosition;
         
         private static Vector4 amp = new Vector4(0.3f, 0.35f, 0.25f, 0.25f);
+        private static Vector4 freq = new Vector4(1.3f, 1.35f, 1.25f, 1.25f);
         private static Vector4 speed = new Vector4(1.2f, 1.375f, 1.1f, 1);
         private static Vector4 dir1 = new Vector4(0.3f, 0.85f, 0.85f, 0.25f);
         private static Vector4 dir2 = new Vector4(0.1f, 0.9f, -0.5f, -0.5f);
@@ -191,26 +176,9 @@ namespace StylizedWater2
 
         //Real frequency value per wave layer
         private static Vector4 frequency;
-        private static Vector4 realSpeed;
+        //Output
+        private static Vector3 offsets;
 
-        [Obsolete("Use WaveParameters.WavesEnabled(Material) instead")]
-        public static bool WavesEnabled(Material waterMat)
-        {
-            return waterMat.IsKeywordEnabled(WavesKeyword);
-        }
-        
-        [Obsolete("Use the function with a 4th bool parameter to indicate if the water material is dynamic")]
-        public static float SampleWaves(Vector3 position, WaterObject waterObject, float rollStrength, out UnityEngine.Vector3 normal)
-        {
-            return SampleWaves(position, waterObject.material, waterObject.transform.position.y, rollStrength, false, out normal);
-        }
-        
-        [Obsolete("Use the function with a 4th bool parameter to indicate if the water material is dynamic")]
-        public static float SampleWaves(Vector3 position, Material waterMat, float waterLevel, float rollStrength, out UnityEngine.Vector3 normal)
-        {
-            return SampleWaves(position, waterMat, waterLevel, rollStrength, false, out normal);
-        }
-        
         /// <summary>
         /// Returns a position in world-space, where a ray cast from the origin in the direction hits the (flat) water level height
         /// </summary>
@@ -278,55 +246,64 @@ namespace StylizedWater2
         {
             return SampleWaves(position, waterObject.material, waterObject.transform.position.y, rollStrength, dynamicMaterial, out normal);
         }
+
+        private static void RecalculateParameters()
+        {
+            direction1 = MultiplyVec4(dir1, waveParameters.direction);
+            direction2 = MultiplyVec4(dir2, waveParameters.direction);
+
+            frequency = freq * (1-waveParameters.distance) * 3f;
+
+            AB.x = steepness.x * waveParameters.steepness * direction1.x * amp.x;
+            AB.y = steepness.x * waveParameters.steepness * direction1.y * amp.x;
+            AB.z = steepness.x * waveParameters.steepness * direction1.z * amp.y;
+            AB.w = steepness.x * waveParameters.steepness * direction1.w * amp.y;
+
+            CD.x = steepness.z * waveParameters.steepness * direction2.x * amp.z;
+            CD.y = steepness.z * waveParameters.steepness * direction2.y * amp.z;
+            CD.z = steepness.w * waveParameters.steepness * direction2.z * amp.w;
+            CD.w = steepness.w * waveParameters.steepness * direction2.w * amp.w;
+        }
         
         private static void SampleWaves(UnityEngine.Vector3 position, Material waterMat, float waterLevel, float rollStrength, bool dynamicMaterial, out UnityEngine.Vector3 offset, out UnityEngine.Vector3 normal)
         {
             Profiler.BeginSample("Buoyancy sampling");
+            
+			//If not desired to re-fetch the material properties every call, at least fetch them if the input material changed (since this is a static function)
+			//In edit-mode, always do this as materials are most likely modified then
+			if(!dynamicMaterial && Application.isPlaying)
+			{
+				//Fetch the material's wave parameters, so the exact calculations can be mirrored
+				if (lastMaterial == null || lastMaterial.Equals(waterMat) == false)
+				{
+                    #if SWS_DEV
+                    Debug.Log("SampleWaves: water material changed, re-fetching parameters");
+                    #endif
+                    
+					GetMaterialParameters(waterMat);
 
-            if(!waterMat)
-            {
-                normal = UnityEngine.Vector3.up;
-                offset = new Vector3(0f, waterLevel, 0f);
+                    lastMaterial = waterMat;
+				}
+			}
+			else	
+			{	
+				GetMaterialParameters(waterMat);
             }
-            
-            //Fetch the material's wave parameters, so the exact calculations can be mirrored
-            if (lastMaterial == null || lastMaterial.Equals(waterMat) == false)
-            {
-                GetMaterialParameters(waterMat);
-                lastMaterial = waterMat;
-            }
-            if(dynamicMaterial || !Application.isPlaying) GetMaterialParameters(waterMat);
 
-            Vector4 freq = new Vector4(1.3f, 1.35f, 1.25f, 1.25f) * (1-waveParameters.distance) * 3f;
+            TIME = (_TimeParameters * waveParameters.animationSpeed * waveParameters.speed * speed);
             
-            direction1 = MultiplyVec4(dir1, waveParameters.direction);
-            direction2 = MultiplyVec4(dir2, waveParameters.direction);
+            RecalculateParameters();
 
-            Vector3 offsets = Vector3.zero;
-            frequency = freq;
-            realSpeed.x *= waveParameters.animationDirection.x;
-            realSpeed.y *= waveParameters.animationDirection.y;
-            realSpeed.z *= waveParameters.animationDirection.x;
-            realSpeed.w *= waveParameters.animationDirection.y;
-            
+            offsets = Vector3.zero;
+                
+            planarPosition.x = position.x;
+            planarPosition.y = position.z;
+
             for (int i = 0; i <= waveParameters.count; i++)
             {
-                float t = 1f+((float)i / (float)waveParameters.count);
+                var t = 1f+((float)i / (float)waveParameters.count);
 
                 frequency *= t;
-
-                AB.x = steepness.x * waveParameters.steepness * direction1.x * amp.x;
-                AB.y = steepness.x * waveParameters.steepness * direction1.y * amp.x;
-                AB.z = steepness.x * waveParameters.steepness * direction1.z * amp.y;
-                AB.w = steepness.x * waveParameters.steepness * direction1.w * amp.y;
-
-                CD.x = steepness.z * waveParameters.steepness * direction2.x * amp.z;
-                CD.y = steepness.z * waveParameters.steepness * direction2.y * amp.z;
-                CD.z = steepness.w * waveParameters.steepness * direction2.z * amp.w;
-                CD.w = steepness.w * waveParameters.steepness * direction2.w * amp.w;
-                
-                planarPosition.x = position.x;
-                planarPosition.y = position.z;
                 
                 #if MATHEMATICS
                 dotABCD.x = Dot2(direction1.xy, planarPosition) * frequency.x;
@@ -339,8 +316,6 @@ namespace StylizedWater2
                 dotABCD.z = Dot2(new Vector2(direction2.x, direction2.y), planarPosition) * frequency.z;
                 dotABCD.w = Dot2(new Vector2(direction2.z, direction2.w), planarPosition) * frequency.w;
                 #endif
-                
-                TIME = (_TimeParameters * waveParameters.animationSpeed * waveParameters.speed * speed);
 
                 sine.x = Sine(dotABCD.x + TIME.x);
                 sine.y = Sine(dotABCD.y + TIME.y);
@@ -357,9 +332,15 @@ namespace StylizedWater2
                 offsets.z += Dot4(cosine, new Vector4(AB.y, AB.w, CD.y, CD.w));
             }
             
+			#if MATHEMATICS
+            rollStrength *= lerp(0.001f, 0.1f, waveParameters.steepness);
+			#else
             rollStrength *= Mathf.Lerp(0.001f, 0.1f, waveParameters.steepness);
+			#endif
             
-            normal = new Vector3(-offsets.x * rollStrength * waveParameters.height, 2f, -offsets.z * rollStrength * waveParameters.height);
+			normal.x = -offsets.x * rollStrength * waveParameters.height;
+			normal.y = 2f;
+			normal.z = -offsets.z * rollStrength * waveParameters.height;
             
 #if MATHEMATICS
             normal = normalize(normal);
@@ -375,9 +356,7 @@ namespace StylizedWater2
             
             Profiler.EndSample();
         }
-
-        //To be obsolete come version 1.1.9. It makes little sense to return one part of the data, and 'out' another...
-        //[Obsolete("Use the function that takes a BuoyancySample struct instead")]
+        
         private static UnityEngine.Vector3 m_offset;
         /// <summary>
         /// Given a position in world-space, returns the wave height and normal
@@ -415,7 +394,7 @@ namespace StylizedWater2
             }
             else
             {
-                SampleDisplacement(ref sample, waterLevel, sample.GetHashCode());
+                SampleDisplacement(ref sample, waterLevel, sample.hashCode);
             }
         }
         

@@ -18,7 +18,7 @@ float ReflectionFresnel(float3 worldNormal, float3 viewDir, float exponent)
 	return pow(max(0.0, AIR_RI - cosTheta), exponent);
 }
 
-TEXTURE2D(_PlanarReflection);
+TEXTURE2D_X(_PlanarReflection);
 SAMPLER(sampler_PlanarReflection);
 
 float3 SampleReflections(float3 reflectionVector, float smoothness, float mask, float4 screenPos, float3 positionWS, float3 normal, float3 viewDir, float2 pixelOffset)
@@ -37,8 +37,7 @@ float3 SampleReflections(float3 reflectionVector, float smoothness, float mask, 
 	#endif
 
 	#if !_RIVER //Planar reflections are pointless on curved surfaces, skip	
-	float4 planarReflections = SAMPLE_TEXTURE2D(_PlanarReflection, sampler_PlanarReflection, screenPos.xy);
-	
+	float4 planarReflections = SAMPLE_TEXTURE2D_X_LOD(_PlanarReflection, sampler_PlanarReflection, screenPos.xy, 0);
 	//Terrain add-pass can output negative alpha values. Clamp as a safeguard against this
 	planarReflections.a = saturate(planarReflections.a);
 	

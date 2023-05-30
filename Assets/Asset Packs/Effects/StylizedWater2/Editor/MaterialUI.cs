@@ -19,11 +19,10 @@ namespace StylizedWater2
     public class MaterialUI : ShaderGUI
     {
 #if URP
-        private const string BASE_SHADER_NAME = "Universal Render Pipeline/FX/Stylized Water 2";
-        private const string TESSELLATION_SHADER_NAME = "Universal Render Pipeline/FX/Stylized Water 2 (Tessellation)";
         private MaterialEditor materialEditor;
         
         private MaterialProperty _ZWrite;
+        private MaterialProperty _ZClip;
         private MaterialProperty _Cull;
         private MaterialProperty _ShadingMode;
         private MaterialProperty _Direction;
@@ -32,6 +31,7 @@ namespace StylizedWater2
         private MaterialProperty _SlopeStretching;
         private MaterialProperty _SlopeSpeed;
         private MaterialProperty _SlopeThreshold;
+        private MaterialProperty _SlopeFoam;
 
         private MaterialProperty _BaseColor;
         private MaterialProperty _ShallowColor;
@@ -126,6 +126,7 @@ namespace StylizedWater2
         private bool tesselationEnabled;
 
         private UI.Material.Section generalSection;
+        private UI.Material.Section renderingSection;
         private UI.Material.Section lightingSection;
         private UI.Material.Section colorSection;
         private UI.Material.Section underwaterSection;
@@ -134,7 +135,7 @@ namespace StylizedWater2
         private UI.Material.Section intersectionSection;
         private UI.Material.Section foamSection;
         private UI.Material.Section wavesSection;
-        private UI.Material.Section advancedSection;
+        private List<UI.Material.Section> sections;
 
         //Keyword states
         private MaterialProperty _LightingOn;
@@ -161,7 +162,7 @@ namespace StylizedWater2
         private bool transparentShadowsEnabled;
         private bool depthAfterTransparents = false;
         private bool underwaterRenderingInstalled;
-
+        
         private void FindProperties(MaterialProperty[] props, Material material)
         {
             tesselationEnabled = material.HasProperty("_TessValue");
@@ -178,6 +179,7 @@ namespace StylizedWater2
 
             _Cull = FindProperty("_Cull", props);
             _ZWrite = FindProperty("_ZWrite", props);
+            _ZClip = FindProperty("_ZClip", props);
             _ShadingMode = FindProperty("_ShadingMode", props);
             _ShadowStrength = FindProperty("_ShadowStrength", props);
             _Direction = FindProperty("_Direction", props);
@@ -186,6 +188,7 @@ namespace StylizedWater2
             _SlopeStretching = FindProperty("_SlopeStretching", props);
             _SlopeSpeed = FindProperty("_SlopeSpeed", props);
             _SlopeThreshold = FindProperty("_SlopeThreshold", props);
+            _SlopeFoam = FindProperty("_SlopeFoam", props);
             
             _DisableDepthTexture = FindProperty("_DisableDepthTexture", props);
             _RefractionOn = FindProperty("_RefractionOn", props);
@@ -302,19 +305,20 @@ namespace StylizedWater2
                 "• Accurate blending of light color for translucency shading\n" +
                 "• Additional texture sample for distance normals");
         }
-
+        
         private void OnEnable(MaterialEditor materialEditorIn)
         {
-            lightingSection = new UI.Material.Section(materialEditorIn,"LIGHTING", new GUIContent("Lighting/Shading"));
-            generalSection = new UI.Material.Section(materialEditorIn,"GENERAL", new GUIContent("General"));
-            colorSection = new UI.Material.Section(materialEditorIn,"COLOR", new GUIContent("Color", "Controls for the base color of the water and transparency"));
-            underwaterSection = new UI.Material.Section(materialEditorIn,"UNDERWATER", new GUIContent("Underwater", "Pertains the appearance of anything seen under the water surface. Not related to any actual underwater rendering"));
-            normalsSection = new UI.Material.Section(materialEditorIn,"NORMALS", new GUIContent("Normals", "Normal maps represent the small-scale curvature of the water surface. This is used for lighting and reflections"));
-            reflectionSection = new UI.Material.Section(materialEditorIn,"REFLECTIONS", new GUIContent("Reflections", "Sun specular reflection, and environment reflections (reflection probes and planar reflections)"));
-            foamSection = new UI.Material.Section(materialEditorIn,"FOAM", new GUIContent("Surface Foam"));
-            intersectionSection = new UI.Material.Section(materialEditorIn,"INTERSECTION", new GUIContent("Intersection Foam", "Draws a foam effects on opaque objects that are touching the water"));
-            wavesSection = new UI.Material.Section(materialEditorIn,"WAVES", new GUIContent("Waves", "Parametric gerstner waves, which modify the surface curvature and animate the mesh's vertices"));
-            advancedSection = new UI.Material.Section(materialEditorIn,"ADVANCED", new GUIContent("Advanced"));
+            sections = new List<UI.Material.Section>();
+            sections.Add(generalSection = new UI.Material.Section(materialEditorIn,"GENERAL", new GUIContent("General")));
+            sections.Add(renderingSection = new UI.Material.Section(materialEditorIn,"RENDERING", new GUIContent("Rendering")));
+            sections.Add(lightingSection = new UI.Material.Section(materialEditorIn,"LIGHTING", new GUIContent("Lighting")));
+            sections.Add(colorSection = new UI.Material.Section(materialEditorIn,"COLOR", new GUIContent("Color", "Controls for the base color of the water and transparency")));
+            sections.Add(underwaterSection = new UI.Material.Section(materialEditorIn,"UNDERWATER", new GUIContent("Underwater", "Pertains the appearance of anything seen under the water surface. Not related to any actual underwater rendering")));
+            sections.Add(normalsSection = new UI.Material.Section(materialEditorIn,"NORMALS", new GUIContent("Normals", "Normal maps represent the small-scale curvature of the water surface. This is used for lighting and reflections")));
+            sections.Add(reflectionSection = new UI.Material.Section(materialEditorIn,"REFLECTIONS", new GUIContent("Reflections", "Sun specular reflection, and environment reflections (reflection probes and planar reflections)")));
+            sections.Add(foamSection = new UI.Material.Section(materialEditorIn,"FOAM", new GUIContent("Surface Foam")));
+            sections.Add(intersectionSection = new UI.Material.Section(materialEditorIn,"INTERSECTION", new GUIContent("Intersection Foam", "Draws a foam effects on opaque objects that are touching the water")));
+            sections.Add(wavesSection = new UI.Material.Section(materialEditorIn,"WAVES", new GUIContent("Waves", "Parametric gerstner waves, which modify the surface curvature and animate the mesh's vertices")));
             
             underwaterRenderingInstalled = StylizedWaterEditor.UnderwaterRenderingInstalled();
             
@@ -382,6 +386,7 @@ namespace StylizedWater2
             EditorGUILayout.Space();
             
             DrawGeneral();
+            DrawRendering(material);
             DrawLighting();
             DrawColor();
             DrawNormals();
@@ -390,12 +395,15 @@ namespace StylizedWater2
             DrawIntersection();
             DrawReflections();
             DrawWaves();
-            DrawAdvanced(material);
-            
+
+            EditorGUILayout.Space();
+
             if (material.HasProperty("_CurvedWorldBendSettings"))
             {
+                EditorGUILayout.Space();
+
                 EditorGUILayout.LabelField("Curved World 2020", EditorStyles.boldLabel);
-                materialEditor.ShaderProperty(_CurvedWorldBendSettings, _CurvedWorldBendSettings.displayName);
+                DrawShaderProperty(_CurvedWorldBendSettings, _CurvedWorldBendSettings.displayName);
                 EditorGUILayout.Space();
             }
             
@@ -409,7 +417,10 @@ namespace StylizedWater2
         public override void OnMaterialPreviewGUI(MaterialEditor materialEditor, Rect rect, GUIStyle background)
         {
             UI.Material.DrawMaterialHeader(materialEditor, rect, background);
-            
+        }
+
+        void DrawNotifications()
+        {
             UI.DrawNotification(!UniversalRenderPipeline.asset, "Universal Render Pipeline is currently not active!", "Show me", StylizedWaterEditor.OpenGraphicsSettings, MessageType.Error);
 
             if (UniversalRenderPipeline.asset && initialized)
@@ -430,7 +441,18 @@ namespace StylizedWater2
                     MessageType.Error);
             }
             
-            UI.DrawNotification(depthAfterTransparents && _ZWrite.floatValue > 0, "\nZWrite option (Advanced tab) is enabled & Depth Texture Mode is set to \'After Transparents\" on the default renderer\n\nWater can not render properly with this combination\n", MessageType.Error);
+            UI.DrawNotification(depthAfterTransparents && _ZWrite.floatValue > 0, "\nZWrite option (Rendering tab) is enabled & Depth Texture Mode is set to \'After Transparents\" on the default renderer\n\nWater can not render properly with this combination\n", MessageType.Error);
+            
+            #if !UNITY_2023_1_OR_NEWER //OpenGLES 2.0 no longer supported at all
+            if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android || EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS)
+            {
+                if (PlayerSettings.GetUseDefaultGraphicsAPIs(EditorUserBuildSettings.activeBuildTarget) == false &&
+                    PlayerSettings.GetGraphicsAPIs(EditorUserBuildSettings.activeBuildTarget)[0] == GraphicsDeviceType.OpenGLES2)
+                {
+                    UI.DrawNotification("You are targeting the OpenGLES 2.0 graphics API, which is not supported. Shader will not compile on the device", MessageType.Error);
+                }
+            }
+            #endif
         }
 
         private void MaterialChanged(Material material)
@@ -459,19 +481,10 @@ namespace StylizedWater2
         
         private void DrawHeader()
         {
-            if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android || EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS)
-            {
-                if (PlayerSettings.GetUseDefaultGraphicsAPIs(EditorUserBuildSettings.activeBuildTarget) == false &&
-                    PlayerSettings.GetGraphicsAPIs(EditorUserBuildSettings.activeBuildTarget)[0] == GraphicsDeviceType.OpenGLES2)
-                {
-                    UI.DrawNotification("You are targeting the OpenGLES 2.0 graphics API, which is not supported. Shader will not compile on the device", MessageType.Error);
-                }
-            }
-            
-            Rect rect = EditorGUILayout.GetControlRect();
+            Rect rect = EditorGUILayout.BeginHorizontal();
             
             GUIContent c = new GUIContent("Version " + AssetInfo.INSTALLED_VERSION);
-            rect.width = EditorStyles.miniLabel.CalcSize(c).x + 8f;
+            rect.width = EditorStyles.label.CalcSize(c).x;
             //rect.x += (rect.width * 2f);
             rect.y -= 3f;
             GUI.Label(rect, c, EditorStyles.label);
@@ -498,18 +511,31 @@ namespace StylizedWater2
                 tooltipRect.width = 120f;
                 GUI.Label(tooltipRect, "Check for update", GUI.skin.button);
             }
+            
+            c = new GUIContent(" Open asset window", EditorGUIUtility.IconContent("_Help").image, "Show help and third-party integrations");
+            
+            Rect assetWindowBtnRtc = EditorGUILayout.GetControlRect();
+            assetWindowBtnRtc.width = (EditorStyles.miniLabel.CalcSize(c).x + 32f);
+            assetWindowBtnRtc.x = EditorGUIUtility.currentViewWidth - assetWindowBtnRtc.width - 17f;
+            assetWindowBtnRtc.height = 20f;
 
-            c = new GUIContent("Open asset window", EditorGUIUtility.IconContent("_Help").image, "Show help and third-party integrations");
-            rect.width = (EditorStyles.miniLabel.CalcSize(c).x + 32f);
-            rect.x = EditorGUIUtility.currentViewWidth - rect.width - 17f;
-            rect.height = 17f;
-
-            if (GUI.Button(rect, c))
+            if (GUI.Button(assetWindowBtnRtc, c))
             {
                 HelpWindow.ShowWindow();
             }
-
+            
+            Rect tooltipBtnRtc = EditorGUILayout.GetControlRect();
+            tooltipBtnRtc.width = 130f;
+            tooltipBtnRtc.height = assetWindowBtnRtc.height;
+            tooltipBtnRtc.x = assetWindowBtnRtc.x - assetWindowBtnRtc.width + 15f;
+            
+            UI.ExpandTooltips = GUI.Toggle(tooltipBtnRtc, UI.ExpandTooltips, new GUIContent(" Toggle tooltips", EditorGUIUtility.IconContent(UI.ExpandTooltips ? "d_animationvisibilitytoggleon" : "d_animationvisibilitytoggleoff").image), "Button");
+            
+            EditorGUILayout.EndHorizontal();
+            
             GUILayout.Space(3f);
+            
+            DrawNotifications();
         }
         
         #region Sections
@@ -521,13 +547,11 @@ namespace StylizedWater2
             {
                 EditorGUILayout.Space();
                 
-                materialEditor.ShaderProperty(_Cull, new GUIContent(_Cull.displayName, "Controls which sides of the water mesh surface is visible"));
-
                 using (new EditorGUI.DisabledGroupScope(_RiverModeOn.floatValue > 0))
                 {
-                    materialEditor.ShaderProperty(_WorldSpaceUV, new GUIContent(_WorldSpaceUV.displayName, "Use either the mesh's UV or world-space units as a base for texture tiling"));
+                    DrawShaderProperty(_WorldSpaceUV, new GUIContent(_WorldSpaceUV.displayName, "Use either the mesh's UV or world-space position coordinates as a base for texture tiling"));
                 }
-                if(_RiverModeOn.floatValue > 0) EditorGUILayout.HelpBox("Shader will use always Mesh UV coordinates when River Mode is enabled.", MessageType.None);
+                if(_RiverModeOn.floatValue > 0) EditorGUILayout.HelpBox("Shader will use always the mesh's UV coordinates when River Mode is enabled.", MessageType.None);
 
                 EditorGUILayout.Space();
 
@@ -536,19 +560,166 @@ namespace StylizedWater2
                 UI.Material.DrawVector2(_Direction, "Direction");
                 UI.Material.DrawFloatField(_Speed, label:"Speed");
                 
+                #if UNITY_2020_2_OR_NEWER
+                if (EditorWindow.focusedWindow && EditorWindow.focusedWindow.GetType() == typeof(SceneView))
+                {
+                    if (SceneView.lastActiveSceneView.sceneViewState.alwaysRefreshEnabled == false)
+                    {
+                        UI.DrawNotification("The \"Always Refresh\" option is disabled in the scene view. Water surface animations will appear to be jumpy", messageType:MessageType.None);
+                    }
+                }
+                #endif
+                
                 EditorGUILayout.Space();
 
-                materialEditor.ShaderProperty(_RiverModeOn, new GUIContent("River Mode",
+                DrawShaderProperty(_RiverModeOn, new GUIContent("River Mode",
                         "When enabled, all animations flow in the vertical UV direction and stretch on slopes, creating faster flowing water." +
-                        " \n\nSurface foam also draws on slopes"));
+                        " \n\nSurface Foam also draws on slopes + A separate normal map can be used for slopes"));
 
                 if (_RiverModeOn.floatValue > 0 || _RiverModeOn.hasMixedValue)
                 {
-                    materialEditor.ShaderProperty(_SlopeStretching, new GUIContent("Slope stretching", null, "On slopes, stretches the UV's by this much. Creates the illusion of faster flowing water"), 1);
-                    materialEditor.ShaderProperty(_SlopeSpeed, new GUIContent("Slope speed", null, "On slopes, animation speed is multiplied by this value"), 1);
-                    materialEditor.ShaderProperty(_SlopeThreshold, new GUIContent(_SlopeThreshold.displayName, "A higher value results in foam also drawing on surfaces that are relatively flat"), 1);
+                    DrawShaderProperty(_SlopeStretching, new GUIContent("Slope stretching", null, "On slopes, stretches textures by this much. Creates the illusion of faster flowing water"), 1);
+                    DrawShaderProperty(_SlopeSpeed, new GUIContent("Slope speed", null, "On slopes, animation speed is multiplied by this value"), 1);
+                    DrawShaderProperty(_SlopeThreshold, new GUIContent(_SlopeThreshold.displayName, "A value higher starts to consider flat surfaces as a slope as well."), 1);
                 }
 
+                EditorGUILayout.Space();
+            }
+            EditorGUILayout.EndFadeGroup();
+        }
+
+        private void DrawRendering(Material material)
+        {
+            renderingSection.DrawHeader(() => SwitchSection(renderingSection));
+
+            if (EditorGUILayout.BeginFadeGroup(renderingSection.anim.faded))
+            {
+                EditorGUILayout.Space();
+                
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    #if UNITY_2022_1_OR_NEWER
+                    MaterialEditor.BeginProperty(_ShadingMode);
+                    #endif
+      
+                    if (_ShadingMode.hasMixedValue)
+                    {
+                        DrawShaderProperty(_ShadingMode, advancedShadingContent);
+                    }
+                    else
+                    {
+                        EditorGUI.BeginChangeCheck();
+                        EditorGUI.showMixedValue = _ShadingMode.hasMixedValue;
+                        EditorGUILayout.LabelField(_ShadingMode.displayName, GUILayout.Width(EditorGUIUtility.labelWidth));
+
+                        float shadingMode = GUILayout.Toolbar((int)_ShadingMode.floatValue, new GUIContent[] { simpleShadingContent, advancedShadingContent, }, GUILayout.MaxWidth((250f)));
+
+                        if (EditorGUI.EndChangeCheck())
+                        {
+                            _ShadingMode.floatValue = shadingMode;
+                        }
+                        EditorGUI.showMixedValue = false;
+                    }
+                    
+                    #if UNITY_2022_1_OR_NEWER
+                    MaterialEditor.EndProperty();
+                    #endif
+                }
+
+                if ((EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android ||
+                     EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS ||EditorUserBuildSettings.activeBuildTarget == BuildTarget.Switch) && _ShadingMode.floatValue == 1f)
+                {
+                    EditorGUILayout.Space();
+                    
+                    UI.DrawNotification("The current shading mode is not intended to be used on mobile hardware", MessageType.Warning);
+                }
+                
+                EditorGUILayout.Space();
+
+                materialEditor.EnableInstancingField();
+                materialEditor.RenderQueueField();
+
+                if (material.renderQueue <= 2450 || material.renderQueue >= 3500)
+                {
+                    UI.DrawNotification("Material must be on the Transparent render queue (2450-3500). Otherwise incurs rendering artefacts", MessageType.Error);
+                }
+                //materialEditor.DoubleSidedGIField();
+                
+                EditorGUILayout.Space();
+
+                DrawShaderProperty(_Cull, new GUIContent(_Cull.displayName, "Controls which sides of the water mesh surface are rendered invisible (culled)"));
+                DrawShaderProperty(_ZWrite, new GUIContent("Depth writing (ZWrite)", "Enable to have the water perform depth-based sorting on itself. Allows for intersecting transparent geometry. Advisable with high waves." +
+                                                                                                "\n\nIf this is disabled, other transparent materials will either render behind or in front of the water, depending on their render queue/priority set in their materials"));
+                DrawShaderProperty(_ZClip, new GUIContent("Frustum clipping (ZClip)", "Enable to clip the surface when it extends beyond the camera's far clipping plane. This is default for all shaders." +
+                                                                                                 "\n\nDisable to aid in creating water that expands towards the horizon." +
+                                                                                                 "\n\nNote: Effects such as edge fading and intersection foam still consider the camera's far clipping plane, this is normal."));
+                
+                EditorGUILayout.Space();
+
+                DrawShaderProperty(_DisableDepthTexture, new GUIContent("Disable depth texture", "Depth texture is made available by the render pipeline and is used to measure the distance between the water surface and opaque geometry behind/in front of it, as well as their position.\n\n" +
+                                                                                                            "This is used for a variety of effects, such as the color gradient, intersection effects, caustics and refraction." +
+                                                                                                            "\n\nDisable if targeting a bare bones rendering set up without a depth pre-pass present."));
+
+                EditorGUILayout.Space();
+                
+                EditorGUI.BeginChangeCheck();
+                var tessellationTooltip = "Dynamically subdivides the mesh's triangles to create denser topology near the camera." +
+                                          "\n\nThis allows for more detailed wave animations." +
+                                          "\n\nOnly supported on GPUs with Shader Model 4.6+ and the Metal graphics API on Mac/iOS. Should it fail, it will fall back to the non-tessellated shader automatically";
+                tesselationEnabled = EditorGUILayout.Toggle(new GUIContent("Tessellation", tessellationTooltip), tesselationEnabled);
+                if(UI.ExpandTooltips) EditorGUILayout.HelpBox(tessellationTooltip, MessageType.None);
+                
+                if (EditorGUI.EndChangeCheck())
+                {
+                    foreach (UnityEngine.Object target in materialEditor.targets)
+                    {
+                        Material mat = (Material)target;
+                        bool usingTessellation = mat.shader.name.Contains(ShaderConfigurator.TemplateParser.TESSELLATION_NAME_SUFFIX);
+
+                        string newShaderName = mat.shader.name;
+
+                        if (usingTessellation)
+                        {
+                            newShaderName = mat.shader.name.Replace(ShaderConfigurator.TemplateParser.TESSELLATION_NAME_SUFFIX, string.Empty);
+                        }
+                        else
+                        {
+                            newShaderName += ShaderConfigurator.TemplateParser.TESSELLATION_NAME_SUFFIX;
+                        }
+                        
+                        #if SWS_DEV
+                        Debug.Log("Switching to shader: " + newShaderName);
+                        #endif
+                        
+                        Shader newShader = Shader.Find(newShaderName);
+                        if(newShader) AssignNewShaderToMaterial(material, material.shader, newShader);
+                        #if SWS_DEV
+                        else
+                        {
+                             Debug.Log("Failed to find tessellation shader with name: " + newShaderName);
+                        }
+                        #endif
+                    }
+                }
+                
+                if (tesselationEnabled && _TessValue != null)
+                {
+                    UI.DrawNotification(_FlatShadingOn.floatValue > 0 || _FlatShadingOn.hasMixedValue, "Flat shading is enabled, tessellation should not be used to achieve the desired effect", MessageType.Warning);
+                    
+                    EditorGUI.indentLevel++;
+
+                    DrawShaderProperty(_TessValue, _TessValue.displayName);
+                    #if UNITY_PS4 || UNITY_XBOXONE || UNITY_GAMECORE
+                    //AMD recommended performance optimization
+                    EditorGUILayout.HelpBox("Value is internally limited to 15 for the current target platform (AMD-specific optimization)", MessageType.None);
+                    #endif
+                    UI.Material.DrawFloatField(_TessMin);
+                    _TessMin.floatValue = Mathf.Clamp(_TessMin.floatValue, 0f, _TessMax.floatValue - 0.01f);
+                    UI.Material.DrawFloatField(_TessMax);
+                    EditorGUI.indentLevel--;
+                    
+                    UI.DrawNotification(material.enableInstancing, "Tessellation does not work correctly when GPU instancing is enabled", MessageType.Warning);
+                }
 
                 EditorGUILayout.Space();
             }
@@ -562,53 +733,15 @@ namespace StylizedWater2
             if (EditorGUILayout.BeginFadeGroup(lightingSection.anim.faded))
             {
                 EditorGUILayout.Space();
-
-                using (new EditorGUILayout.HorizontalScope())
-                {
-                    #if UNITY_2022_1_OR_NEWER
-                    MaterialEditor.BeginProperty(_ShadingMode);
-                    #endif
-                    
-                    EditorGUI.BeginChangeCheck();
-                    EditorGUI.showMixedValue = _ShadingMode.hasMixedValue;
-
-                    if (_ShadingMode.hasMixedValue)
-                    {
-                        materialEditor.ShaderProperty(_ShadingMode, advancedShadingContent);
-                    }
-                    else
-                    {
-                        EditorGUILayout.LabelField(_ShadingMode.displayName, GUILayout.Width(EditorGUIUtility.labelWidth));
-
-                        float shadingMode = GUILayout.Toolbar((int)_ShadingMode.floatValue, new GUIContent[] { simpleShadingContent, advancedShadingContent, }, GUILayout.MaxWidth((250f)));
-                        
-                        if (EditorGUI.EndChangeCheck())
-                            _ShadingMode.floatValue = shadingMode;
-                    }
-
-                    EditorGUI.showMixedValue = false;
-                    
-                    #if UNITY_2022_1_OR_NEWER
-                    MaterialEditor.EndProperty();
-                    #endif
-                }
                 
-                EditorGUILayout.Space();
+                DrawShaderProperty(_LightingOn, new GUIContent("Enable lighting", "Color from lights and ambient light (Flat/Gradient/Skybox) will affect the material. If using overall Unlit shaders in the scene, or fixed lighting, disable to skip lighting calculations."));
 
-                if ((EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android ||
-                     EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS) && _ShadingMode.floatValue == 1f)
-                {
-                    UI.DrawNotification("The current shading mode is not intended to be used on mobile hardware", MessageType.Warning);
-                }
-
-                materialEditor.ShaderProperty(_LightingOn, new GUIContent("Enable lighting", "Color from lights and Ambient light will affect the material. Can be disabled if using Unlit shaders, or fixed lighting"));
-
-                materialEditor.ShaderProperty(_FlatShadingOn, new GUIContent("Flat/low-poly shading", "When enabled, normals are calculated per mesh face, resulting in a faceted appearance (low poly look)"));
+                DrawShaderProperty(_FlatShadingOn, new GUIContent("Flat/low-poly shading", "When enabled, normals are calculated per mesh face, resulting in a faceted appearance (low poly look). The mesh needs sufficient vertices to really sell the effect (eg. a quad mesh won't do)"));
                 UI.DrawNotification(_FlatShadingOn.floatValue > 0 && tesselationEnabled, "Tessellation is enabled, it should not be used to achieve the desired effect", MessageType.Warning);
 
                 UI.DrawNotification(_FlatShadingOn.floatValue > 0f && _WavesOn.floatValue == 0f, "Flat shading has little effect if waves are disabled", MessageType.Warning);
 
-                materialEditor.ShaderProperty(_ReceiveShadows, new GUIContent("Receive shadows"));
+                DrawShaderProperty(_ReceiveShadows, new GUIContent("Receive shadows", "Allows the material to receive shadows.\n\nAlso enables light-based effects such as reflections and caustics to hide themselves in shadows."));
                 if ((_ReceiveShadows.floatValue > 0 || _ReceiveShadows.hasMixedValue) && !transparentShadowsEnabled && _ShadingMode.floatValue != 0)
                 {
                     #if URP
@@ -623,8 +756,14 @@ namespace StylizedWater2
                 {
                     if ((_ReceiveShadows.floatValue > 0 || _ReceiveShadows.hasMixedValue))
                     {
-                        materialEditor.ShaderProperty(_ShadowStrength, "Strength", 1);
+                        DrawShaderProperty(_ShadowStrength, "Strength", 1);
                     }
+                }
+                
+                DrawShaderProperty(_NormalStrength, new GUIContent("Diffuse lighting", "Controls how much the curvature of the normal map affects directional lighting"));
+                if (_LightingOn.floatValue < 1f || _LightingOn.hasMixedValue)
+                {
+                    UI.DrawNotification("Lighting is disabled, normal strength has no effect", MessageType.Info);
                 }
 
                 EditorGUILayout.Space();
@@ -632,21 +771,21 @@ namespace StylizedWater2
                 using (new EditorGUI.DisabledScope(_NormalMapOn.floatValue == 0f))
                 {
                     EditorGUILayout.LabelField("Sparkles", EditorStyles.boldLabel);
-                    materialEditor.ShaderProperty(_SparkleIntensity, "Intensity");
-                    materialEditor.ShaderProperty(_SparkleSize, "Size");
+                    DrawShaderProperty(_SparkleIntensity, new GUIContent("Intensity", "The color/intensity of the main directional light is multiplied on top of this."));
+                    DrawShaderProperty(_SparkleSize, "Size");
                 }
                 UI.DrawNotification(_NormalMapOn.floatValue == 0f, "Sparkles require the normal map feature to be enabled", MessageType.None);
                 
                 EditorGUILayout.Space();
 
-                materialEditor.ShaderProperty(_TranslucencyOn, new GUIContent("Translucency", "Creates the appearance of sun light shining through the waves.\n\nNote that is only visible at grazing light angle"));
+                DrawShaderProperty(_TranslucencyOn, new GUIContent("Translucency", "Creates the appearance of sun light passing through the water and scattering.\n\nNote that this mostly visible at grazing light angle"));
 
                 if (_TranslucencyOn.floatValue > 0 || _TranslucencyOn.hasMixedValue)
                 {
-                    materialEditor.ShaderProperty(_TranslucencyStrength, new GUIContent("Strength"), 1);
-                    materialEditor.ShaderProperty(_TranslucencyExp, new GUIContent("Exponent", "Essentially controls the width/scale of the effect"), 1);
-                    materialEditor.ShaderProperty(_TranslucencyCurvatureMask, new GUIContent("Curvature mask", "Masks the effect by the orientation of the surface. Surfaces facing away from the sun will receive less of an effect"), 1);
-                    materialEditor.ShaderProperty(_TranslucencyReflectionMask, new GUIContent("Reflection Mask", "Controls how strongly reflections are laid over the effect. A value of 1 is physically accurate"), 1);
+                    DrawShaderProperty(_TranslucencyStrength, new GUIContent("Strength", "Acts as a multiplier for the light's intensity"), 1);
+                    DrawShaderProperty(_TranslucencyExp, new GUIContent("Exponent", "Essentially controls the width/scale of the effect"), 1);
+                    DrawShaderProperty(_TranslucencyCurvatureMask, new GUIContent("Curvature mask", "Masks the effect by the orientation of the surface. Surfaces facing away from the sun will receive less of an effect. On sphere mesh, this would push the effect towards the edges/silhouette."), 1);
+                    DrawShaderProperty(_TranslucencyReflectionMask, new GUIContent("Reflection Mask", "Controls how strongly reflections are laid over the effect. A value of 1 is physically accurate"), 1);
                 }
                 
                 EditorGUILayout.Space();
@@ -665,34 +804,34 @@ namespace StylizedWater2
                 UI.Material.DrawColorField(_BaseColor, true, _BaseColor.displayName, "Base water color, alpha channel controls transparency");
                 UI.Material.DrawColorField(_ShallowColor, true, _ShallowColor.displayName, "Water color in shallow areas, alpha channel controls transparency. Note that the caustics effect is visible here, setting the alpha to 100% hides caustics");
                 
-                //materialEditor.ShaderProperty(_Smoothness);
-                //materialEditor.ShaderProperty(_Metallic);
+                //DrawShaderProperty(_Smoothness);
+                //DrawShaderProperty(_Metallic);
 
                 using (new EditorGUI.DisabledGroupScope(_DisableDepthTexture.floatValue == 1f && !_DisableDepthTexture.hasMixedValue))
                 {
                     EditorGUILayout.Space();
 
                     EditorGUILayout.LabelField("Fog/Density", EditorStyles.boldLabel);
-                    materialEditor.ShaderProperty(_DepthVertical, new GUIContent("Distance Depth", "Distance measured from the camera to the surface behind the water. Water turns denser the more the camera looks along it"));
-                    materialEditor.ShaderProperty(_DepthHorizontal, label:"Vertical Depth");
+                    DrawShaderProperty(_DepthVertical, new GUIContent("Distance Depth", "Distance measured from the camera to the surface behind the water. Water turns denser the more the camera looks along it"));
+                    DrawShaderProperty(_DepthHorizontal, new GUIContent("Vertical Depth", "Density as measured from the water surface, straight down"));
                     
-                    materialEditor.ShaderProperty(_DepthExp, new GUIContent("Exponential", tooltip:"Exponential depth works best for shallow water and relatively flat shores"), 1);
+                    DrawShaderProperty(_DepthExp, new GUIContent("Exponential", tooltip:"Exponential depth works best for shallow water and relatively flat shores"), 1);
                 }
                 
                 EditorGUILayout.Space();
 
-                materialEditor.ShaderProperty(_VertexColorDepth, new GUIContent("Vertex color depth (G)", "The Green vertex color channel also adds opacity"));
+                DrawShaderProperty(_VertexColorDepth, new GUIContent("Vertex color depth (G)", "The Green vertex color channel subtracts (visual) depth from the water, making it appear shallow. When River Mode is enabled, this controls the complete opacity of the material instead"));
                 using (new EditorGUI.DisabledGroupScope(_DisableDepthTexture.floatValue == 1f && !_DisableDepthTexture.hasMixedValue))
                 {
-                    UI.Material.DrawFloatField(_EdgeFade, "Edge fading", "Fades out the water where it intersects with opaque objects.\n\nRequires the depth texture option to be enabled");
+                    UI.Material.DrawFloatField(_EdgeFade, "Edge fading", "Fades out the water where it intersects with opaque geometry.\n\nRequires the depth texture option to be enabled");
                     _EdgeFade.floatValue = Mathf.Max(0f, _EdgeFade.floatValue);
                 }
                 EditorGUILayout.Space();
 
                 UI.Material.DrawColorField(_HorizonColor, true, _HorizonColor.displayName, "Color as perceived on the horizon, where looking across the water");
-                materialEditor.ShaderProperty(_HorizonDistance, _HorizonDistance.displayName);
+                DrawShaderProperty(_HorizonDistance, _HorizonDistance.displayName);
 
-                materialEditor.ShaderProperty(_WaveTint, new GUIContent(_WaveTint.displayName, "Adds a bright/dark tint based on wave height\n\nWaves feature must be enabled"));
+                DrawShaderProperty(_WaveTint, new GUIContent(_WaveTint.displayName, "Adds a bright/dark tint based on wave height\n\nWaves feature must be enabled"));
 
                 EditorGUILayout.Space();
             }
@@ -707,7 +846,7 @@ namespace StylizedWater2
             {
                 EditorGUILayout.Space();
 
-                materialEditor.ShaderProperty(_NormalMapOn,  new GUIContent("Enable", "Normals add small-scale detail to the water surface, which in turn is used in various lighting techniques"));
+                DrawShaderProperty(_NormalMapOn,  new GUIContent("Enable", "Normals add small-scale detail curvature to the water surface, which in turn is used in various lighting techniques"));
                 
                 EditorGUILayout.Space();
 
@@ -721,15 +860,10 @@ namespace StylizedWater2
                     }
                     UI.Material.DrawFloatTicker(_NormalTiling, "Tiling");
                     UI.Material.DrawFloatTicker(_NormalSpeed, "Speed multiplier");
-                    materialEditor.ShaderProperty(_NormalStrength, "Strength (lighting)");
-                    if (_LightingOn.floatValue < 1f || _LightingOn.hasMixedValue)
-                    {
-                        UI.DrawNotification("Lighting is disabled, normal strength has no effect", MessageType.Info);
-                    }
-                    
+
                     EditorGUILayout.Space();
 
-                    materialEditor.ShaderProperty(_DistanceNormalsOn, new GUIContent("Distance normals", "Resamples normals in the distance, at a larger scale. At the cost of additional processing, tiling artifacts can be greatly reduced"));
+                    DrawShaderProperty(_DistanceNormalsOn, new GUIContent("Distance normals", "Resamples normals in the distance, at a larger scale. At the cost some additional shading calculations, tiling artifacts can be greatly reduced"));
 
                     if (_DistanceNormalsOn.floatValue > 0 || _DistanceNormalsOn.hasMixedValue)
                     {
@@ -753,13 +887,17 @@ namespace StylizedWater2
             {
                 EditorGUILayout.Space();
 
-                materialEditor.ShaderProperty(_CausticsOn, "Caustics");
+                DrawShaderProperty(_CausticsOn, new GUIContent("Caustics", "Caustics are normally a complex optical effect, created by light passing through a surface and refracting." +
+                                                                           "\n\nA static caustics texture can be used to approximate this effect by projecting it onto the opaque geometry behind the water surface." +
+                                                                           "\n\nIf Advanced shading is enabled, point- and spot lights also create this effect."));
                 
                 if (_CausticsOn.floatValue == 1 || _CausticsOn.hasMixedValue)
                 {
                     materialEditor.TextureProperty(_CausticsTex, "Texture (Additively blended)");
-                    UI.Material.DrawFloatField(_CausticsBrightness);
-                    materialEditor.ShaderProperty(_CausticsDistortion, new GUIContent(_CausticsDistortion.displayName, "Distorted the caustics based on the normal map"));
+                    UI.Material.DrawFloatField(_CausticsBrightness, "Brightness", "The intensity of the incoming light controls how strongly the effect is visible. This parameter acts as a multiplier.");
+                    if(!_CausticsBrightness.hasMixedValue) _CausticsBrightness.floatValue = Mathf.Max(0, _CausticsBrightness.floatValue);
+
+                    DrawShaderProperty(_CausticsDistortion, new GUIContent(_CausticsDistortion.displayName, "Distorted the caustics based on the normal map"));
                     
                     EditorGUILayout.Space();
 
@@ -768,12 +906,14 @@ namespace StylizedWater2
                 }
                 if (_DisableDepthTexture.floatValue == 1f && _CausticsOn.floatValue == 1f)
                 {
-                    UI.DrawNotification("Caustics are disabled because the \"Disable depth texture\" option is", MessageType.Error);
+                    UI.DrawNotification("Caustics project on the water surface itself, because the \"Disable depth texture\" option is enabled.", MessageType.None);
+                    
+                    UI.DrawNotification(_VertexColorDepth.floatValue == 0 && !_VertexColorDepth.hasMixedValue, "\nDepth texture is disabled, so water has no means of creating shallow water. Caustics will not seem visible.\n\nEnable the use of vertex color opacity to manually paint shallow water.\n", "Enable", () => _VertexColorDepth.floatValue = 1);
                 }
 
                 EditorGUILayout.Space();
 
-                materialEditor.ShaderProperty(_RefractionOn, "Refraction");
+                DrawShaderProperty(_RefractionOn, new GUIContent("Refraction", "Simulates how the surface behind the water appears distorted, because the light passes through the water curvy surface"));
 
                 if (_RefractionOn.floatValue == 1f || _RefractionOn.hasMixedValue)
                 {
@@ -782,7 +922,7 @@ namespace StylizedWater2
                         UI.DrawNotification("Refraction will have no effect if normals and waves are disabled", MessageType.Warning);
                     }
                     
-                    materialEditor.ShaderProperty(_RefractionStrength, new GUIContent("Strength", "Note: Distortion strength is influenced by the strength of the normal map texture"), 1);
+                    DrawShaderProperty(_RefractionStrength, new GUIContent("Strength", "Note: Distortion strength is influenced by the strength of the normal map texture"), 1);
                 }
                 else
                 {
@@ -797,8 +937,8 @@ namespace StylizedWater2
                     EditorGUILayout.Space();
 
                     EditorGUILayout.LabelField("Underwater Surface Rendering", EditorStyles.boldLabel);
-                    materialEditor.ShaderProperty(_UnderwaterSurfaceSmoothness, new GUIContent("Surface Smoothness", "Controls how distorted everything above the water appears from below"));
-                    materialEditor.ShaderProperty(_UnderwaterRefractionOffset, new GUIContent("Refraction offset", "Creates a wide \"circle\" of visible air above the camera. Pushes it further away from the camera"));
+                    DrawShaderProperty(_UnderwaterSurfaceSmoothness, new GUIContent("Surface Smoothness", "Controls how distorted everything above the water appears from below"));
+                    DrawShaderProperty(_UnderwaterRefractionOffset, new GUIContent("Refraction offset", "Creates a wide \"circle\" of visible air above the camera. Pushes it further away from the camera"));
                 }
 
                 EditorGUILayout.Space();
@@ -814,21 +954,28 @@ namespace StylizedWater2
             {
                 EditorGUILayout.Space();
                 
-                materialEditor.ShaderProperty(_FoamOn, "Enable");
+                DrawShaderProperty(_FoamOn, new GUIContent("Enable", "Draws an cross-animated foam texture on the water surface"));
                 if (_FoamOn.floatValue > 0 || _FoamOn.hasMixedValue)
                 {
                     materialEditor.TextureProperty(_FoamTex, "Texture (R=Mask)");
                     UI.Material.DrawColorField(_FoamColor, true, "Color", "Color of the foam, the alpha channel controls opacity");
-                    materialEditor.ShaderProperty(_VertexColorFoam, new GUIContent("Vertex color painting (A)",
+                    DrawShaderProperty(_VertexColorFoam, new GUIContent("Vertex color painting (A)",
                         "Enable the usage of the vertex color Alpha channel to add foam"));
 
-                    materialEditor.ShaderProperty(_FoamSize, new GUIContent(_FoamSize.displayName, "Clips the texture based on its grayscale values. This means if the foam texture is a hard black/white texture, it has no effect"));
-                    using (new EditorGUI.DisabledGroupScope(_RiverModeOn.floatValue > 0 && !_RiverModeOn.hasMixedValue))
+                    DrawShaderProperty(_FoamSize, new GUIContent(_FoamSize.displayName, "Clips the texture based on its grayscale values. This means if the foam texture is a hard black/white texture, it has no effect"));
+
+                    if (_RiverModeOn.floatValue > 0 || _RiverModeOn.hasMixedValue)
                     {
-                        materialEditor.ShaderProperty(_FoamWaveMask, new GUIContent(_FoamWaveMask.displayName, "Opt to only show the foam on the highest points of waves"));
-                        materialEditor.ShaderProperty(_FoamWaveMaskExp, new GUIContent("Exponent", "Pushes the mask more towards the top of the waves"), 1);
+                        DrawShaderProperty(_SlopeFoam, new GUIContent(_SlopeFoam.displayName, "Control the amount of Surface Foam that draws on slopes"));
+                    }
+                    else
+                    {
+                        DrawShaderProperty(_FoamWaveMask, new GUIContent(_FoamWaveMask.displayName, "Opt to only show the foam on the highest points of waves"));
+                        DrawShaderProperty(_FoamWaveMaskExp, new GUIContent("Exponent", "Pushes the mask more towards the top of the waves"), 1);
                     }
                     
+                    EditorGUILayout.Space();
+
                     UI.Material.DrawFloatTicker(_FoamTiling);
                     UI.Material.DrawFloatTicker(_FoamSpeed);
                 }
@@ -857,7 +1004,7 @@ namespace StylizedWater2
 
                     if (_IntersectionStyle.hasMixedValue)
                     {
-                        materialEditor.ShaderProperty(_IntersectionStyle, "Style");
+                        DrawShaderProperty(_IntersectionStyle, "Style");
                     }
                     else
                     {
@@ -879,30 +1026,33 @@ namespace StylizedWater2
                     #if UNITY_2022_1_OR_NEWER
                     MaterialEditor.EndProperty();
                     #endif
+                    
                 }
+                if (UI.ExpandTooltips) EditorGUILayout.HelpBox("Draws an animated foam effect where the water intersects with opaque geometry", MessageType.None);
 
                 if (_IntersectionStyle.floatValue > 0 || _IntersectionStyle.hasMixedValue)
                 {
-                    materialEditor.ShaderProperty(_IntersectionSource, new GUIContent("Gradient source", null, "The effect requires a grayscale gradient to work with, this sets what information should be used for this"));
+                    DrawShaderProperty(_IntersectionSource, new GUIContent("Gradient source", null, "The effect requires a linear gradient to work with, something that represents the distance from the intersection point out towards the water." +
+                                                                                                    "\n\nThis parameter control what's being used as the source to approximate this information."));
                     if (_IntersectionSource.floatValue == 0 && _DisableDepthTexture.floatValue == 1f)
                     {
-                        UI.DrawNotification("The depth texture option is disabled in the Advanced tab",
+                        UI.DrawNotification("The depth texture option is disabled in the Rendering tab",
                             MessageType.Error);
                     }
 
                     materialEditor.TextureProperty(_IntersectionNoise, "Texture (R=Mask)");
-                    UI.Material.DrawColorField(_IntersectionColor, true);
+                    UI.Material.DrawColorField(_IntersectionColor, true, "Color", "Alpha channel controls the opacity");
                     
-                    materialEditor.ShaderProperty(_IntersectionLength, new GUIContent(_IntersectionLength.displayName, "Distance from objects/shore"));
-                    materialEditor.ShaderProperty(_IntersectionFalloff, new GUIContent(_IntersectionFalloff.displayName, "The falloff represents a gradient"));
+                    DrawShaderProperty(_IntersectionLength, new GUIContent(_IntersectionLength.displayName, "Distance from objects/shore"));
+                    DrawShaderProperty(_IntersectionFalloff, new GUIContent(_IntersectionFalloff.displayName, "The falloff represents a gradient"));
                     UI.Material.DrawFloatTicker(_IntersectionTiling);
                     UI.Material.DrawFloatTicker(_IntersectionSpeed, tooltip:"This value is multiplied by the Animation Speed value in the General tab");
 
                     if (_IntersectionStyle.floatValue == 1f || _IntersectionStyle.hasMixedValue)
                     {
-                        materialEditor.ShaderProperty(_IntersectionClipping, new GUIContent(_IntersectionClipping.displayName, "Clips the effect based on its underlying grayscale values."));
+                        DrawShaderProperty(_IntersectionClipping, new GUIContent(_IntersectionClipping.displayName, "Clips the effect based on the texture's gradient."));
                         UI.Material.DrawFloatTicker(_IntersectionRippleDist, _IntersectionRippleDist.displayName, "Distance between each ripples over the total intersection length");
-                        materialEditor.ShaderProperty(_IntersectionRippleStrength, new GUIContent(_IntersectionRippleStrength.displayName, "Sets how much the ripples should be blended in with the effect"));
+                        DrawShaderProperty(_IntersectionRippleStrength, new GUIContent(_IntersectionRippleStrength.displayName, "Sets how much the ripples should be blended in with the effect"));
                     }
                 }
 
@@ -920,72 +1070,105 @@ namespace StylizedWater2
                 EditorGUILayout.Space();
 
                 EditorGUILayout.LabelField("Light reflections", EditorStyles.boldLabel);
-                materialEditor.ShaderProperty(_SpecularReflectionsOn, "Enable");
+                DrawShaderProperty(_SpecularReflectionsOn, new GUIContent("Enable", 
+                    "Creates a specular reflection based on the relationship between the light-, camera and water surface angle." +
+                    "\n\nA combination between the Size and Distortion parameter can achieve different visual styles"));
 
                 EditorGUI.indentLevel++;
                 if (_SpecularReflectionsOn.floatValue > 0f || _SpecularReflectionsOn.hasMixedValue)
                 {
                     EditorGUILayout.Space();
-                    
+
                     EditorGUILayout.LabelField("Directional Light", EditorStyles.boldLabel);
 
-                    materialEditor.ShaderProperty(_SunReflectionStrength, new GUIContent("Strength", "This value is multiplied over the sun light's intensity"));
-                    materialEditor.ShaderProperty(_SunReflectionSize, "Size");
-                    materialEditor.ShaderProperty(_SunReflectionDistortion, new GUIContent("Distortion", "Note: Distortion is largely influenced by the strength of the normal map texture and wave curvature"));
+                    DrawShaderProperty(_SunReflectionStrength, new GUIContent("Strength", "This value is multiplied over the sun light's intensity"));
+                    if(!_SunReflectionStrength.hasMixedValue) _SunReflectionStrength.floatValue = Mathf.Max(0, _SunReflectionStrength.floatValue);
+                    
+                    DrawShaderProperty(_SunReflectionSize, new GUIContent("Size", "Determines how wide the reflection appears"));
+                    DrawShaderProperty(_SunReflectionDistortion, new GUIContent("Distortion", "Distortion is largely influenced by the strength of the normal map texture and wave curvature"));
 
                     if (_LightingOn.floatValue > 0f || _LightingOn.hasMixedValue)
                     {
                         EditorGUILayout.Space();
-                        
+
                         EditorGUILayout.LabelField("Point/Spot lights", EditorStyles.boldLabel);
+
+                        DrawShaderProperty(_PointSpotLightReflectionStrength, new GUIContent("Strength", "This value is multiplied over the light's intensity"));
+                        if(!_PointSpotLightReflectionStrength.hasMixedValue) _PointSpotLightReflectionStrength.floatValue = Mathf.Max(0, _PointSpotLightReflectionStrength.floatValue);
                         
-                        materialEditor.ShaderProperty(_PointSpotLightReflectionStrength, new GUIContent("Strength", "This value is multiplied over the light's intensity"));
-                        materialEditor.ShaderProperty(_PointSpotLightReflectionSize, new GUIContent("Size", "Specular reflection size for point/spot lights"));
-                        materialEditor.ShaderProperty(_PointSpotLightReflectionDistortion, new GUIContent("Distortion", "Distortion is largely influenced by the strength of the normal map texture and wave curvature"));
+                        DrawShaderProperty(_PointSpotLightReflectionSize, new GUIContent("Size", "Specular reflection size for point/spot lights"));
+                        DrawShaderProperty(_PointSpotLightReflectionDistortion, new GUIContent("Distortion", "Distortion is largely influenced by the strength of the normal map texture and wave curvature"));
                     }
                 }
                 EditorGUI.indentLevel--;
 
                 EditorGUILayout.Space();
 
-                EditorGUILayout.LabelField("Skybox/Reflection probes", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField("Environment Reflections", EditorStyles.boldLabel);
 
-                materialEditor.ShaderProperty(_EnvironmentReflectionsOn, new GUIContent("Enable", "Enabled reflections from the skybox and reflection probes (Note that URP does not support probe blending yet)"));
-                #if UNITY_2022_1_OR_NEWER
+                DrawShaderProperty(_EnvironmentReflectionsOn, new GUIContent("Enable", "Enable reflections from the skybox, reflection probes and planar reflections."));
+                
+#if UNITY_2022_1_OR_NEWER
                 var customReflection = RenderSettings.customReflectionTexture;
                 #else
                 var customReflection = RenderSettings.customReflection;
                 #endif
                 if (_EnvironmentReflectionsOn.floatValue > 0 && RenderSettings.defaultReflectionMode == DefaultReflectionMode.Custom && !customReflection)
                 {
-                    UI.DrawNotification("Lighting settings: Environment reflections source is set to \"Custom\" without a cubemap assigned. No reflections will be visible", MessageType.Warning);
+                    UI.DrawNotification("Lighting settings: Environment reflections source is set to \"Custom\" without a cubemap assigned. No reflections may be visible", MessageType.Warning);
                 }
-                
+
+                if (_EnvironmentReflectionsOn.floatValue > 0 && QualitySettings.realtimeReflectionProbes == false && PlanarReflectionRenderer.Instances.Count == 0)
+                {
+                    UI.DrawNotification("Realtime reflection probes are disabled in Quality Settings", MessageType.Warning);
+                }
+
                 EditorGUILayout.Space();
 
                 if (_EnvironmentReflectionsOn.floatValue > 0 || _EnvironmentReflectionsOn.hasMixedValue)
                 {
-                    materialEditor.ShaderProperty(_ReflectionStrength, _ReflectionStrength.displayName);
+                    DrawShaderProperty(_ReflectionStrength, _ReflectionStrength.displayName);
                     if (_LightingOn.floatValue > 0f || _LightingOn.hasMixedValue)
                     {
-                        materialEditor.ShaderProperty(_ReflectionLighting, new GUIContent(_ReflectionLighting.displayName, "Technically, lighting shouldn't be applied to the reflected image. If reflections aren't updated in realtime, but lighting is, this is still beneficial.\n\nThis controls how much lighting affects the reflection"));
+                        DrawShaderProperty(_ReflectionLighting, new GUIContent(_ReflectionLighting.displayName, "Technically, lighting shouldn't be applied to the reflected image. If reflections aren't updated in realtime, but lighting is, this is still beneficial.\n\nThis controls how much lighting affects the reflection"));
                     }
-                    
+
                     #if !UNITY_2021_2_OR_NEWER
                     if (SceneView.lastActiveSceneView && SceneView.lastActiveSceneView.orthographic)
                     {
                         UI.DrawNotification("Reflection probes do not work with orthographic cameras until Unity 2021.2.0 (URP 12.0.0)", MessageType.Warning);
                     }
                     #endif
+
+                    EditorGUILayout.Space();
+
+                    DrawShaderProperty(_ReflectionFresnel, new GUIContent(_ReflectionFresnel.displayName, "Masks the reflection by the viewing angle in relationship to the surface (including wave curvature), which is more true to nature (known as fresnel)"));
+                    DrawShaderProperty(_ReflectionDistortion, new GUIContent(_ReflectionDistortion.displayName, "Distorts the reflection by the wave normals and normal map"));
+                    DrawShaderProperty(_ReflectionBlur, new GUIContent(_ReflectionBlur.displayName, "Blurs the reflection probe, this can be used for a more general reflection of colors"));
                     
                     EditorGUILayout.Space();
                     
-                    materialEditor.ShaderProperty(_ReflectionFresnel, new GUIContent(_ReflectionFresnel.displayName, "Masks the reflection by the viewing angle in relationship to the surface (including wave curvature), which is more true to nature (known as fresnel)"));
-                    materialEditor.ShaderProperty(_ReflectionDistortion, new GUIContent(_ReflectionDistortion.displayName, "Distorts the reflection by the wave normals and normal map"));
-                    materialEditor.ShaderProperty(_ReflectionBlur, new GUIContent(_ReflectionBlur.displayName, "Blurs the reflection probe, this can be used for a more general reflection of colors"));
+                    EditorGUILayout.LabelField($"Planar Reflections renderers in scene: {PlanarReflectionRenderer.Instances.Count}", EditorStyles.miniLabel);
+                    if (PlanarReflectionRenderer.Instances.Count > 0)
+                    {
+                        using (new EditorGUILayout.VerticalScope(EditorStyles.textArea))
+                        {
+                            foreach (PlanarReflectionRenderer r in PlanarReflectionRenderer.Instances)
+                            {
+                                using (new EditorGUILayout.HorizontalScope())
+                                {
+                                    EditorGUILayout.LabelField(r.name);
+                                    if (GUILayout.Button("Select"))
+                                    {
+                                        Selection.activeGameObject = r.gameObject;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    EditorGUILayout.Space();
                 }
-
-                EditorGUILayout.Space();
             }
             EditorGUILayout.EndFadeGroup();
         }
@@ -1002,17 +1185,17 @@ namespace StylizedWater2
 
                 using (new EditorGUI.DisabledGroupScope(_RiverModeOn.floatValue > 0 && !_RiverModeOn.hasMixedValue))
                 {
-                    materialEditor.ShaderProperty(_WavesOn, "Enable");
+                    DrawShaderProperty(_WavesOn, "Enable");
                     
                     EditorGUILayout.Space();
                     
                     if ((_WavesOn.floatValue == 1 || _WavesOn.hasMixedValue) && _RiverModeOn.floatValue < 1)
                     {
                         UI.Material.DrawFloatTicker(_WaveSpeed, label: "Speed multiplier");
-                        materialEditor.ShaderProperty(_VertexColorWaveFlattening, new GUIContent("Vertex color flattening (B)",
+                        DrawShaderProperty(_VertexColorWaveFlattening, new GUIContent("Vertex color flattening (B)",
                             "The Blue vertex color channel flattens waves\n\nNote: this does NOT affect buoyancy calculations!"));
                         
-                        materialEditor.ShaderProperty(_WaveHeight, new GUIContent(_WaveHeight.displayName, "Waves will always push the water up from its base height, meaning waves never have a negative height"));
+                        DrawShaderProperty(_WaveHeight, new GUIContent(_WaveHeight.displayName, "Waves will always push the water up from its base height, meaning waves never have a negative height"));
                        
                         UI.Material.DrawIntSlider(_WaveCount,
                             tooltip:
@@ -1051,9 +1234,9 @@ namespace StylizedWater2
                         MaterialEditor.EndProperty();
                         #endif
                         
-                        materialEditor.ShaderProperty(_WaveDistance, new GUIContent(_WaveDistance.displayName, "Distance between waves"));
-                        materialEditor.ShaderProperty(_WaveSteepness, new GUIContent(_WaveSteepness.displayName, "Sharpness, depending on other settings here, a too high value will causes vertices to overlap. This also creates horizontal movement"));
-                        materialEditor.ShaderProperty(_WaveNormalStr, new GUIContent(_WaveNormalStr.displayName, "Normals affect how curved the surface is perceived for direct and ambient light. Without this, the water will appear flat"));
+                        DrawShaderProperty(_WaveDistance, new GUIContent(_WaveDistance.displayName, "Distance between waves"));
+                        DrawShaderProperty(_WaveSteepness, new GUIContent(_WaveSteepness.displayName, "Sharpness, depending on other settings here, a too high value will causes vertices to overlap. This also creates horizontal movement"));
+                        DrawShaderProperty(_WaveNormalStr, new GUIContent(_WaveNormalStr.displayName, "Normals affect how curved the surface is perceived for direct and ambient light. Without this, the water will appear flat"));
                         
                         UI.Material.DrawMinMaxSlider(_WaveFadeDistance, 0f, 500f, "Fade Distance", "Fades out the waves between the start- and end distance. This can avoid tiling artifacts in the distance");
                     }
@@ -1064,93 +1247,28 @@ namespace StylizedWater2
             EditorGUILayout.EndFadeGroup();
         }
 
-        private void DrawAdvanced(Material material)
+        private void DrawShaderProperty(MaterialProperty prop, string label, int indent = 0)
         {
-            advancedSection.DrawHeader(() => SwitchSection(advancedSection));
-
-            if (EditorGUILayout.BeginFadeGroup(advancedSection.anim.faded))
-            {
-                EditorGUILayout.Space();
-
-                materialEditor.ShaderProperty(_ZWrite, new GUIContent("Depth writing (ZWrite)", "Enable to have the water perform transparency sorting on itself. Advisable with high waves.\n\nIf this is disabled, other transparent materials will either render behind or in front of the water, depending on their render queue/priority set in their materials"));
-
-                materialEditor.ShaderProperty(_DisableDepthTexture, new GUIContent("Disable depth texture", "Depth texture is used to measure the distance between the water surface and objects underneath it.\n\n" +
-                                                                                                            "This is used for the color gradient and intersection effects"));
-                EditorGUILayout.Space();
-                
-                EditorGUI.BeginChangeCheck();
-                tesselationEnabled = EditorGUILayout.Toggle(
-                    new GUIContent("Tessellation", "Dynamically subdivides the triangles to create denser topology near the camera." +
-                                                                    "\n\nThis allows for more detailed wave animations." +
-                                                                    "\n\nOnly supported on GPUs with Shader Model 4.6+. Should it fail, it will revert to the non-tessellated shader"), 
-                                                                    tesselationEnabled);
-                
-                if (EditorGUI.EndChangeCheck())
-                {
-                    if(tesselationEnabled) AssignNewShaderToMaterial(material, material.shader, Shader.Find(TESSELLATION_SHADER_NAME));
-                    else AssignNewShaderToMaterial(material, material.shader, Shader.Find(BASE_SHADER_NAME));
-                }
-                
-                if (tesselationEnabled && _TessValue != null)
-                {
-                    UI.DrawNotification(_FlatShadingOn.floatValue > 0 || _FlatShadingOn.hasMixedValue, "Flat shading is enabled, tessellation should not be used to achieve the desired effect", MessageType.Warning);
-                    
-                    EditorGUI.indentLevel++;
-
-                    materialEditor.ShaderProperty(_TessValue, _TessValue.displayName);
-                    #if UNITY_PS4 || UNITY_XBOXONE || UNITY_GAMECORE
-                    //AMD recommended performance optimization
-                    EditorGUILayout.HelpBox("Value is internally limited to 15 for the current target platform (AMD-specific optimization)", MessageType.None);
-                    #endif
-                    UI.Material.DrawFloatField(_TessMin);
-                    _TessMin.floatValue = Mathf.Clamp(_TessMin.floatValue, 0f, _TessMax.floatValue - 0.01f);
-                    UI.Material.DrawFloatField(_TessMax);
-                    EditorGUI.indentLevel--;
-                    
-                    UI.DrawNotification(material.enableInstancing, "Tessellation does not work correctly when GPU instancing is enabled", MessageType.Warning);
-                }
-
-                EditorGUILayout.Space();
-
-                materialEditor.EnableInstancingField();
-                materialEditor.RenderQueueField();
-
-                if (material.renderQueue <= 2450 || material.renderQueue >= 3500)
-                {
-                    UI.DrawNotification("Material must be on the Transparent render queue (~3000). Otherwise incurs rendering artefacts", MessageType.Error);
-                }
-                //materialEditor.DoubleSidedGIField();
-
-                EditorGUILayout.Space();
-            }
-            EditorGUILayout.EndFadeGroup();
+            DrawShaderProperty(prop, new GUIContent(label), indent);
         }
 
-        private void SwitchSection(UI.Material.Section s)
+        private void DrawShaderProperty(MaterialProperty prop, GUIContent content, int indent = 0)
         {
-            generalSection.Expanded = (s == generalSection) && !generalSection.Expanded;
-            lightingSection.Expanded = (s == lightingSection) && !lightingSection.Expanded;
-            colorSection.Expanded = (s == colorSection) && !colorSection.Expanded;
-            underwaterSection.Expanded = (s == underwaterSection) && !underwaterSection.Expanded;
-            normalsSection.Expanded = (s == normalsSection) && !normalsSection.Expanded;
-            reflectionSection.Expanded = (s == reflectionSection) && !reflectionSection.Expanded;
-            intersectionSection.Expanded = (s == intersectionSection) && !intersectionSection.Expanded;
-            foamSection.Expanded = (s == foamSection) && !foamSection.Expanded;
-            wavesSection.Expanded = (s == wavesSection) && !wavesSection.Expanded;
-            advancedSection.Expanded = (s == advancedSection) && !advancedSection.Expanded;
+            materialEditor.ShaderProperty(prop, content, indent);
 
-            /*
-            generalSection.Expanded = true;
-            lightingSection.Expanded = true;
-            colorSection.Expanded = true;
-            underwaterSection.Expanded = true;
-            normalsSection.Expanded = true;
-            reflectionSection.Expanded = true;
-            intersectionSection.Expanded = true;
-            foamSection.Expanded = true;
-            wavesSection.Expanded = true;
-            advancedSection.Expanded = true;
-            */
+            if (UI.ExpandTooltips && content.tooltip != string.Empty)
+            {
+                EditorGUILayout.HelpBox(content.tooltip, MessageType.None);
+            }
+        }
+
+        private void SwitchSection(UI.Material.Section target)
+        {
+            foreach (var section in sections)
+            {
+                section.Expanded = (target == section) && !section.Expanded;
+                //section.Expanded = true;
+            }
         }
         #endregion
         

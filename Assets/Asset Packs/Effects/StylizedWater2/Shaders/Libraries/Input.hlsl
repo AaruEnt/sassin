@@ -55,6 +55,7 @@ CBUFFER_START(UnityPerMaterial)
 	half _SlopeStretching;
 	half _SlopeSpeed;
 	half _SlopeThreshold;
+	half _SlopeFoam;
 
 	//Foam
 	float _FoamTiling;
@@ -93,6 +94,9 @@ CBUFFER_START(UnityPerMaterial)
 	half _CausticsSpeed;
 	half _RefractionStrength;
 	half _CausticsDistortion;
+
+	half _UnderwaterSurfaceSmoothness;
+	half _UnderwaterRefractionOffset;
 
 	half _VertexColorDepth;
 	half _VertexColorWaveFlattening;

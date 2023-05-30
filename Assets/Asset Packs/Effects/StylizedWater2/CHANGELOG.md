@@ -1,3 +1,37 @@
+1.4.0
+Converted water shader to a new 'scriptable shader' framework. Integrations, extensions and version-specific hooks are now automatically incorporated.
+
+Added:
+- Material UI, added a "Toggle tooltips" button, which shows every parameter's tooltip below it.
+- Surface Foam slope parameter for River Mode. Controls how much foam is automatically drawn on slopes.
+- Waterfall foam texture.
+- Option to disable z-clipping of the water surface (Rendering tab).
+- Improved performance of Buoyancy API (roughly 20% faster).
+- Water Mesh + Water Grid inspector, option to preview the mesh as a wireframe in the scene view.
+- Options under "GameObject/3D Object/Water" to create a water object or grid.
+- Planar Reflection Renderer inspector, preview image of rendered reflection in the UI.
+- Planar Reflection Renderer, option to take the component's transform rotation into account. Making an upside-down/sideways reflection possible.
+
+Changed:
+- Material UI, "Advanced" section renamed to "Rendering".
+- River slope normal map now uses the same import settings as the base normal map (reduces the amount of samplers used).
+- Re-authored foam/caustics textures to double their scaling size, reducing visible tiling artefacts.
+- Caustics are no longer disabled if the "Disable Depth Texture" is enabled. Instead, they draw on the water surface itself.
+- Integration for Dynamic Water Physics 2 is now based on the "NWH_DWP2" scripting define symbol. No longer required to unlock the component.
+- WaterMesh class, improvements to make parameter changes non-destructive:
+  * Vertex noise is now consistent at any mesh scale
+  * UV scale is no longer influenced by scale
+  * No longer uses a fixed number of subdivisions, but rather a "vertex distance" value.
+
+Fixed:
+- Warnings about obsolete code in Unity 2023.1+ regarding OpenGLES 2.0 checks (now completely unsupported).
+- Reflection distortion for Planar Reflections not being equally strong as for reflection probes.
+- Refraction artifacts visible for geometry in front of the water in orthographic projections.
+- Refraction no longer being visible when the Disable Depth Texture option was enabled.
+
+Removed:
+- Public functions in Buoyancy class that were marked as obsolete since v1.1.4
+
 1.3.1
 
 Added:
@@ -8,7 +42,7 @@ Changed:
 - Updated fog integration for SC Post Effects (v2.3.2+)
 - Reduced the file size of the StreamWaves normal map file by half (no quality loss).
 
-Fixed
+Fixed:
 - Wave tint parameter creating negative color values (it now merely brighten wave crest as intended).
 - Preemptive shader error fix for Unity 2023.1.0a26+
 - Materials not receiving shadows, or showing banding artefacts, when a single shadow cascade is used. (In Unity 2021.3.15+, or versions released after December 15th 2022)

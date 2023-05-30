@@ -2,14 +2,19 @@
 //Staggart Creations (http://staggart.xyz)
 //Copyright protected under Unity Asset Store EULA
 
-//Rather than using 2 layers, sample an additional 2 layers panning to the left/right as well
-//#define QUAD_NORMAL_SAMPLES
-
 TEXTURE2D(_FoamTex);
 SAMPLER(sampler_FoamTex);
 TEXTURE2D(_BumpMapLarge);
 TEXTURE2D(_BumpMapSlope);
-SAMPLER(sampler_BumpMapSlope);
+
+float3 BlendTangentNormals(float3 a, float3 b)
+{
+	#if _ADVANCED_SHADING
+	return BlendNormalRNM(a, b);
+	#else
+	return BlendNormal(a, b);
+	#endif
+}
 
 float3 SampleNormals(float2 uv, float3 wPos, float2 time, float speed, float slope, int vFace) 
 {
@@ -55,10 +60,10 @@ float3 SampleNormals(float2 uv, float3 wPos, float2 time, float speed, float slo
 #if _RIVER
 	uvs = PackedUV(uv, time, speed * _SlopeSpeed);
 	uvs.xy = uvs.xy * float2(1, 1-_SlopeStretching);
-	float3 n3 = UnpackNormal(SAMPLE_TEXTURE2D(_BumpMapSlope, sampler_BumpMapSlope, uvs.xy));
+	float3 n3 = UnpackNormal(SAMPLE_TEXTURE2D(_BumpMapSlope, sampler_BumpMap, uvs.xy));
 
 	#if _ADVANCED_SHADING
-	n3 = BlendTangentNormals(n3, UnpackNormal(SAMPLE_TEXTURE2D(_BumpMapSlope, sampler_BumpMapSlope, uvs.zw)));
+	n3 = BlendTangentNormals(n3, UnpackNormal(SAMPLE_TEXTURE2D(_BumpMapSlope, sampler_BumpMap, uvs.zw)));
 	#endif
 	
 	blendedNormals = lerp(blendedNormals, n3, slope);
@@ -105,7 +110,7 @@ float SampleIntersection(float2 uv, float gradient, float2 time)
 float SampleFoam(float2 uv, float2 time, float clipping, float mask, float slope)
 {
 #if _FOAM
-	float4 uvs = PackedUV(uv, time, _FoamSpeed);
+	float4 uvs = PackedUV(uv, time, _FoamSpeed, 0.5, 0.15);
 	float f1 = SAMPLE_TEXTURE2D(_FoamTex, sampler_FoamTex, uvs.xy).r;	
 	float f2 = SAMPLE_TEXTURE2D(_FoamTex, sampler_FoamTex, uvs.zw).r;
 	
@@ -119,7 +124,7 @@ float SampleFoam(float2 uv, float2 time, float clipping, float mask, float slope
 #if _RIVER //Slopes
 	uvs = PackedUV(uv, time, _FoamSpeed * _SlopeSpeed);
 	//Stretch UV vertically on slope
-	uvs = uvs * float4(1.0, 1-_SlopeStretching, 1.0, 1-_SlopeStretching);
+	uvs.yw *= 1-_SlopeStretching;
 
 	//Cannot reuse the same UV, slope foam needs to be resampled and blended in
 	float f3 = SAMPLE_TEXTURE2D(_FoamTex, sampler_FoamTex, uvs.xy).r;
@@ -130,7 +135,9 @@ float SampleFoam(float2 uv, float2 time, float clipping, float mask, float slope
 	f4 = SRGBToLinear(f4);
 	#endif
 
-	foam = saturate(lerp(f1 + f2, f3 + f4, slope)) * mask;
+	half slopeFoam = saturate(f3 + f4);
+	
+	foam = lerp(foam, slopeFoam, slope);
 #endif
 	
 	foam = smoothstep(clipping, 1.0, foam);

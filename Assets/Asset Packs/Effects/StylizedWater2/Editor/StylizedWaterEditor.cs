@@ -2,7 +2,6 @@
 //Staggart Creations (http://staggart.xyz)
 //Copyright protected under Unity Asset Store EULA
 
-using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -18,8 +17,58 @@ namespace StylizedWater2
     public class StylizedWaterEditor : Editor
     {
         #if URP
+        [MenuItem("GameObject/3D Object/Water/Object", false, 0)]
+        public static void CreateWaterObject()
+        {
+            Material mat = AssetDatabase.LoadAssetAtPath<Material>(AssetDatabase.GUIDToAssetPath("fbb04271505a76f40b984e38071e86f3"));
+            Mesh mesh = AssetDatabase.LoadAssetAtPath<Mesh>(AssetDatabase.GUIDToAssetPath("1e01d80fdc2155d4692276500db33fc9"));
+
+            WaterObject obj = WaterObject.New(mat, mesh);
+            
+            //Position in view
+            if (SceneView.lastActiveSceneView)
+            {
+                obj.transform.position = SceneView.lastActiveSceneView.camera.transform.position + (SceneView.lastActiveSceneView.camera.transform.forward * (Mathf.Max(mesh.bounds.size.x, mesh.bounds.size.z)) * 0.5f);
+            }
+            
+            if (Selection.activeGameObject) obj.transform.parent = Selection.activeGameObject.transform;
+
+            Selection.activeObject = obj;
+            
+            if(Application.isPlaying == false) EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+        }
+
+        [MenuItem("GameObject/3D Object/Water/Grid", false, 1)]
+        [MenuItem("Window/Stylized Water 2/Create water grid", false, 2001)]
+        public static void CreateWaterGrid()
+        {
+            GameObject obj = new GameObject("Water Grid", typeof(WaterGrid));
+            Undo.RegisterCreatedObjectUndo(obj, "Created Water Grid");
+
+            obj.layer = LayerMask.NameToLayer("Water");
+            
+            WaterGrid grid = obj.GetComponent<WaterGrid>();
+            grid.Recreate();
+
+            if (Selection.activeGameObject) obj.transform.parent = Selection.activeGameObject.transform;
+            
+            Selection.activeObject = obj;
+
+            //Position in view
+            if (SceneView.lastActiveSceneView)
+            {
+                Vector3 position = SceneView.lastActiveSceneView.camera.transform.position + (SceneView.lastActiveSceneView.camera.transform.forward * grid.scale * 0.5f);
+                position.y = 0f;
+                
+                grid.transform.position = position;
+            }
+            
+            if(Application.isPlaying == false) EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+        }
+        
+        [MenuItem("GameObject/3D Object/Water/Planar Reflections Renderer", false, 2)]
         [MenuItem("Window/Stylized Water 2/Set up planar reflections", false, 2000)]
-        private static void CreatePlanarReflections()
+        public static void CreatePlanarReflectionRenderer()
         {
             GameObject obj = new GameObject("Planar Reflections Renderer", typeof(PlanarReflectionRenderer));
             Undo.RegisterCreatedObjectUndo(obj, "Created PlanarReflectionRenderer");
@@ -30,23 +79,9 @@ namespace StylizedWater2
             
             if(Application.isPlaying == false) EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
         }
-        #endif 
+        #endif
         
-        [MenuItem("Window/Stylized Water 2/Create water grid", false, 2001)]
-        private static void CreateWaterGrid()
-        {
-            GameObject obj = new GameObject("Water Grid", typeof(WaterGrid));
-            Undo.RegisterCreatedObjectUndo(obj, "Created Water Grid");
-
-            WaterGrid grid = obj.GetComponent<WaterGrid>();
-            grid.Recreate();
-            
-            Selection.activeObject = obj;
-            
-            if(Application.isPlaying == false) EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-        }
-        
-        [MenuItem("Assets/Create/Water mesh")]
+        [MenuItem("Assets/Create/Water/Mesh")]
         private static void CreateWaterPlaneAsset()
         {
             ProjectWindowUtil.CreateAssetWithContent("New Watermesh.watermesh", "");
@@ -60,21 +95,20 @@ namespace StylizedWater2
             if (!t.gameObject.GetComponent<FloatingTransform>())
             {
                 FloatingTransform component = t.gameObject.AddComponent<FloatingTransform>();
+                EditorUtility.SetDirty(t);
             }
-            
-            EditorUtility.SetDirty(t);
         }
         
         public static bool UnderwaterRenderingInstalled()
         {
-            //Checking for UnderwaterRenderer.cs
+            //Checking for UnderwaterRenderer.cs meta file
             string path = AssetDatabase.GUIDToAssetPath("6a52edc7a3652d84784e10be859d5807");
             return AssetDatabase.LoadMainAssetAtPath(path);
         }
         
         public static bool SurfaceModifiersInstalled()
         {
-            //Checking for WaterModifiersRenderFeature.cs
+            //Checking for the WaterModifiersRenderFeature.cs meta file
             string path = AssetDatabase.GUIDToAssetPath("89138902f514ada418b44ddd62e8de22");
             return AssetDatabase.LoadMainAssetAtPath(path);
         }
@@ -129,70 +163,76 @@ namespace StylizedWater2
             EditorUtility.SetDirty(material);
         }
         
-        public class DWP2
+        public static bool CurvedWorldInstalled(out string libraryPath)
         {
-            private const string DataProviderName = "StylizedWaterDataProvider";
+            //Checking for "CurvedWorldTransform.cginc"
+            libraryPath = AssetDatabase.GUIDToAssetPath("208a98c9ab72b9f4bb8735c6a229e807");
+            return libraryPath != string.Empty;
+        }
+
+        #if NWH_DWP2
+        public static bool DWP2Installed => true;
+        #else
+        public static bool DWP2Installed => false;
+        #endif
+
+        public static T Find<T>() where T : Object
+        {
+            #if UNITY_2023_1_OR_NEWER
+            return (T)Object.FindFirstObjectByType(typeof(T));
+            #elif UNITY_2020_1_OR_NEWER
+            return (T)Object.FindObjectOfType(typeof(T), false);
+            #else
+            return (T)Object.FindObjectOfType(typeof(T));
+            #endif
+        }
+
+        public static void SetupForDWP2()
+        {
+            #if NWH_DWP2
+            if (!EditorUtility.DisplayDialog("Dynamic Water Physics 2 -> Stylized Water 2", 
+                "This operation will look for a \"Flat Water Data Provider\" component and replace it with the \"Stylized Water Data Provider\" component", 
+                "OK", "Cancel"))
+            {
+                return;
+            }
             
-            public static bool isInstalled;
-            public static bool dataProviderUnlocked;
+            NWH.DWP2.WaterData.StylizedWaterDataProvider dataProvider = Find<NWH.DWP2.WaterData.StylizedWaterDataProvider>();
 
-            public static void CheckInstallation()
+            if (dataProvider)
             {
-                isInstalled = IsDWPInstalled();
-                dataProviderUnlocked = DWPDataProviderUnlocked();
+                EditorUtility.DisplayDialog("Dynamic Water Physics 2 -> Stylized Water 2", "A \"Stylized Water Data Provider\" component was already found in the scene", "OK");
+
+                EditorGUIUtility.PingObject(dataProvider.gameObject);
+                
+                return;
             }
-
-            public static bool IsDWPInstalled()
+            else
             {
-                string[] results = AssetDatabase.FindAssets("DWP_NUIEditor");
-
-                if(results.Length > 0)
+                if (EditorUtility.DisplayDialog("Dynamic Water Physics 2 -> Stylized Water 2", 
+                    "Could not find a \"Flat Water Data Provider\" component in the scene.\n\nIt's recommended to first set up DWP2 according to their manual.", 
+                    "OK"))
                 {
-                    isInstalled = true;
-                    return true;
-                }
-                else
-                {
-                    isInstalled = false;
-                }
-                return false;
-
-            }
-
-            public static bool DWPDataProviderUnlocked()
-            {
-                string[] results = AssetDatabase.FindAssets(DataProviderName);
-
-                if (results.Length > 0)
-                {
-                    string path = AssetDatabase.GUIDToAssetPath(results[0]);
-                    return !path.Contains(".txt");
-                }
-
-                return false;
-            }
-
-            public static void UnlockDataProvider()
-            {
-                string[] results = AssetDatabase.FindAssets(DataProviderName);
-
-                if (results.Length > 0)
-                {
-                    string path = AssetDatabase.GUIDToAssetPath(results[0]);
-                    string absPath = Application.dataPath + path.Replace("Assets", string.Empty);
-                    System.IO.File.Move(absPath, absPath.Replace(".txt", string.Empty));
-
-                    AssetDatabase.Refresh();
-                    dataProviderUnlocked = true;
-                }
-                else
-                {
-                    Debug.LogError("The file " + DataProviderName + ".cs could not be found. Check that you are using the latest version of DWP2");
                     return;
                 }
-                
-                Debug.Log("StylizedWaterDataProvider component is now available");
             }
+            
+            NWH.DWP2.WaterData.FlatWaterDataProvider oldProvider = Find<NWH.DWP2.WaterData.FlatWaterDataProvider>();
+
+            NWH.DWP2.DefaultWater.Water waterScript = Find<NWH.DWP2.DefaultWater.Water>();
+            if(waterScript) DestroyImmediate(waterScript);
+            
+            if (oldProvider)
+            {
+                dataProvider = oldProvider.gameObject.AddComponent<NWH.DWP2.WaterData.StylizedWaterDataProvider>();
+                oldProvider.gameObject.AddComponent<StylizedWater2.WaterObject>();
+                
+                Selection.activeGameObject = oldProvider.gameObject;
+
+                DestroyImmediate(oldProvider);
+            }
+            #endif
         }
+        
     }
 }
