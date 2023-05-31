@@ -135,7 +135,8 @@ namespace JointVR {
         }
 
         public void Unstab(StabJoint stabJoint) {
-
+            if (!stabJoint.stabbedCollider)
+                return;
             if (root.parent == stabJoint.stabbedCollider.transform)
             {
                 manager.maintainParent = null;
@@ -183,6 +184,7 @@ namespace JointVR {
             IgnoreCollision(stabbedCollider, true);
 
             stabJoint.stabDirection = root.InverseTransformDirection(transform.TransformDirection(newAnchor));
+
 
             foreach (Stabber disableGroup in disableStabJointGroupsOnStab)
             {
