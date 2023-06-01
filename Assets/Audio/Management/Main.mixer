@@ -178,6 +178,7 @@ AudioMixerController:
     - 31ef601b0b9ab6848b6824261af34792
     - 55482021a24fd5f4fbf95dcf8bcb05fa
     - d6298a8fa6637f342a04886851adf3b9
+    - e058c68b88c739f44ac28e994dd9c332
     name: View
   m_CurrentViewIndex: 0
   m_TargetSnapshot: {fileID: 24500006}
@@ -229,8 +230,9 @@ AudioMixerSnapshotController:
   m_SnapshotID: 231f9e7861e9b6a41bae9987b611d535
   m_FloatValues:
     ea211c018fbffe041bc0367720663b60: -4.9356413
+    23ae38d2325ba8643bd238dcc92bb244: -24.900742
     7e39c1731a072b248a8ded44d6e50c23: -15.421314
-    b9bb0386ae124d447b46f26141800b53: -24.900742
+    b9bb0386ae124d447b46f26141800b53: -14.816608
     3dd63e1ad2b7fb841b4674c15040108a: -4.9356413
     4e6043ffdf2f9a0448c3f0252ae86395: -14.816608
   m_TransitionOverrides: {}
@@ -259,10 +261,11 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: BGM
+  m_Name: BGM - Main
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: 0e5c728c76290e94088967d9f144126e
-  m_Children: []
+  m_Children:
+  - {fileID: 8595080132669215973}
   m_Volume: b9bb0386ae124d447b46f26141800b53
   m_Pitch: 8dd99033706f4bf41aa6cceaab671b24
   m_Send: 00000000000000000000000000000000
@@ -355,6 +358,39 @@ AudioMixerGroupController:
   m_Send: 00000000000000000000000000000000
   m_Effects:
   - {fileID: -4371743350001770394}
+  m_UserColorIndex: 0
+  m_Mute: 0
+  m_Solo: 0
+  m_BypassEffects: 0
+--- !u!244 &7637038321143582693
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: 08b63e4af93dd634e9b5a46fea043743
+  m_EffectName: Attenuation
+  m_MixLevel: e27d88ca7391cd94fba8dacda6bf66c8
+  m_Parameters: []
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
+--- !u!243 &8595080132669215973
+AudioMixerGroupController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: BGM (Soft)
+  m_AudioMixer: {fileID: 24100000}
+  m_GroupID: e058c68b88c739f44ac28e994dd9c332
+  m_Children: []
+  m_Volume: 23ae38d2325ba8643bd238dcc92bb244
+  m_Pitch: f308c8cb2e3363e4ea271442a03af687
+  m_Send: 00000000000000000000000000000000
+  m_Effects:
+  - {fileID: 7637038321143582693}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0
