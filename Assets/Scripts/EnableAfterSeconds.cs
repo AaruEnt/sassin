@@ -11,6 +11,7 @@ public class EnableAfterSeconds : MonoBehaviour
     private bool isRunning = false;
     private float currDelay = 0f;
     private bool create = false;
+    public Transform spawnPoint;
 
     void Update()
     {
@@ -28,7 +29,10 @@ public class EnableAfterSeconds : MonoBehaviour
                 else if (newObject && create)
                 {
                     UnityEngine.Debug.Log(transform.rotation);
-                    var tmp = Instantiate(newObject, transform.position, transform.rotation, null);
+                    Transform spawn = transform;
+                    if (spawnPoint)
+                        spawn = spawnPoint;
+                    var tmp = Instantiate(newObject, spawn.position, transform.rotation, null);
                     tmp.transform.rotation = transform.rotation;
                     isRunning = false;
                     timer = 0f;
