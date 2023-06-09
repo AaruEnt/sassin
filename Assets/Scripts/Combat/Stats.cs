@@ -296,7 +296,7 @@ public class Stats : MonoBehaviour
             yield return null;
         }
         player.useMovement = true;
-        sat.value = 0f;
+        sat.value = 1.1f;
         CA.saturation.SetValue(sat);
         if (respawnBarrier)
             respawnBarrier.SetActive(false);
