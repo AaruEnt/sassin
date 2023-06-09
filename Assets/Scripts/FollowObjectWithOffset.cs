@@ -43,6 +43,11 @@ public class FollowObjectWithOffset : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!Parent || !Parent.transform)
+        {
+            Destroy(this);
+            return;
+        }
         var newpos = Parent.transform.TransformPoint(pos);
         var newfw = Parent.transform.TransformDirection(fw);
         var newup = Parent.transform.TransformDirection(up);
