@@ -279,8 +279,13 @@ public class Stats : MonoBehaviour
 
         VolumeParameter<float> sat = new VolumeParameter<float>();
 
-        if (respawnBarrier)
+        if (respawnBarrier && !respawnBarrier.activeSelf)
+        {
             respawnBarrier.SetActive(true);
+            Vector3 newPos = trackedObjects.transform.position;
+            newPos.y = respawnBarrier.transform.position.y;
+            respawnBarrier.transform.position = newPos;
+        }
             
         while (timer < respawnTimer)
         {
@@ -291,7 +296,7 @@ public class Stats : MonoBehaviour
             yield return null;
         }
         player.useMovement = true;
-        sat.value = 0f;
+        sat.value = 1.1f;
         CA.saturation.SetValue(sat);
         if (respawnBarrier)
             respawnBarrier.SetActive(false);
