@@ -54,4 +54,9 @@ public class EnableAfterSeconds : MonoBehaviour
         isRunning = true;
         create = true;
     }
+
+    public void CancelCreation()
+    {
+        isRunning = false;
+    }
 }
