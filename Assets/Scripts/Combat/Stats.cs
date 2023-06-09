@@ -279,8 +279,13 @@ public class Stats : MonoBehaviour
 
         VolumeParameter<float> sat = new VolumeParameter<float>();
 
-        if (respawnBarrier)
+        if (respawnBarrier && !respawnBarrier.activeSelf)
+        {
             respawnBarrier.SetActive(true);
+            Vector3 newPos = trackedObjects.transform.position;
+            newPos.y = respawnBarrier.transform.position.y;
+            respawnBarrier.transform.position = newPos;
+        }
             
         while (timer < respawnTimer)
         {
