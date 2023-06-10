@@ -293,6 +293,7 @@ public class Stats : MonoBehaviour
             timer += Time.deltaTime;
             sat.value = -100f + blendVal;
             CA.saturation.SetValue(sat);
+            transform.position = _startPos;
             yield return null;
         }
         player.useMovement = true;
