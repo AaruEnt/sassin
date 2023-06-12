@@ -279,8 +279,13 @@ public class Stats : MonoBehaviour
 
         VolumeParameter<float> sat = new VolumeParameter<float>();
 
-        if (respawnBarrier)
+        if (respawnBarrier && !respawnBarrier.activeSelf)
+        {
             respawnBarrier.SetActive(true);
+            Vector3 newPos = trackedObjects.transform.position;
+            newPos.y = respawnBarrier.transform.position.y;
+            respawnBarrier.transform.position = newPos;
+        }
             
         while (timer < respawnTimer)
         {
@@ -288,10 +293,11 @@ public class Stats : MonoBehaviour
             timer += Time.deltaTime;
             sat.value = -100f + blendVal;
             CA.saturation.SetValue(sat);
+            transform.position = _startPos;
             yield return null;
         }
         player.useMovement = true;
-        sat.value = 0f;
+        sat.value = 1.1f;
         CA.saturation.SetValue(sat);
         if (respawnBarrier)
             respawnBarrier.SetActive(false);
