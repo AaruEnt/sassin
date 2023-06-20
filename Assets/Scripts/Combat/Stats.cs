@@ -8,8 +8,10 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using NaughtyAttributes;
 using Autohand;
+using Photon.Pun;
+using System.Diagnostics;
 
-public class Stats : MonoBehaviour
+public class Stats : MonoBehaviourPunCallbacks
 {
     [Header("Variables")]
     [SerializeField, Tooltip("health")]
@@ -65,6 +67,10 @@ public class Stats : MonoBehaviour
     [SerializeField, Tooltip("Optional, used to set isKinematic false on death")]
     private Rigidbody[] ragdoll;
 
+    [Tooltip("The Player's UI GameObject Prefab")]
+    [SerializeField]
+    public GameObject PlayerUiPrefab;
+
     private float stabCD = 0f;
 
     private Vector3 _startPos;
@@ -75,6 +81,16 @@ public class Stats : MonoBehaviour
     {
         _startPos = transform.position;
         _trackedObjectsStartPos = trackedObjects.transform.position;
+
+        if (PlayerUiPrefab != null)
+        {
+            GameObject _uiGo = Instantiate(PlayerUiPrefab);
+            _uiGo.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
+        }
+        else
+        {
+            UnityEngine.Debug.LogWarning("<Color=Red><a>Missing</a></Color> PlayerUiPrefab reference on player Prefab.", this);
+        }
     }
 
     void Update()
