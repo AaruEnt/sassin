@@ -317,5 +317,6 @@ public class Stats : MonoBehaviourPunCallbacks
         CA.saturation.SetValue(sat);
         if (respawnBarrier)
             respawnBarrier.SetActive(false);
+        health = maxHealth;
     }
 }

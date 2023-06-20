@@ -18,6 +18,8 @@ namespace Com.Aaru.Sassin
         [Tooltip("The prefab to use for representing the player")]
         public GameObject playerPrefab;
 
+        public static GameManager Instance;
+
         #endregion
 
         #region Photon Callbacks
@@ -45,6 +47,7 @@ namespace Com.Aaru.Sassin
 
         void Start()
         {
+            Instance = this;
             if (playerPrefab == null)
             {
                 UnityEngine.Debug.LogError("<Color=Red><a>Missing</a></Color> playerPrefab Reference. Please set it up in GameObject 'Game Manager'", this);

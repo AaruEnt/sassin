@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 #if !UNITY_ANDROID
 using Valve.VR;
+using Photon.Pun;
 #endif
 
 namespace Autohand.Demo
 {
-    public class SteamVRHandPlayerLink : MonoBehaviour{
+    public class SteamVRHandPlayerLink : MonoBehaviourPunCallbacks
+    {
 #if !UNITY_ANDROID
         public AutoHandPlayer player;
         public SteamVR_Input_Sources moveController;
@@ -20,6 +22,10 @@ namespace Autohand.Demo
         bool leftPressed;
 
         void Update(){
+            if (!photonView.IsMine)
+            {
+                return;
+            }
             player.Move(moveAxis.GetAxis(moveController));
             if(!moveAxis.active)
                 player.Move(Vector2.zero);
