@@ -91,6 +91,12 @@ public class Stats : MonoBehaviourPunCallbacks
         {
             UnityEngine.Debug.LogWarning("<Color=Red><a>Missing</a></Color> PlayerUiPrefab reference on player Prefab.", this);
         }
+
+        if (moveToSpawnOnDeath && volume == null)
+        {
+            var tmp = GameObject.Find("Post Processing");
+            volume = tmp != null ? tmp.GetComponent<Volume>() : null;
+        }
     }
 
     void Update()

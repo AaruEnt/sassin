@@ -5,8 +5,9 @@ using UnityEngine.UI;
 using Autohand;
 using NaughtyAttributes;
 using System.Diagnostics;
+using Photon.Pun;
 
-public class PrimaryButton : MonoBehaviour
+public class PrimaryButton : MonoBehaviourPunCallbacks
 {
     [Header("References")]
     [SerializeField, Tooltip("Reference to the player rigidbody")]
@@ -73,6 +74,8 @@ public class PrimaryButton : MonoBehaviour
     void Update() {
         //if (!isSliding && player.IsCrouching())
         //    Slide();
+        if (!photonView.IsMine)
+            return;
         if (jumpOnPress)
         {
             if (player.IsGrounded())
@@ -118,6 +121,8 @@ public class PrimaryButton : MonoBehaviour
     }
 
     private void Jump() {
+        if (!photonView.IsMine)
+            return;
         if (jumpCD > 0)
             return;
         float blendJumpHeight = jumpHeight + (((maxJumpHeight - jumpHeight) / 14) * ((momentum.counter >= 900 ? 630 : momentum.counter - 270) / 45));
@@ -155,6 +160,8 @@ public class PrimaryButton : MonoBehaviour
     }
 
     private void Slide() {
+        if (!photonView.IsMine)
+            return;
         if (!isSliding && momentum.counter >= 800) {
             isSliding = true;
             StartCoroutine(DoSlide());
