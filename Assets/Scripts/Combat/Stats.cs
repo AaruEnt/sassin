@@ -11,7 +11,7 @@ using Autohand;
 using Photon.Pun;
 using System.Diagnostics;
 
-public class Stats : MonoBehaviourPunCallbacks
+public class Stats : MonoBehaviourPunCallbacks, IPunObservable
 {
     [Header("Variables")]
     [SerializeField, Tooltip("health")]
@@ -76,6 +76,24 @@ public class Stats : MonoBehaviourPunCallbacks
     private Vector3 _startPos;
 
     private float timer = 0f;
+
+    #region IPunObservable implementation
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            // We own this player: send the others our data
+            stream.SendNext(health);
+        }
+        else
+        {
+            // Network player, receive data
+            this.health = (float)stream.ReceiveNext();
+        }
+    }
+
+    #endregion
 
     void Start()
     {
