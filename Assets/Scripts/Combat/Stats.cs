@@ -100,14 +100,16 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         _startPos = transform.position;
         _trackedObjectsStartPos = trackedObjects.transform.position;
 
-        if (PlayerUiPrefab != null)
+
+        if (PlayerUiPrefab != null && PhotonNetwork.CurrentRoom != null)
         {
             GameObject _uiGo = Instantiate(PlayerUiPrefab);
             _uiGo.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
         }
         else
         {
-            UnityEngine.Debug.LogWarning("<Color=Red><a>Missing</a></Color> PlayerUiPrefab reference on player Prefab.", this);
+            if (PhotonNetwork.CurrentRoom != null)
+                UnityEngine.Debug.LogWarning("<Color=Red><a>Missing</a></Color> PlayerUiPrefab reference on player Prefab.", this);
         }
 
         if (moveToSpawnOnDeath && volume == null)

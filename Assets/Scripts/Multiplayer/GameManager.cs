@@ -8,6 +8,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
+using Valve.VR;
 
 namespace Com.Aaru.Sassin
 {
@@ -56,7 +57,7 @@ namespace Com.Aaru.Sassin
             {
                 UnityEngine.Debug.LogFormat("We are Instantiating LocalPlayer from {0}", UnityEngine.Application.loadedLevelName);
                 // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
-                PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f, 5f, 0f), Quaternion.identity, 0);
+                PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f, 2f, 0f), Quaternion.identity, 0);
             }
         }
 
