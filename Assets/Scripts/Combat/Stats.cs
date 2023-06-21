@@ -147,16 +147,19 @@ public class Stats : MonoBehaviourPunCallbacks
         {
             transform.position = _startPos;
             trackedObjects.transform.position = _trackedObjectsStartPos;
-            var profile = volume?.profile;
-            if (!profile)
-                throw new System.NullReferenceException(nameof(UnityEngine.Rendering.VolumeProfile));
-            ColorAdjustments CA;
-            if (profile.TryGet<ColorAdjustments>(out CA))
+            if (photonView.IsMine)
             {
-                VolumeParameter<float> sat = new VolumeParameter<float>();
-                sat.value = -100f;
-                CA.saturation.SetValue(sat);
-                health = maxHealth;
+                var profile = volume?.profile;
+                if (!profile)
+                    throw new System.NullReferenceException(nameof(UnityEngine.Rendering.VolumeProfile));
+                ColorAdjustments CA;
+                if (profile.TryGet<ColorAdjustments>(out CA))
+                {
+                    VolumeParameter<float> sat = new VolumeParameter<float>();
+                    sat.value = -100f;
+                    CA.saturation.SetValue(sat);
+                    health = maxHealth;
+                }
             }
             player.useMovement = false;
             timer = 0f;
@@ -313,8 +316,11 @@ public class Stats : MonoBehaviourPunCallbacks
         {
             float blendVal = ((timer / respawnTimer) * 50);
             timer += Time.deltaTime;
-            sat.value = -100f + blendVal;
-            CA.saturation.SetValue(sat);
+            if (photonView.IsMine)
+            {
+                sat.value = -100f + blendVal;
+                CA.saturation.SetValue(sat);
+            }
             transform.position = _startPos;
             yield return null;
         }

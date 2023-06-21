@@ -29,7 +29,10 @@ namespace Autohand.Demo{
 
 
         public void Update() {
-            
+            if (!photonView.IsMine)
+            {
+                return;
+            }
             if(squeezeAction != null && squeezeAction.GetState(handType) && !squeezing) {
                 squeezing = true;
                 hand.Squeeze();
