@@ -20,7 +20,7 @@ namespace Autohand.Demo
 
         void Update()
         {
-            if (!photonView.IsMine)
+            if (photonView && !photonView.IsMine)
             {
                 return;
             }

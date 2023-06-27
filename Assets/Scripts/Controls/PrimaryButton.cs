@@ -74,7 +74,7 @@ public class PrimaryButton : MonoBehaviourPunCallbacks
     void Update() {
         //if (!isSliding && player.IsCrouching())
         //    Slide();
-        if (!photonView.IsMine)
+        if (photonView && !photonView.IsMine)
             return;
         if (jumpOnPress)
         {
@@ -121,7 +121,7 @@ public class PrimaryButton : MonoBehaviourPunCallbacks
     }
 
     private void Jump() {
-        if (!photonView.IsMine)
+        if (photonView && !photonView.IsMine)
             return;
         if (jumpCD > 0)
             return;

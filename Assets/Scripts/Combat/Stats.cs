@@ -136,7 +136,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     {
         // #Important
         // used in GameManager.cs: we keep track of the localPlayer instance to prevent instantiation when levels are synchronized
-        if (photonView.IsMine)
+        if (photonView && photonView.IsMine)
         {
             Stats.LocalPlayerInstance = this.gameObject;
         }
