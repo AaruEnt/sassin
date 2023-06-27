@@ -18070,7 +18070,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: fec7d84bbf6d6224386b5134c4fecc4d, type: 2}
+  - {fileID: 2100000, guid: 167154950b2e0b2499503867ce84493c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -24473,7 +24473,7 @@ MonoBehaviour:
   releaseSoundPlayer: {fileID: 7137647479467802305}
   defaultGrabSound: {fileID: 8300000, guid: d80edf00be4412f4a8d75b2729d47c14, type: 3}
   defaultReleaseSound: {fileID: 8300000, guid: df96814b0b3a8e9469d7ee8b84391484, type: 3}
---- !u!114 &5325298530518685534
+--- !u!114 &8500806086383359149
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -24482,13 +24482,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 691538906269628476}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 1
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 1
+  m_TeleportEnabled: 1
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!114 &1336202698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24588,7 +24588,10 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 82976901}
-  - {fileID: 6524285040274284966}
+  - {fileID: 0}
+  - {fileID: 3500748825489958857}
+  - {fileID: 0}
+  - {fileID: 0}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -24744,22 +24747,6 @@ MonoBehaviour:
   - {fileID: 8921186253344509124}
   leftGrab: {fileID: 1352689454417272828}
   rightGrab: {fileID: 7151560491831480727}
---- !u!114 &6524285040274284966
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3230564732466509246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 1
 --- !u!114 &6526095594361489426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24774,6 +24761,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioS: {fileID: 2040070092}
   baseFootstepTime: 0.5
+--- !u!114 &7316991658624775128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3230564732466509246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 1
+  m_TeleportEnabled: 1
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!114 &1336202705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24839,7 +24842,7 @@ MonoBehaviour:
   landSound: {fileID: 368951059}
   coyoteTime: 0.3
   slideForce: 30
---- !u!114 &171490908234812153
+--- !u!114 &4444654781359667239
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -24848,13 +24851,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 6652452518085992804}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 1
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 1
+  m_TeleportEnabled: 1
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!114 &4459031788057297943
 MonoBehaviour:
   m_ObjectHideFlags: 0

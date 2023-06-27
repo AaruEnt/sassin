@@ -13,6 +13,9 @@ using System.Diagnostics;
 
 public class Stats : MonoBehaviourPunCallbacks, IPunObservable
 {
+    [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
+    public static GameObject LocalPlayerInstance;
+
     [Header("Variables")]
     [SerializeField, Tooltip("health")]
     internal float health = 20f;
@@ -127,6 +130,16 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         }
         if (stabCD > 0)
             stabCD -= Time.deltaTime;
+    }
+
+    void Awake()
+    {
+        // #Important
+        // used in GameManager.cs: we keep track of the localPlayer instance to prevent instantiation when levels are synchronized
+        if (photonView.IsMine)
+        {
+            Stats.LocalPlayerInstance = this.gameObject;
+        }
     }
 
     // When damage is received

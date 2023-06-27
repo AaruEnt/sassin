@@ -49,7 +49,7 @@ namespace Com.Aaru.Sassin
         void Start()
         {
             Instance = this;
-            if (PhotonNetwork.CurrentRoom != null)
+            if (PhotonNetwork.CurrentRoom != null && Stats.LocalPlayerInstance == null)
             {
                 if (playerPrefab == null)
                 {
@@ -64,6 +64,10 @@ namespace Com.Aaru.Sassin
             }
             SteamVR_Fade.Start(Color.black, 0f);
             SteamVR_Fade.Start(Color.clear, 1f);
+            #if UNITY_5_4_OR_NEWER
+            // Unity 5.4 has a new scene management. register a method to call CalledOnLevelWasLoaded.
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+            #endif
         }
 
         void LoadArena()
@@ -76,6 +80,13 @@ namespace Com.Aaru.Sassin
             UnityEngine.Debug.LogFormat("PhotonNetwork : Loading Level : {0}", PhotonNetwork.CurrentRoom.PlayerCount);
             PhotonNetwork.LoadLevel("Room for " + PhotonNetwork.CurrentRoom.PlayerCount);
         }
+
+        #if UNITY_5_4_OR_NEWER
+        void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadingMode)
+        {
+            this.CalledOnLevelWasLoaded(scene.buildIndex);
+        }
+        #endif
 
         #endregion
 
@@ -104,6 +115,36 @@ namespace Com.Aaru.Sassin
                 LoadArena();
             }
         }
+
+        #endregion
+
+        #region MonoBehavior Callbacks
+
+        #if !UNITY_5_4_OR_NEWER
+        /// <summary>See CalledOnLevelWasLoaded. Outdated in Unity 5.4.</summary>
+        void OnLevelWasLoaded(int level)
+        {
+            this.CalledOnLevelWasLoaded(level);
+        }
+        #endif
+
+        void CalledOnLevelWasLoaded(int level)
+        {
+            // check if we are outside the Arena and if it's the case, spawn around the center of the arena in a safe zone
+            if (!Physics.Raycast(transform.position, -Vector3.up, 5f))
+            {
+                transform.position = new Vector3(0f, 5f, 0f);
+            }
+        }
+
+        #if UNITY_5_4_OR_NEWER
+        public override void OnDisable()
+        {
+            // Always call the base to remove callbacks
+            base.OnDisable ();
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+        #endif
 
         #endregion
     }
