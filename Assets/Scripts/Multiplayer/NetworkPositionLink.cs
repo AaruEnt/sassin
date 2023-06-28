@@ -9,8 +9,11 @@ public class NetworkPositionLink : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        networkPlayer = NetworkPlayer.player;
-        player = networkPlayer.GetComponent<NetworkPlayer>();
+        if (networkPlayer)
+        {
+            networkPlayer = NetworkPlayer.player;
+            player = networkPlayer.GetComponent<NetworkPlayer>();
+        }
     }
 
     // Update is called once per frame
