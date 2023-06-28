@@ -22,7 +22,7 @@ public class NetworkPositionLink : MonoBehaviour
     {
         if (networkPlayer != null && player != null)
         {
-            UnityEngine.Debug.Log("tmp");
+            UnityEngine.Debug.Log(string.Format("pos: {0}, rot: {1}", this.transform.position, this.transform.rotation));
             player.UpdatePositionRotation(this.transform, this.transform.rotation);
         } else
         {
