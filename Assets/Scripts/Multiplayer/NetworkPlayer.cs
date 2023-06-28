@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.XR;
 using Photon.Pun;
 
-public class NetworkPlayer : MonoBehaviourPunCallbacks, IPunObservable
+public class NetworkPlayer : MonoBehaviourPunCallbacks
 {
     public Transform head;
     public Transform left;
@@ -38,8 +38,8 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks, IPunObservable
         InputDevices.GetDeviceAtXRNode(node).TryGetFeatureValue(CommonUsages.devicePosition, out Vector3 position);
         InputDevices.GetDeviceAtXRNode(node).TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion rotation);
 
-        target.position = position;
-        target.rotation = rotation;
+        target.localPosition = position;
+        target.localRotation = rotation;
     }
 
     internal void UpdatePositionRotation(Transform position, Quaternion rotation)
@@ -49,28 +49,6 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     #region IPunObservable implementation
-
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting)
-        {
-            // We own this player: send the others our data
-            stream.SendNext(transform.position);
-            stream.SendNext(transform.rotation);
-            stream.SendNext(left.transform.position);
-            stream.SendNext(right.transform.position);
-            stream.SendNext(head.transform.position);
-        }
-        else
-        {
-            // Network player, receive data
-            transform.position = (Vector3)stream.ReceiveNext();
-            transform.rotation = (Quaternion)stream.ReceiveNext();
-            left.transform.position = (Vector3)stream.ReceiveNext();
-            right.transform.position = (Vector3)stream.ReceiveNext();
-            head.transform.position = (Vector3)stream.ReceiveNext();
-        }
-    }
 
     #endregion
 }
