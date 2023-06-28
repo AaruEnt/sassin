@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class NetworkPositionLink : MonoBehaviour
@@ -21,8 +22,16 @@ public class NetworkPositionLink : MonoBehaviour
     {
         if (networkPlayer != null && player != null)
         {
-            Debug.Log("tmp");
+            UnityEngine.Debug.Log("tmp");
             player.UpdatePositionRotation(this.transform, this.transform.rotation);
+        } else
+        {
+            UnityEngine.Debug.Log("Looking for self");
+            if (NetworkPlayer.player)
+            {
+                networkPlayer = NetworkPlayer.player;
+                player = networkPlayer.GetComponent<NetworkPlayer>();
+            }
         }
     }
 }
