@@ -16,6 +16,9 @@ public class NetworkPositionLink : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        player.UpdatePositionRotation(this.transform, this.transform.rotation);
+        if (networkPlayer != null && player != null)
+        {
+            player.UpdatePositionRotation(this.transform, this.transform.rotation);
+        }
     }
 }
