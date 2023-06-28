@@ -9,10 +9,15 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
     public Transform head;
     public Transform left;
     public Transform right;
+    public static GameObject player;
 
     // Start is called before the first frame update
     void Start()
     {
+        if (photonView.IsMine)
+        {
+            player = this.gameObject;
+        }
     }
 
     // Update is called once per frame
@@ -35,5 +40,11 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
 
         target.position = position;
         target.rotation = rotation;
+    }
+
+    internal void UpdatePositionRotation(Transform position, Quaternion rotation)
+    {
+        transform.position = position.position;
+        transform.rotation = rotation;
     }
 }
