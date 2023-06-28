@@ -9,7 +9,7 @@ public class NetworkPositionLink : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (networkPlayer)
+        if (NetworkPlayer.player)
         {
             networkPlayer = NetworkPlayer.player;
             player = networkPlayer.GetComponent<NetworkPlayer>();
@@ -21,6 +21,7 @@ public class NetworkPositionLink : MonoBehaviour
     {
         if (networkPlayer != null && player != null)
         {
+            Debug.Log("tmp");
             player.UpdatePositionRotation(this.transform, this.transform.rotation);
         }
     }
