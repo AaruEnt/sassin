@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.XR;
 using Photon.Pun;
 
-public class NetworkPlayer : MonoBehaviourPunCallbacks
+public class NetworkPlayer : MonoBehaviourPunCallbacks, IPunObservable
 {
     public Transform head;
     public Transform left;
@@ -47,4 +47,30 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
         transform.position = position.position;
         transform.rotation = rotation;
     }
+
+    #region IPunObservable implementation
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            // We own this player: send the others our data
+            stream.SendNext(transform.position);
+            stream.SendNext(transform.rotation);
+            stream.SendNext(left.transform.position);
+            stream.SendNext(right.transform.position);
+            stream.SendNext(head.transform.position);
+        }
+        else
+        {
+            // Network player, receive data
+            transform.position = (Vector3)stream.ReceiveNext();
+            transform.rotation = (Quaternion)stream.ReceiveNext();
+            left.transform.position = (Vector3)stream.ReceiveNext();
+            right.transform.position = (Vector3)stream.ReceiveNext();
+            head.transform.position = (Vector3)stream.ReceiveNext();
+        }
+    }
+
+    #endregion
 }
