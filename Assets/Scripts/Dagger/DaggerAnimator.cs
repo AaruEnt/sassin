@@ -6,6 +6,23 @@ public class DaggerAnimator : MonoBehaviour
 {
     [SerializeField, Tooltip("The animator for the dagger")]
     private Animator anim;
+    public Transform models;
+
+    private NetworkDagger dagger;
+
+
+    void Update()
+    {
+        if (!dagger && NetworkDagger.dagger)
+        {
+            dagger = NetworkDagger.dagger.GetComponent<NetworkDagger>();
+        }
+        if (dagger)
+        {
+            dagger.UpdatePositionRotation(models, models.rotation);
+        }
+    }
+
 
     // Toggles on the spinning animation
     public void ToggleOn()

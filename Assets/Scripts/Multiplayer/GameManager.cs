@@ -18,6 +18,7 @@ namespace Com.Aaru.Sassin
 
         [Tooltip("The prefab to use for representing the player")]
         public GameObject playerPrefab;
+        public GameObject daggerPrefab;
 
         public static GameManager Instance;
 
@@ -51,7 +52,7 @@ namespace Com.Aaru.Sassin
             Instance = this;
             if (PhotonNetwork.CurrentRoom != null && Stats.LocalPlayerInstance == null)
             {
-                if (playerPrefab == null)
+                if (playerPrefab == null || daggerPrefab == null)
                 {
                     UnityEngine.Debug.LogError("<Color=Red><a>Missing</a></Color> playerPrefab Reference. Please set it up in GameObject 'Game Manager'", this);
                 }
@@ -60,6 +61,7 @@ namespace Com.Aaru.Sassin
                     UnityEngine.Debug.LogFormat("We are Instantiating LocalPlayer from {0}", UnityEngine.Application.loadedLevelName);
                     // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
                     PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f, 2f, 0f), Quaternion.identity, 0);
+                    PhotonNetwork.Instantiate(this.daggerPrefab.name, new Vector3(0f, 2f, 0f), Quaternion.identity, 0);
                 }
             }
             SteamVR_Fade.Start(Color.black, 0f);
