@@ -8,6 +8,7 @@ public class NetworkPositionLink : MonoBehaviour
     public GameObject head;
     public GameObject left;
     public GameObject right;
+    public CapsuleCollider body;
 
     private GameObject networkPlayer;
     private NetworkPlayer player;
@@ -21,6 +22,7 @@ public class NetworkPositionLink : MonoBehaviour
             player.rightHand = right;
             player.leftHand = left;
             player.headCamera = head;
+            player.body = body;
         }
     }
 
@@ -41,6 +43,7 @@ public class NetworkPositionLink : MonoBehaviour
                 player.rightHand = right;
                 player.leftHand = left;
                 player.headCamera = head;
+                player.body = body;
             }
         }
     }

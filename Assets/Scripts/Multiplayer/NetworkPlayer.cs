@@ -10,6 +10,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
     public Transform head;
     public Transform left;
     public Transform right;
+    public CapsuleCollider bodyCol;
     public static GameObject player;
     public Vector3 leftRotOffset;
     public Vector3 rightRotOffset;
@@ -17,6 +18,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
     internal GameObject leftHand;
     internal GameObject rightHand;
     internal GameObject headCamera;
+    internal CapsuleCollider body;
 
     // Start is called before the first frame update
     void Start()
@@ -35,8 +37,10 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
             left.gameObject.SetActive(false);
             head.gameObject.SetActive(false);
             MapPosition(head, XRNode.Head, Quaternion.identity.eulerAngles);
-            MapPosition(left, leftHand, leftRotOffset);
-            MapPosition(right, rightHand, rightRotOffset);
+            MapPosition(left, leftHand);
+            MapPosition(right, rightHand);
+            if (body)
+                UpdateCollider(bodyCol, body);
         }
     }
 
@@ -49,7 +53,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
         target.rotation = rotation * Quaternion.Euler(rotOffset);
     }
 
-    void MapPosition(Transform target, GameObject node, Vector3 rotOffset = default(Vector3))
+    void MapPosition(Transform target, GameObject node)
     {
         UnityEngine.Debug.Log("In override");
         target.localPosition = node.transform.localPosition;
@@ -60,6 +64,14 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
     {
         transform.position = position.position;
         transform.rotation = rotation;
+    }
+
+    void UpdateCollider(CapsuleCollider copyTo, CapsuleCollider copyFrom)
+    {
+        copyTo.height = copyFrom.height;
+        copyTo.radius = copyFrom.radius;
+        copyTo.center = copyFrom.center;
+        copyTo.transform.position = copyFrom.transform.position;
     }
 
     #region IPunObservable implementation

@@ -14,7 +14,7 @@ using System.Diagnostics;
 public class Stats : MonoBehaviourPunCallbacks, IPunObservable
 {
     [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
-    public static GameObject LocalPlayerInstance;
+    public static Stats LocalStatsInstance;
 
     [Header("Variables")]
     [SerializeField, Tooltip("health")]
@@ -70,9 +70,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField, Tooltip("Optional, used to set isKinematic false on death")]
     private Rigidbody[] ragdoll;
 
-    [Tooltip("The Player's UI GameObject Prefab")]
-    [SerializeField]
-    public GameObject PlayerUiPrefab;
+    
 
     private float stabCD = 0f;
 
@@ -104,17 +102,6 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         _trackedObjectsStartPos = trackedObjects.transform.position;
 
 
-        if (PlayerUiPrefab != null && PhotonNetwork.CurrentRoom != null)
-        {
-            GameObject _uiGo = Instantiate(PlayerUiPrefab);
-            _uiGo.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
-        }
-        else
-        {
-            if (PhotonNetwork.CurrentRoom != null)
-                UnityEngine.Debug.LogWarning("<Color=Red><a>Missing</a></Color> PlayerUiPrefab reference on player Prefab.", this);
-        }
-
         if (moveToSpawnOnDeath && volume == null)
         {
             var tmp = GameObject.Find("Post Processing");
@@ -134,12 +121,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
 
     void Awake()
     {
-        // #Important
-        // used in GameManager.cs: we keep track of the localPlayer instance to prevent instantiation when levels are synchronized
-        if (photonView && photonView.IsMine)
-        {
-            Stats.LocalPlayerInstance = this.gameObject;
-        }
+        Stats.LocalStatsInstance = this;
     }
 
     // When damage is received

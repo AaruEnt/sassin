@@ -19,6 +19,9 @@ namespace Com.Aaru.Sassin
         [Tooltip("The prefab to use for representing the player")]
         public GameObject playerPrefab;
         public GameObject daggerPrefab;
+        [Tooltip("The Player's UI GameObject Prefab")]
+        [SerializeField]
+        public GameObject PlayerUiPrefab;
 
         public static GameManager Instance;
 
@@ -50,7 +53,7 @@ namespace Com.Aaru.Sassin
         void Start()
         {
             Instance = this;
-            if (PhotonNetwork.CurrentRoom != null && Stats.LocalPlayerInstance == null)
+            if (PhotonNetwork.CurrentRoom != null && PlayerManager.LocalPlayerInstance == null)
             {
                 if (playerPrefab == null || daggerPrefab == null)
                 {
@@ -58,10 +61,16 @@ namespace Com.Aaru.Sassin
                 }
                 else
                 {
-                    UnityEngine.Debug.LogFormat("We are Instantiating LocalPlayer from {0}", UnityEngine.Application.loadedLevelName);
-                    // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
-                    PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f, 2f, 0f), Quaternion.identity, 0);
-                    PhotonNetwork.Instantiate(this.daggerPrefab.name, new Vector3(0f, 2f, 0f), Quaternion.identity, 0);
+                    if (PlayerManager.LocalPlayerInstance == null)
+                    {
+                        UnityEngine.Debug.LogFormat("We are Instantiating LocalPlayer from {0}", UnityEngine.Application.loadedLevelName);
+                        // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
+                        PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f, 2f, 0f), Quaternion.identity, 0);
+                        PhotonNetwork.Instantiate(this.daggerPrefab.name, new Vector3(0f, 2f, 0f), Quaternion.identity, 0);
+                        GameObject tmp = GameObject.Find("UICanvas");
+                        GameObject _uiGo = Instantiate(PlayerUiPrefab);
+                        _uiGo.SendMessage("SetTarget", tmp.transform.parent.GetComponent<PlayerManager>(), SendMessageOptions.RequireReceiver);
+                    }
                 }
             }
             SteamVR_Fade.Start(Color.black, 0f);

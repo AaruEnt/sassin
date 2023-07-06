@@ -19,7 +19,7 @@ namespace Com.Aaru.Sassin {
         [SerializeField]
         private Slider playerHealthSlider;
 
-        private Stats target;
+        private PlayerManager target;
 
         private bool parentSet = false;
 
@@ -57,7 +57,7 @@ namespace Com.Aaru.Sassin {
 
         #region Public Methods
 
-        public void SetTarget(Stats _target)
+        public void SetTarget(PlayerManager _target)
         {
             if (_target == null)
             {
