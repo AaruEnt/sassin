@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using System.Diagnostics;
 
 public class NetworkDagger : MonoBehaviourPunCallbacks
 {
@@ -21,6 +22,10 @@ public class NetworkDagger : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
+        if (photonView.IsMine && DaggerAnimator.LocalDaggerInstance != null && model == null)
+        {
+            model = DaggerAnimator.LocalDaggerInstance.models.gameObject;
+        }
         if (photonView.IsMine)
         {
             foreach (Transform t in transform)
@@ -29,6 +34,7 @@ public class NetworkDagger : MonoBehaviourPunCallbacks
                     t.gameObject.SetActive(false);
             }
         }
+        UnityEngine.Debug.Log(model);
     }
 
     internal void UpdatePositionRotation(Transform pos, Quaternion rot)

@@ -4,23 +4,16 @@ using UnityEngine;
 
 public class DaggerAnimator : MonoBehaviour
 {
+    public static DaggerAnimator LocalDaggerInstance;
     [SerializeField, Tooltip("The animator for the dagger")]
     private Animator anim;
     public Transform models;
 
     private NetworkDagger dagger;
 
-
-    void Update()
+    void Awake()
     {
-        if (!dagger && NetworkDagger.dagger)
-        {
-            dagger = NetworkDagger.dagger.GetComponent<NetworkDagger>();
-        }
-        if (dagger)
-        {
-            dagger.UpdatePositionRotation(models, models.rotation);
-        }
+        LocalDaggerInstance = this;
     }
 
 
