@@ -36,7 +36,7 @@ public class NetworkDagger : MonoBehaviourPunCallbacks
                     t.gameObject.SetActive(false);
             }
         }
-        UnityEngine.Debug.Log(model.transform.position);
+        //UnityEngine.Debug.Log(model.transform.position);
         UpdatePositionRotation(model.transform, model.transform.rotation);
     }
 
