@@ -8,6 +8,8 @@ public class NetworkDagger : MonoBehaviourPunCallbacks
 {
     public static GameObject dagger;
 
+    public GameObject networkModels;
+
     internal GameObject model;
 
     // Start is called before the first frame update
@@ -34,12 +36,13 @@ public class NetworkDagger : MonoBehaviourPunCallbacks
                     t.gameObject.SetActive(false);
             }
         }
-        UnityEngine.Debug.Log(model);
+        UnityEngine.Debug.Log(model.transform.position);
+        UpdatePositionRotation(model.transform, model.transform.rotation);
     }
 
     internal void UpdatePositionRotation(Transform pos, Quaternion rot)
     {
-        transform.position = pos.position;
-        transform.rotation = rot;
+        networkModels.transform.position = pos.position;
+        networkModels.transform.rotation = rot;
     }
 }
