@@ -36,6 +36,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
             right.gameObject.SetActive(false);
             left.gameObject.SetActive(false);
             head.gameObject.SetActive(false);
+            bodyCol.gameObject.SetActive(false);
             MapPosition(head, XRNode.Head, Quaternion.identity.eulerAngles);
             MapPosition(left, leftHand);
             MapPosition(right, rightHand);
