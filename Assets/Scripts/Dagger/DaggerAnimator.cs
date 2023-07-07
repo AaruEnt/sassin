@@ -4,17 +4,9 @@ using UnityEngine;
 
 public class DaggerAnimator : MonoBehaviour
 {
-    public static DaggerAnimator LocalDaggerInstance;
     [SerializeField, Tooltip("The animator for the dagger")]
     private Animator anim;
-    public Transform models;
 
-    private NetworkDagger dagger;
-
-    void Awake()
-    {
-        LocalDaggerInstance = this;
-    }
 
 
     // Toggles on the spinning animation

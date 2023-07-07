@@ -30,4 +30,9 @@ public class PlayerManager : MonoBehaviourPunCallbacks
             health = s.health;
         }
     }
+
+    internal void UpdateHealth(float damage)
+    {
+        s.OnDamageReceived(damage);
+    }
 }

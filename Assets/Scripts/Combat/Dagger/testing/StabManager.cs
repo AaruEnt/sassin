@@ -14,6 +14,7 @@ namespace JointVR
     [RequireComponent(typeof(Rigidbody))]
     public class StabManager : MonoBehaviour
     {
+        public static StabManager LocalDaggerInstance;
         [SerializeField] public List<Stabber> stabbers = new List<Stabber>();
         [SerializeField] public List<Rigidbody> ignoreStab = new List<Rigidbody>();
         [Tag] public string ignoreStabTag;
@@ -26,6 +27,7 @@ namespace JointVR
 
         public GameObject stabEffect;
         public bool createOneEffect = true;
+        public GameObject models;
 
         
         // Start is called before the first frame update
@@ -48,6 +50,12 @@ namespace JointVR
                     joint.jointRb = rb;
 
             
+        }
+
+
+        void Awake()
+        {
+            LocalDaggerInstance = this;
         }
 
         void Update()
