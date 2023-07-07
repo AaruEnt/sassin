@@ -34,7 +34,7 @@ public class NetworkDagger : MonoBehaviourPunCallbacks
         if (photonView.IsMine && StabManager.LocalDaggerInstance != null && model == null)
         {
             model = StabManager.LocalDaggerInstance.models;
-            model.gameObject.SetActive(false);
+            networkModels.gameObject.SetActive(false);
             damage = StabManager.LocalDaggerInstance.gameObject.GetComponent<Weapon>()?.damage;
             if (damage == null)
             {
