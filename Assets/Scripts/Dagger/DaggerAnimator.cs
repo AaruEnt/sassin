@@ -7,6 +7,8 @@ public class DaggerAnimator : MonoBehaviour
     [SerializeField, Tooltip("The animator for the dagger")]
     private Animator anim;
 
+
+
     // Toggles on the spinning animation
     public void ToggleOn()
     {

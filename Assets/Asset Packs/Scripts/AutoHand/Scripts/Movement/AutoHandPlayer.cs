@@ -463,7 +463,8 @@ namespace Autohand {
 
         Vector3 offset;
         void SyncBodyHead() {
-            var delta = 50f * Time.fixedDeltaTime;
+            // changed magic num from 50 to 100
+            var delta = 100f * Time.fixedDeltaTime;
             float scale = transform.lossyScale.x > transform.lossyScale.z ? transform.lossyScale.x : transform.lossyScale.z;
 
             if((headCamera.transform.position - transform.position).magnitude > 0.1f* delta) {
