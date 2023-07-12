@@ -295,7 +295,7 @@ namespace JointVR {
             {
                 if (j.joint)
                 {
-                    Stats s = j.stabbedCollider.transform.root.GetComponent<Stats>();
+                    Stats s = j.stabbedCollider?.transform.root.GetComponent<Stats>();
                     if (s)
                         s.ManuallyRemoveCollision(root.gameObject);
                     Unstab(j);

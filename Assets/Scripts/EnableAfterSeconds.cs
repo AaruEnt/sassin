@@ -4,14 +4,29 @@ using UnityEngine;
 
 public class EnableAfterSeconds : MonoBehaviour
 {
+    public bool enableOnAwake;
+    public bool destroyOnFinish = false;
+    public float defaultSeconds = 1f;
     public GameObject toEnable;
     public GameObject newObject;
+
 
     private float timer = 0f;
     private bool isRunning = false;
     private float currDelay = 0f;
     private bool create = false;
     public Transform spawnPoint;
+
+    void Awake()
+    {
+        if (enableOnAwake)
+        {
+            isRunning = true;
+            currDelay = defaultSeconds;
+            timer = 0f;
+        }
+    }
+
 
     void Update()
     {
@@ -37,6 +52,11 @@ public class EnableAfterSeconds : MonoBehaviour
                     isRunning = false;
                     timer = 0f;
                     create = false;
+                }
+
+                if (destroyOnFinish)
+                {
+                    Destroy(this);
                 }
             }
         }

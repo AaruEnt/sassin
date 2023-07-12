@@ -15,12 +15,16 @@ public class DaggerSummon : MonoBehaviour
 
     internal bool isHeld = false;
 
+    public bool tempDisableSummon = false;
+
     [Button]
     public void SummonKnife() { SummonToPlacePoint(); }
 
     // voids momentum and prepares dagger to be put in placepoint
     public void SummonToPlacePoint()
     {
+        if (tempDisableSummon)
+            return;
         if (isHeld)
             return;
         Rigidbody rb = GetComponent<Rigidbody>();
@@ -49,6 +53,8 @@ public class DaggerSummon : MonoBehaviour
 
     public void SummonToGrabPoint(Hand hand, Grabbable gb = null)
     {
+        if (tempDisableSummon)
+            return;
         if (isHeld)
             return;
         Rigidbody rb = GetComponent<Rigidbody>();
@@ -60,5 +66,10 @@ public class DaggerSummon : MonoBehaviour
         hand.TryGrab(g);
         if (dAnim)
             dAnim.ToggleOff();
+    }
+
+    public void SetEnabled(bool enabled)
+    {
+        tempDisableSummon = !enabled;
     }
 }
