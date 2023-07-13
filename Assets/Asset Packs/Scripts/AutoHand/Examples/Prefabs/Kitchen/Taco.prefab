@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 8035188000993757356}
   - component: {fileID: 8035188000993757345}
   - component: {fileID: 8035188000993757344}
+  - component: {fileID: 2449602357422985113}
   m_Layer: 0
   m_Name: Taco
   m_TagString: Untagged
@@ -132,26 +133,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 822bc9090447b9c40833509c4a32e597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ignoreMe: 0
   body: {fileID: 0}
+  hightlightMaterial: {fileID: 0}
+  isGrabbable: 1
+  CopySettings: {fileID: 0}
+  grabType: 0
   handType: 0
-  ignoreWeight: 0
-  maintainGrabOffset: 0
   singleHandOnly: 1
   allowHeldSwapping: 1
   instantGrab: 0
+  useGentleGrab: 0
+  maintainGrabOffset: 0
+  ignoreWeight: 0
   parentOnGrab: 1
-  throwMultiplyer: 1
-  lookAssistMultiplyer: 1
-  hightlightMaterial: {fileID: 0}
+  throwPower: 1
   jointBreakForce: 1000
   showAdvancedSettings: 0
-  lockHandOnGrab: 0
   makeChildrenGrabbable: 1
-  jointedBodies: []
+  grabPriorityWeight: 1
   ignoreReleaseTime: 0.25
-  grabDistancePriority: 1
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
+  customGrabJoint: {fileID: 0}
+  jointedBodies: []
+  heldIgnoreColliders: []
+  pullApartBreakOnly: 1
   showEvents: 0
   onGrab:
     m_PersistentCalls:
@@ -183,7 +190,6 @@ MonoBehaviour:
   onUnhighlight:
     m_PersistentCalls:
       m_Calls: []
-  pullApartBreakOnly: 1
   OnJointBreak:
     m_PersistentCalls:
       m_Calls:
@@ -199,7 +205,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  isGrabbable: 1
+  breakHoldWhenGrabActive: 1
+  lockHandOnGrab: 0
 --- !u!114 &8035188000993757345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,12 +220,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   smashForce: 1.5
-  destroyOnSmash: 0
+  destroyOnSmash: 1
   releaseOnSmash: 0
-  effect: {fileID: 1708889463548190791, guid: ae95971c2f52c7a49b273f7a6547f819, type: 3}
+  effect: {fileID: 1708889463548190809, guid: ae95971c2f52c7a49b273f7a6547f819, type: 3}
   createNewEffect: 1
   applyVelocityOnSmash: 1
-  smashSound: {fileID: 0}
+  smashSound: {fileID: 8300000, guid: 3c73ab236391cd748b00945c22254c46, type: 3}
   smashVolume: 1
   OnSmash:
     m_PersistentCalls:
@@ -242,8 +249,8 @@ MonoBehaviour:
   OnBreak:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
+      - m_Target: {fileID: 8035188000993757345}
+        m_TargetAssemblyTypeName: Autohand.Demo.Smash, Assembly-CSharp
         m_MethodName: DoSmash
         m_Mode: 1
         m_Arguments:
@@ -254,3 +261,35 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &2449602357422985113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2063587596306059683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec29f7c9046538f4ab8f6b9d1e3fd58f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  obj: {fileID: 0}
+  tag: MouthTrigger
+  t:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8035188000993757345}
+        m_TargetAssemblyTypeName: Autohand.Demo.Smash, Assembly-CSharp
+        m_MethodName: DoSmash
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  te:
+    m_PersistentCalls:
+      m_Calls: []
