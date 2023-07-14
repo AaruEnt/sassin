@@ -545,6 +545,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   ignoreStabTag: Effect
+  stabEffect: {fileID: 0}
+  createOneEffect: 1
 --- !u!114 &4098599877513415008
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -898,7 +900,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4098599877513415009}
         m_TargetAssemblyTypeName: JointVR.StabManager, Assembly-CSharp
-        m_MethodName: UnFreezeRigidbody
+        m_MethodName: UnstabAll
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1097,6 +1099,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   place: {fileID: 0}
   dAnim: {fileID: 199313010}
+  tempDisableSummon: 0
 --- !u!114 &1635681123
 MonoBehaviour:
   m_ObjectHideFlags: 0
