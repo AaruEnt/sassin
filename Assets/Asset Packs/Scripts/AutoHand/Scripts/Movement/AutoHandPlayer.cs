@@ -5,6 +5,7 @@ using Autohand.Demo;
 using System;
 using NaughtyAttributes;
 using UnityEngine.Serialization;
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -179,6 +180,8 @@ namespace Autohand {
         bool ignoreIterpolationFrame;
         Vector3 targetPosOffset;
         int handPlayerMask;
+
+        private bool climbingLastFrame = false;
 
 
 
@@ -742,6 +745,7 @@ namespace Autohand {
             {
                 bodyCapsule.height = 0.2f;
                 bodyCapsule.center = new Vector3(0, 1f, 0);
+                climbingLastFrame = true;
                 return;
             }
 
@@ -750,6 +754,25 @@ namespace Autohand {
                 bodyCapsule.height = playerHeight;
                 var centerHeight = playerHeight / 2f > bodyCapsule.radius ? playerHeight / 2f : bodyCapsule.radius;
                 bodyCapsule.center = new Vector3(0, centerHeight, 0);
+                if (climbingLastFrame)
+                {
+                    var direction = new Vector3 { [bodyCapsule.direction] = 1 };
+                    var offset = bodyCapsule.height / 2 - bodyCapsule.radius;
+                    var localPoint0 = bodyCapsule.center - direction * offset;
+                    var localPoint1 = bodyCapsule.center + direction * offset;
+                    var point0 = transform.TransformPoint(localPoint0);
+                    var point1 = transform.TransformPoint(localPoint1);
+                    var r = transform.TransformVector(bodyCapsule.radius - 0.01f, bodyCapsule.radius - 0.01f, bodyCapsule.radius - 0.01f);
+                    var radius = Enumerable.Range(0, 3).Select(xyz => xyz == bodyCapsule.direction ? 0 : r[xyz]).Select(Mathf.Abs).Max();
+                    if(Physics.CheckCapsule(point0, point1, radius, groundLayerMask, QueryTriggerInteraction.Ignore))
+                    {
+                        Vector3 tmp = body.transform.position;
+                        tmp.y += 1f;
+                        body.transform.position = tmp;
+                    }
+                    climbingLastFrame = false;
+                    
+                }
             }
         }
 
