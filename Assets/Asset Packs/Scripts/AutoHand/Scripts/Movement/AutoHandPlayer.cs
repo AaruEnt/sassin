@@ -727,6 +727,7 @@ namespace Autohand {
         }
 
         protected virtual void UpdatePlayerHeight() {
+            
             if(crouching != lastCrouching) {
                 if(lastCrouching)
                     heightOffset += lastCrouchingHeight;
@@ -737,7 +738,14 @@ namespace Autohand {
                 lastCrouchingHeight = crouchHeight;
             }
 
-            if(autoAdjustColliderHeight) {
+            if (IsClimbing())
+            {
+                bodyCapsule.height = 0.2f;
+                bodyCapsule.center = new Vector3(0, 1f, 0);
+                return;
+            }
+
+            if (autoAdjustColliderHeight) {
                 playerHeight = Mathf.Clamp(headCamera.transform.position.y - transform.position.y, minMaxHeight.x, minMaxHeight.y);
                 bodyCapsule.height = playerHeight;
                 var centerHeight = playerHeight / 2f > bodyCapsule.radius ? playerHeight / 2f : bodyCapsule.radius;
