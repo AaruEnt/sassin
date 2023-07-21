@@ -8,9 +8,14 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using NaughtyAttributes;
 using Autohand;
+using Photon.Pun;
+using System.Diagnostics;
 
-public class Stats : MonoBehaviour
+public class Stats : MonoBehaviourPunCallbacks, IPunObservable
 {
+    [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
+    public static Stats LocalStatsInstance;
+
     [Header("Variables")]
     [SerializeField, Tooltip("health")]
     internal float health = 20f;
@@ -33,11 +38,6 @@ public class Stats : MonoBehaviour
 
     [SerializeField, Tooltip("Move to spawn on death, with a short stun. Used mainly for the player.")]
     private bool moveToSpawnOnDeath = false;
-
-    [SerializeField, Tooltip("Move to spawn on death, with a short stun. Used mainly for the player.")]
-    private bool moveToCheckpointOnDeath = false;
-
-    private Vector3 lastCheckpoint;
 
     [SerializeField, ShowIf("moveToSpawnOnDeath")]
     private float respawnTimer = 5f;
@@ -70,17 +70,43 @@ public class Stats : MonoBehaviour
     [SerializeField, Tooltip("Optional, used to set isKinematic false on death")]
     private Rigidbody[] ragdoll;
 
+    
+
     private float stabCD = 0f;
 
     private Vector3 _startPos;
 
     private float timer = 0f;
 
+    #region IPunObservable implementation
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            // We own this player: send the others our data
+            stream.SendNext(health);
+        }
+        else
+        {
+            // Network player, receive data
+            this.health = (float)stream.ReceiveNext();
+        }
+    }
+
+    #endregion
+
     void Start()
     {
         _startPos = transform.position;
         _trackedObjectsStartPos = trackedObjects.transform.position;
-        lastCheckpoint = _startPos;
+
+
+        if (moveToSpawnOnDeath && volume == null)
+        {
+            var tmp = GameObject.Find("Post Processing");
+            volume = tmp != null ? tmp.GetComponent<Volume>() : null;
+        }
     }
 
     void Update()
@@ -91,6 +117,11 @@ public class Stats : MonoBehaviour
         }
         if (stabCD > 0)
             stabCD -= Time.deltaTime;
+    }
+
+    void Awake()
+    {
+        Stats.LocalStatsInstance = this;
     }
 
     // When damage is received
@@ -127,39 +158,23 @@ public class Stats : MonoBehaviour
             Destroy(this.gameObject);
         else if (reloadSceneOnDeath)
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        else if (moveToCheckpointOnDeath)
-        {
-            transform.position = lastCheckpoint;
-            trackedObjects.transform.position = lastCheckpoint;
-            var profile = volume?.profile;
-            if (!profile)
-                throw new System.NullReferenceException(nameof(UnityEngine.Rendering.VolumeProfile));
-            ColorAdjustments CA;
-            if (profile.TryGet<ColorAdjustments>(out CA))
-            {
-                VolumeParameter<float> sat = new VolumeParameter<float>();
-                sat.value = -100f;
-                CA.saturation.SetValue(sat);
-                health = maxHealth;
-            }
-            player.useMovement = false;
-            timer = 0f;
-            StartCoroutine(Respawn());
-        }
         else if (moveToSpawnOnDeath)
         {
             transform.position = _startPos;
             trackedObjects.transform.position = _trackedObjectsStartPos;
-            var profile = volume?.profile;
-            if (!profile)
-                throw new System.NullReferenceException(nameof(UnityEngine.Rendering.VolumeProfile));
-            ColorAdjustments CA;
-            if (profile.TryGet<ColorAdjustments>(out CA))
+            if (photonView.IsMine)
             {
-                VolumeParameter<float> sat = new VolumeParameter<float>();
-                sat.value = -100f;
-                CA.saturation.SetValue(sat);
-                health = maxHealth;
+                var profile = volume?.profile;
+                if (!profile)
+                    throw new System.NullReferenceException(nameof(UnityEngine.Rendering.VolumeProfile));
+                ColorAdjustments CA;
+                if (profile.TryGet<ColorAdjustments>(out CA))
+                {
+                    VolumeParameter<float> sat = new VolumeParameter<float>();
+                    sat.value = -100f;
+                    CA.saturation.SetValue(sat);
+                    health = maxHealth;
+                }
             }
             player.useMovement = false;
             timer = 0f;
@@ -268,18 +283,7 @@ public class Stats : MonoBehaviour
         }
     }
 
-
-    internal void OnTriggerEnter(Collider col)
-    {
-        if (col.gameObject.CompareTag("Checkpoint"))
-        {
-            Vector3? tmp = col.transform.GetChild(0)?.position;
-            if (tmp.HasValue)
-                lastCheckpoint = (Vector3)tmp;
-        }
-    }
-
-        internal void OnCollisionExit(Collision col)
+    internal void OnCollisionExit(Collision col)
     {
         if (col.body as Rigidbody == null)
             return;
@@ -327,16 +331,12 @@ public class Stats : MonoBehaviour
         {
             float blendVal = ((timer / respawnTimer) * 50);
             timer += Time.deltaTime;
-            sat.value = -100f + blendVal;
-            CA.saturation.SetValue(sat);
-            if (moveToCheckpointOnDeath)
+            if (photonView.IsMine)
             {
-                transform.position = lastCheckpoint;
+                sat.value = -100f + blendVal;
+                CA.saturation.SetValue(sat);
             }
-            else
-            {
-                transform.position = _startPos;
-            }
+            transform.position = _startPos;
             yield return null;
         }
         player.useMovement = true;
@@ -344,5 +344,6 @@ public class Stats : MonoBehaviour
         CA.saturation.SetValue(sat);
         if (respawnBarrier)
             respawnBarrier.SetActive(false);
+        health = maxHealth;
     }
 }
