@@ -21,8 +21,16 @@ namespace Valve.VR
 
         public int initialPriority = 0;
 
+        public static int dontRerunCode = 0;
+
         private void Start()
         {
+            UnityEngine.Debug.Log(dontRerunCode);
+            if (dontRerunCode >= 3)
+            {
+                return;
+            }
+            dontRerunCode += 1;
             if (actionSet != null && activateOnStart)
             {
                 //Debug.Log(string.Format("[SteamVR] Activating {0} action set.", actionSet.fullPath));

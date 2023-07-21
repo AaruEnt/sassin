@@ -12,7 +12,7 @@ namespace Autohand{
         public Transform followBody;
 
         [Header("Follow Settings")]
-        public float followStrength = 50f;
+        public float followStrength = 100f;
         [Tooltip("The maximum allowed distance from the body for the headCamera to still move")]
         //public float maxBodyDistance = 0.5f;
 

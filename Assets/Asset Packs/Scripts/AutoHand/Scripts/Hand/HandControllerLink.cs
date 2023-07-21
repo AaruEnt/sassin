@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 namespace Autohand {
-    public class HandControllerLink : MonoBehaviour {
+    public class HandControllerLink : MonoBehaviourPunCallbacks {
         public static HandControllerLink handLeft, handRight;
 
         public Hand hand;

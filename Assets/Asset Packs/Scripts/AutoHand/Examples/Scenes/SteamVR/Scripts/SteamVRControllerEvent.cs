@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Photon.Pun;
 #if !UNITY_ANDROID
 using Valve.VR;
 #endif
 
 namespace Autohand.Demo
 {
-    public class SteamVRControllerEvent : MonoBehaviour{
+    public class SteamVRControllerEvent : MonoBehaviourPunCallbacks {
 #if !UNITY_ANDROID
         public SteamVR_Input_Sources controller;
         public SteamVR_Action_Boolean button;
@@ -19,6 +20,10 @@ namespace Autohand.Demo
 
         void Update()
         {
+            if (photonView && !photonView.IsMine)
+            {
+                return;
+            }
             if (!pressed && button.GetState(controller))
             {
                 pressed = true;
