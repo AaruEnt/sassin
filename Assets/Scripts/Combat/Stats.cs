@@ -9,6 +9,7 @@ using UnityEngine.Rendering.Universal;
 using NaughtyAttributes;
 using Autohand;
 using Photon.Pun;
+using Photon.Realtime;
 using System.Diagnostics;
 
 public class Stats : MonoBehaviourPunCallbacks, IPunObservable
@@ -187,7 +188,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         {
             transform.position = _startPos;
             trackedObjects.transform.position = _trackedObjectsStartPos;
-            if (photonView.IsMine)
+            if ((photonView && photonView.IsMine) || !PhotonNetwork.IsConnected)
             {
                 var profile = volume?.profile;
                 if (!profile)
@@ -366,7 +367,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         {
             float blendVal = ((timer / respawnTimer) * 50);
             timer += Time.deltaTime;
-            if (photonView.IsMine)
+            if ((photonView && photonView.IsMine) || !PhotonNetwork.IsConnected)
             {
                 sat.value = -100f + blendVal;
                 CA.saturation.SetValue(sat);
