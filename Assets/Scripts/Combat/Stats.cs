@@ -39,6 +39,11 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField, Tooltip("Move to spawn on death, with a short stun. Used mainly for the player.")]
     private bool moveToSpawnOnDeath = false;
 
+    [SerializeField, Tooltip("Move to spawn on death, with a short stun. Used mainly for the player.")]
+    private bool moveToCheckpointOnDeath = false;
+
+    private Vector3 lastCheckpoint;
+
     [SerializeField, ShowIf("moveToSpawnOnDeath")]
     private float respawnTimer = 5f;
 
@@ -100,6 +105,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     {
         _startPos = transform.position;
         _trackedObjectsStartPos = trackedObjects.transform.position;
+        lastCheckpoint = _startPos;
 
 
         if (moveToSpawnOnDeath && volume == null)
@@ -158,6 +164,25 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
             Destroy(this.gameObject);
         else if (reloadSceneOnDeath)
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        else if (moveToCheckpointOnDeath)
+        {
+            transform.position = lastCheckpoint;
+            trackedObjects.transform.position = lastCheckpoint;
+            var profile = volume?.profile;
+            if (!profile)
+                throw new System.NullReferenceException(nameof(UnityEngine.Rendering.VolumeProfile));
+            ColorAdjustments CA;
+            if (profile.TryGet<ColorAdjustments>(out CA))
+            {
+                VolumeParameter<float> sat = new VolumeParameter<float>();
+                sat.value = -100f;
+                CA.saturation.SetValue(sat);
+                health = maxHealth;
+            }
+            player.useMovement = false;
+            timer = 0f;
+            StartCoroutine(Respawn());
+        }
         else if (moveToSpawnOnDeath)
         {
             transform.position = _startPos;
@@ -283,6 +308,16 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
+    internal void OnTriggerEnter(Collider col)
+    {
+        if (col.gameObject.CompareTag("Checkpoint"))
+        {
+            Vector3? tmp = col.transform.GetChild(0)?.position;
+            if (tmp.HasValue)
+                lastCheckpoint = (Vector3)tmp;
+        }
+    }
+
     internal void OnCollisionExit(Collision col)
     {
         if (col.body as Rigidbody == null)
@@ -342,6 +377,14 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         player.useMovement = true;
         sat.value = 1.1f;
         CA.saturation.SetValue(sat);
+        if (moveToCheckpointOnDeath)
+        {
+            transform.position = lastCheckpoint;
+        }
+        else
+        {
+            transform.position = _startPos;
+        }
         if (respawnBarrier)
             respawnBarrier.SetActive(false);
         health = maxHealth;
