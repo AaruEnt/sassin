@@ -112,6 +112,8 @@ namespace Autohand {
         public float climbUpStepHeightMultiplier = 1;
         [Tooltip("Multiplies the body's velocity on ending climb, allowing the player to fling themselves easier")]
         public float climbFlingForceMultiplier = 1.2f;
+        [Tooltip("Multiplies the body's velocity on ending climb, allowing the player to fling themselves easier")]
+        public float twoHandClimbFlingForceMultiplier = 2.2f;
 
         [AutoToggleHeader("Enable Pushing")]
         [Tooltip("Whether or not the player can use Pushable objects (Objects with the Pushable component)")]
@@ -1012,7 +1014,10 @@ namespace Autohand {
                 Vector3 newVel = body.velocity;
                 newVel.x *= 0.15f;
                 newVel.z *= 0.15f;
-                newVel.y *= climbFlingForceMultiplier;
+                if (grab.heldBy2Hands)
+                    newVel.y *= twoHandClimbFlingForceMultiplier;
+                else
+                    newVel.y *= climbFlingForceMultiplier;
                 body.velocity = newVel;
             }
         }

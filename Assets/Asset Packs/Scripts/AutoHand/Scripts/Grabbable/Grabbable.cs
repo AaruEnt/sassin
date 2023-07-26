@@ -157,6 +157,9 @@ namespace Autohand {
         public PlacePointEvent OnPlacePointAddEvent;
         public PlacePointEvent OnPlacePointRemoveEvent;
 
+        private float heldBy2HandsCD = 0f;
+        internal bool heldBy2Hands = false;
+
 
         /// <summary>Whether or not this object was force released (dropped) when last released (as opposed to being intentionally released)</summary>
         public bool wasForceReleased { get; internal set; } = false;
@@ -211,6 +214,18 @@ namespace Autohand {
         void Update()
         {
             UpdateHeldInterpolation();
+
+            if (heldBy.Count == 2)
+            {
+                heldBy2Hands = true;
+                heldBy2HandsCD = 0f;
+            } else if (heldBy2Hands)
+            {
+                if (heldBy2HandsCD >= 1f)
+                    heldBy2Hands = false;
+                else
+                    heldBy2HandsCD += Time.deltaTime;
+            }
         }
 
         protected override void FixedUpdate() {

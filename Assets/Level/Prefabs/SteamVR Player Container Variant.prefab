@@ -18111,6 +18111,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c77d2800f329124590890ae13c7ac06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enableOnAwake: 0
+  destroyOnFinish: 0
+  defaultSeconds: 1
   toEnable: {fileID: 0}
   newObject: {fileID: 2213772736214915290, guid: 9117e90c3537068408ade4c1f331533b, type: 3}
   spawnPoint: {fileID: 4951016253739604257}
@@ -24005,6 +24008,10 @@ PrefabInstance:
       propertyPath: climbUpStepHeightMultiplier
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 4904617705076360061, guid: 7ddaef112cded9a4bbca3e89c198134e, type: 3}
+      propertyPath: twoHandClimbFlingForceMultiplier
+      value: 2.7
+      objectReference: {fileID: 0}
     - target: {fileID: 4904617705076360063, guid: 7ddaef112cded9a4bbca3e89c198134e, type: 3}
       propertyPath: m_TagString
       value: Player
@@ -24531,6 +24538,7 @@ MonoBehaviour:
   destroyOnDeath: 0
   reloadSceneOnDeath: 0
   moveToSpawnOnDeath: 1
+  moveToCheckpointOnDeath: 0
   respawnTimer: 5
   trackedObjects: {fileID: 1767383049954231693}
   respawnBarrier: {fileID: 922874872}
