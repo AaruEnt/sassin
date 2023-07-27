@@ -4,11 +4,16 @@ using System.ComponentModel;
 using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using NaughtyAttributes;
 
 public class LoadingScene : MonoBehaviour
 {
     private float t = 0f;
     public float minTime = 4f;
+
+    [Button]
+    private void clearTutorialData() { PlayerPrefs.SetInt("BeatTutorial", 0); UnityEngine.Debug.Log("Cleared!"); }
+
     // Start is called before the first frame update
     void Start()
     {
