@@ -152,6 +152,8 @@ namespace Autohand {
         public HandGrabEvent OnHighlightEvent;
         public HandGrabEvent OnUnhighlightEvent;
 
+        public UnityEvent DistanceExceededEvent;
+
         public PlacePointEvent OnPlacePointHighlightEvent;
         public PlacePointEvent OnPlacePointUnhighlightEvent;
         public PlacePointEvent OnPlacePointAddEvent;

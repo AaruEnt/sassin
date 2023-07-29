@@ -547,8 +547,10 @@ namespace Autohand {
                         tryMaxDistanceCount += 2;
                     }
                     else if(!holdingObj.parentOnGrab || tryMaxDistanceCount >= 1) {
+                        Grabbable g = holdingObj;
                         holdingObj.ForceHandRelease(this as Hand);
                         SetHandLocation(movePos, transform.rotation);
+                        g.DistanceExceededEvent.Invoke();
                     }
                 }
                 else {
