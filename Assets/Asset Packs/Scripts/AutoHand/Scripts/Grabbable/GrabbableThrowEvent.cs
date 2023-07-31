@@ -17,6 +17,8 @@ namespace Autohand{
         Coroutine resetThrowing;
         float throwTime = 3;
 
+        private bool firstCollisionCheck = false;
+
         void Awake() {
             rb = GetComponent<Rigidbody>();
             grab = GetComponent<Grabbable>();
@@ -48,11 +50,22 @@ namespace Autohand{
             if(!thrown || grab == null)
                 return;
 
+
             if(((1 << collision.collider.gameObject.layer) & collisionLayers) == 0)
                 return;
-        
-            if(rb.velocity.magnitude >= breakVelocity) {
+
+            if (firstCollisionCheck)
+            {
+                return;
+            }
+
+            firstCollisionCheck = true;
+
+            if (rb.velocity.magnitude >= breakVelocity) {
                 Invoke("Break", Time.fixedDeltaTime);
+            } else
+            {
+                firstCollisionCheck = false;
             }
         }
 
