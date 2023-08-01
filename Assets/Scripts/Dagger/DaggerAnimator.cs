@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Autohand;
+using System.Diagnostics;
 
 public class DaggerAnimator : MonoBehaviour
 {
     [SerializeField, Tooltip("The animator for the dagger")]
     private Animator anim;
-
 
 
     // Toggles on the spinning animation
