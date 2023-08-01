@@ -131,6 +131,7 @@ namespace Autohand {
         public UnityHandGrabEvent OnJointBreak = new UnityHandGrabEvent();
 
         public bool breakHoldWhenGrabActive = true;
+        public bool teleportWhenDistanceExceeded = false;
 
 
         //Advanced Hidden Settings

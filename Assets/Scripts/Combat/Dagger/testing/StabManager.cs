@@ -246,6 +246,7 @@ namespace JointVR
             }
             maintainParent = null;
             transform.parent = null;
+            UnFreezeRigidbody();
         }
 
         public void UnstabTarget(Collider col)
