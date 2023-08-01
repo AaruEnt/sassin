@@ -158,7 +158,8 @@ namespace JointVR {
 
             Destroy(stabJoint.joint);
 
-            IgnoreCollision(stabJoint.stabbedCollider);
+            if (stabJoint.stabbedCollider)
+                IgnoreCollision(stabJoint.stabbedCollider);
 
             stabJoint.unstabbedCollider = stabJoint.stabbedCollider;
 
@@ -181,7 +182,8 @@ namespace JointVR {
             newAnchor.y = stabDirection.yMotion == ConfigurableJointMotion.Limited ? stabLength : 0;
             newAnchor.z = stabDirection.zMotion == ConfigurableJointMotion.Limited ? stabLength : 0;
 
-            IgnoreCollision(stabbedCollider, true);
+            if (stabbedCollider)
+                IgnoreCollision(stabbedCollider, true);
 
             stabJoint.stabDirection = root.InverseTransformDirection(transform.TransformDirection(newAnchor));
 
