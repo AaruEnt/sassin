@@ -5,11 +5,13 @@ using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using NaughtyAttributes;
+using Valve.VR;
 
 public class LoadingScene : MonoBehaviour
 {
     private float t = 0f;
     public float minTime = 4f;
+    private bool faded = false;
 
     [Button]
     private void clearTutorialData() { PlayerPrefs.SetInt("BeatTutorial", 0); UnityEngine.Debug.Log("Cleared!"); }
@@ -38,6 +40,11 @@ public class LoadingScene : MonoBehaviour
         {
             t += Time.deltaTime;
             UnityEngine.Debug.Log(string.Format("Progress: {0}", operation.progress));
+            if (operation.progress >= 0.9f && t >= minTime - 1.5f && !faded)
+            {
+                faded = true;
+                SteamVR_Fade.View(Color.black, 1f);
+            }
             if (operation.progress >= 0.9f && t >= minTime)
             {
                 operation.allowSceneActivation = true;
