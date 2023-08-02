@@ -5,7 +5,7 @@ using Autohand;
 
 public class DaggerHelper : MonoBehaviour
 {
-    private Grabbable g;
+    public Grabbable g;
     private Rigidbody r;
 
     public Transform followObjTMP;
@@ -13,7 +13,8 @@ public class DaggerHelper : MonoBehaviour
 
     void Start()
     {
-        g = GetComponent<Grabbable>();
+        if (!g)
+            g = GetComponent<Grabbable>();
         r = GetComponent<Rigidbody>();
     }
 

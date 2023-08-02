@@ -121,6 +121,7 @@ public class PrimaryButton : MonoBehaviourPunCallbacks
     }
 
     private void Jump() {
+        UnityEngine.Debug.Log("Jump");
         if (photonView && !photonView.IsMine)
             return;
         if (jumpCD > 0)
@@ -160,7 +161,7 @@ public class PrimaryButton : MonoBehaviourPunCallbacks
     }
 
     private void Slide() {
-        if (!photonView.IsMine)
+        if (photonView && !photonView.IsMine)
             return;
         if (!isSliding && momentum.counter >= 800) {
             isSliding = true;

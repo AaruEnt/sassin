@@ -135,9 +135,7 @@ namespace JointVR {
         }
 
         public void Unstab(StabJoint stabJoint) {
-            if (!stabJoint.stabbedCollider)
-                return;
-            if (root.parent == stabJoint.stabbedCollider.transform)
+            if (root.parent == stabJoint.stabbedCollider?.transform)
             {
                 manager.maintainParent = null;
                 root.parent = null;
@@ -148,7 +146,7 @@ namespace JointVR {
                     collider.enabled = true;
             }
 
-            if (stabJoint.stabbedCollider.transform.parent)
+            if (stabJoint.stabbedCollider?.transform.parent)
                 if (stabJoint.stabbedCollider.transform.parent == stabJoint.joint.transform)
                     stabJoint.stabbedCollider.transform.parent = null;
 
@@ -159,9 +157,10 @@ namespace JointVR {
             Destroy(stabJoint.joint);
 
             if (stabJoint.stabbedCollider)
+            {
                 IgnoreCollision(stabJoint.stabbedCollider);
-
-            stabJoint.unstabbedCollider = stabJoint.stabbedCollider;
+                stabJoint.unstabbedCollider = stabJoint.stabbedCollider;
+            }
 
             stabJoint.stabbedCollider = null;
 
@@ -295,9 +294,9 @@ namespace JointVR {
         {
             foreach (StabJoint j in stabJoints)
             {
-                if (j.joint)
+                if (j.stabbedCollider && j.joint)
                 {
-                    Stats s = j.stabbedCollider?.transform.root.GetComponent<Stats>();
+                    Stats? s = j.stabbedCollider?.transform.root.GetComponent<Stats>();
                     if (s)
                         s.ManuallyRemoveCollision(root.gameObject);
                     Unstab(j);

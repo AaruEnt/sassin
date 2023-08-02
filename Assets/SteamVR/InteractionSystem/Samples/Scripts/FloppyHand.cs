@@ -9,7 +9,7 @@ namespace Valve.VR.InteractionSystem.Sample
     {
         protected float fingerFlexAngle = 140;
 
-        public SteamVR_Action_Single squeezyAction = SteamVR_Input.GetAction<SteamVR_Action_Single>("Squeeze");
+        public SteamVR_Action_Single squeezyAction = SteamVR_Input.GetAction<SteamVR_Action_Single>("SqueezeDepth");
         public SteamVR_Input_Sources inputSource;
 
         [System.Serializable]
