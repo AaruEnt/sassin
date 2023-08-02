@@ -80,6 +80,12 @@ namespace JointVR {
         void Update() {
             Resistance();
             AttemptUnstab();
+
+            foreach (StabJoint s in stabJoints)
+            {
+                if (s.stabbedCollider == null && s.joint != null)
+                    Destroy(s.joint);
+            }
         }
 
         public Vector3 GetStabDirection() {
