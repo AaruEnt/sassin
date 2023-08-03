@@ -101,7 +101,7 @@ public class GourdBoss : MonoBehaviour
     {
         if (lastCastSpell != null)
         {
-            Destroy(lastCastSpell);
+            Destroy(lastCastSpell.gameObject);
         }
     }
 }
