@@ -145,8 +145,8 @@ MonoBehaviour:
   maintainGrabOffset: 0
   ignoreWeight: 0
   parentOnGrab: 1
-  throwPower: 1
-  jointBreakForce: 3500
+  throwPower: 1.5
+  jointBreakForce: 10000
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
@@ -180,7 +180,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   breakHoldWhenGrabActive: 1
+  teleportWhenDistanceExceeded: 0
   lockHandOnGrab: 0
+  DistanceExceededEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &-5191062834652893961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -196,7 +200,7 @@ MonoBehaviour:
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
-    m_Bits: 311
+    m_Bits: 4026556471
   OnBreak:
     m_PersistentCalls:
       m_Calls:
@@ -260,6 +264,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   newObj: {fileID: 2712090953132601037, guid: bbb29b13ff4f5324495736134b93c533, type: 3}
+  isPaper: 1
+  paperText: You're A Cunt
 --- !u!1 &1922784390871268
 GameObject:
   m_ObjectHideFlags: 0
