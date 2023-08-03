@@ -57,8 +57,13 @@ public class Spell : MonoBehaviour
 
     // Called by enemy script
     // Sends the spell effect towards target position
-    internal IEnumerator ThrowSpell() {
+    internal IEnumerator ThrowSpell(Transform? targetPos = null) {
         yield return new WaitForSeconds(chargeTime);
+        if (targetPos != null)
+        {
+            targetPosition = targetPos.position;
+        }
+        targetPosition.y += (float)Randomizer.GetDouble(1);
         var r = GetComponent<Rigidbody>();
         r.isKinematic = false;
         GetComponent<FollowObjectWithOffset>().enabled = false;
