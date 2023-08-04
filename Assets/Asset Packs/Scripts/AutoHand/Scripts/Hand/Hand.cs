@@ -282,7 +282,7 @@ namespace Autohand {
                 else
                 {
                     //Vector3 tmp = transform.TransformDirection(palmTransform.forward);
-                    if (palmTransform.forward.y <= -0.7f)
+                    if ((!left && -palmTransform.right.z <= -0.4f) || (left && palmTransform.right.z <= -0.4f))
                         ct.SummonDagger(this);
                 }
             }
