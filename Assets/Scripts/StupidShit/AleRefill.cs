@@ -10,6 +10,7 @@ public class AleRefill : MonoBehaviour
     public GameObject aleCollider;
     public MeshRenderer aleRenderer;
     public GameObject alePourEffect;
+    private ParticleSystem aleEffect;
     public List<Transform> aleSpawnLocations = new List<Transform>();
 
     [Header("Fill controls")]
@@ -38,6 +39,7 @@ public class AleRefill : MonoBehaviour
         }
         fillPercent = aleRenderer.material.GetFloat("_fillPercent");
         startRotation = Quaternion.Euler(transform.localRotation.x, 0, transform.localRotation.z);
+        aleEffect = alePourEffect.GetComponent<ParticleSystem>();
     }
 
 
@@ -58,18 +60,19 @@ public class AleRefill : MonoBehaviour
                 }
             }
             alePourEffect.transform.position = lowestLoc.position;
-            alePourEffect.SetActive(true);
+            if (!aleEffect.isPlaying)
+                aleEffect.Play();
             if (angle * 100f > maxAngle + 10)
-                fillPercent -= fillSpeed * Time.deltaTime * 3;
+                fillPercent -= fillSpeed * Time.deltaTime * 1.5f;
             else
                 fillPercent -= fillSpeed * Time.deltaTime;
         }
         else
         {
-            alePourEffect.SetActive(false);
+            aleEffect.Stop();
         }
 
-        if (fillPercent <= 0.05)
+        if (fillPercent <= 0.03)
         {
             aleRenderer.enabled = false;
         } else
