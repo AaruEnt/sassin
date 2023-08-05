@@ -282,7 +282,8 @@ namespace Autohand {
                 else
                 {
                     //Vector3 tmp = transform.TransformDirection(palmTransform.forward);
-                    if ((!left && -palmTransform.right.z <= -0.4f) || (left && palmTransform.right.z <= -0.4f))
+                    Vector3 distance = (ct.transform.position - palmTransform.position).normalized;
+                    if ((!left && Vector3.Angle(-palmTransform.right, distance) <= 40f) || (left && Vector3.Angle(palmTransform.right, distance) <= 40f))
                         ct.SummonDagger(this);
                 }
             }
