@@ -24,7 +24,7 @@ public class Randomizer : MonoBehaviour
         return tmp < percent;
     }
 
-    public static GameObject PickRandomObject(List<GameObject> toPick)
+    public static T PickRandomObject<T>(List<T> toPick)
     {
         return toPick[random.Next(toPick.Count - 1)];
     }
