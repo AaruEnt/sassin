@@ -16,6 +16,7 @@ public class GourdGenecide : MonoBehaviour
     private bool goodEffectsActive = false;
     private bool evilEffectsActive = false;
     private bool goodEffectsForbidden = false;
+    private bool gourdLordKilled = false;
 
     void Start()
     {
@@ -42,7 +43,7 @@ public class GourdGenecide : MonoBehaviour
             }
             goodEffectsActive = false;
         }
-        if (!evilEffectsActive && killedGourds >= genocideAmount)
+        if (!evilEffectsActive && (killedGourds >= genocideAmount || gourdLordKilled))
         {
             foreach (var g in evilEffects)
             {
@@ -82,5 +83,6 @@ public class GourdGenecide : MonoBehaviour
         killedGourds++;
         if (lordSkull)
             lordSkull.SetActive(true);
+        gourdLordKilled = true;
     }
 }
