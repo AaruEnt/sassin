@@ -2,14 +2,19 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Body17
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_ShaderKeywords: _METALLICSPECGLOSSMAP _SPECULARHIGHLIGHTS_OFF
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _METALLICSPECGLOSSMAP
+  - _SPECULARHIGHLIGHTS_OFF
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -17,6 +22,7 @@ Material:
   stringTagMap:
     RenderType: Opaque
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -77,7 +83,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: ddcd295266b9ce047a2a26d853a7eed1, type: 3}
+        m_Texture: {fileID: 2800000, guid: 91749c00f30636a46bb14b89ba4aaa48, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTexture:
@@ -252,12 +258,15 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _AOIntensity: 0
     - _AddSandStrength: 0.52
     - _AlphaClip: 0
+    - _AlphaToMask: 0
     - _AmbientPower: 0
     - _Blend: 0
+    - _BlendModePreserveSpecular: 1
     - _BottomLine: -25
     - _Brightness: 1
     - _BumpScale: 1
@@ -275,6 +284,7 @@ Material:
     - _DistanceFog: 0.5
     - _DontMix: 0
     - _DstBlend: 0
+    - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
     - _FlowMultiplier: 0.3
     - _FoamHeight: 0.01
@@ -353,6 +363,7 @@ Material:
     - _SpecMult: 0.5
     - _SpecularHighlights: 0
     - _SrcBlend: 1
+    - _SrcBlendAlpha: 1
     - _Surface: 0
     - _TessellationEdgeLength: 50
     - _TessellationUniform: 1
@@ -384,7 +395,7 @@ Material:
     - _AmbientColor: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _BotColor: {r: 0.71, g: 0.87, b: 0.91, a: 0}
-    - _Color: {r: 1, g: 0.38853803, b: 0.25943398, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Color1: {r: 0.9100466, g: 0, b: 1, a: 1}
     - _Color1_B: {r: 0, g: 1, b: 0, a: 1}
     - _Color1_F: {r: 0, g: 1, b: 0, a: 1}
@@ -450,4 +461,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 4
+  version: 7

@@ -15,19 +15,21 @@ MonoBehaviour:
   version: 12
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Ground
-  m_Shader: {fileID: -6465566751694194690, guid: 315ca30ed298d60468f2af05f02c2fa3,
-    type: 3}
-  m_ShaderKeywords: 
+  m_Shader: {fileID: -6465566751694194690, guid: 315ca30ed298d60468f2af05f02c2fa3, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2450
+  m_CustomRenderQueue: 2000
   stringTagMap:
     MotionVector: User
   disabledShaderPasses:
@@ -37,6 +39,7 @@ Material:
   - TransparentBackface
   - RayTracingPrepass
   - ForwardEmissiveForDeferred
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -148,6 +151,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - AO_Intensity: 0.449
     - ENUM_A62EE6F9F9D24F7C96E1CF69259161D1: 0
@@ -276,10 +280,8 @@ Material:
     m_Colors:
     - Color_1: {r: 0.7169812, g: 0.61210245, b: 0.4362763, a: 0}
     - Color_2: {r: 0.509434, g: 0.28229132, b: 0.03123889, a: 0}
-    - Color_d395fe4e0ef345adb7863e3ec792e842: {r: 1, g: 0.9006946, b: 0.61960787,
-        a: 0}
-    - Color_d395fe4e0ef345adb7863e3ec792e842_1: {r: 0.5754717, g: 0.45739144, b: 0.33931115,
-        a: 0}
+    - Color_d395fe4e0ef345adb7863e3ec792e842: {r: 1, g: 0.9006946, b: 0.61960787, a: 0}
+    - Color_d395fe4e0ef345adb7863e3ec792e842_1: {r: 0.5754717, g: 0.45739144, b: 0.33931115, a: 0}
     - Main_Color: {r: 0.8396226, g: 0.495349, b: 0.2732734, a: 0}
     - Moss_Color: {r: 0.51317203, g: 0.8773585, b: 0.25244746, a: 0}
     - Moss_Color_1: {r: 1, g: 1, b: 1, a: 0}
@@ -304,6 +306,7 @@ Material:
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - main_Color: {r: 0.71488965, g: 0.89867395, b: 0.990566, a: 0}
+  m_BuildTextureStacks: []
 --- !u!114 &6609383143886334766
 MonoBehaviour:
   m_ObjectHideFlags: 11
@@ -316,4 +319,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 5
+  version: 7

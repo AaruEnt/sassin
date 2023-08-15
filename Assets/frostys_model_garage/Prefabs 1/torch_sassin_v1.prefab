@@ -27,6 +27,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0.7071068, z: -0, w: -0.7071068}
   m_LocalPosition: {x: 24.732, y: 3.821, z: -121.766}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7130341970229855343}
   - {fileID: 8301883042652683681}
@@ -41,9 +42,17 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 255729814369489230}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Size: {x: 0.14674723, y: 0.8813659, z: 0.40911108}
   m_Center: {x: 0, y: 0.022814214, z: 0.19962463}
 --- !u!1001 &7313468950529008516
@@ -51,6 +60,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 3437157030274808740}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 68ec2be318c684544b4ceb92012c97b6, type: 3}
@@ -102,6 +112,9 @@ PrefabInstance:
       value: Torch01
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68ec2be318c684544b4ceb92012c97b6, type: 3}
 --- !u!4 &7130341970229855343 stripped
 Transform:
@@ -113,6 +126,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 3437157030274808740}
     m_Modifications:
     - target: {fileID: 1529992072156129873, guid: b0a0bccbb3173664ab8d90397201f8e6, type: 3}
@@ -176,6 +190,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b0a0bccbb3173664ab8d90397201f8e6, type: 3}
 --- !u!4 &8301883042652683681 stripped
 Transform:
