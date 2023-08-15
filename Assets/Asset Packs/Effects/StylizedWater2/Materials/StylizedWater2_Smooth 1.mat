@@ -8,26 +8,25 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: StylizedWater2_Smooth 1
-  m_Shader: {fileID: -6465566751694194690, guid: d7b0192b9bf19c949900035fa781fdc4, type: 3}
+  m_Shader: {fileID: 4800000, guid: 3053b55455b17244e8745591e1aefd6a, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _ADVANCED_SHADING
-  - _CAUSTICS
-  - _DISTANCE_NORMALS
-  - _NORMALMAP
-  - _REFRACTION
-  - _RIVER
-  - _SMOOTH_INTERSECTION
-  - _TRANSLUCENCY
-  - _WAVES
+  m_ValidKeywords: []
   m_InvalidKeywords:
   - ADVANCED_LIGHTING
-  - _DEPTHEXP_ON
+  - _ADVANCED_SHADING
+  - _CAUSTICS
   - _DEPTH_TEX
+  - _DISTANCE_NORMALS
+  - _FOAM
+  - _REFRACTION
+  - _RIVER
   - _SIMPLE_LIGHTING
+  - _SMOOTH_INTERSECTION
+  - _TRANSLUCENCY
   - _VERTEXCOLORFOAM_ON
   - _VERTEXCOLORWAVEFLATTENING_ON
+  - _WAVES
   - _WORLDSPACEUV_ON
   - _ZCLIP_ON
   m_LightmapFlags: 4
@@ -136,11 +135,11 @@ Material:
     - _Cull: 2
     - _Cutoff: 0.5
     - _Depth: 0.55
-    - _DepthExp: 1
-    - _DepthHorizontal: 0.15
+    - _DepthExp: 0
+    - _DepthHorizontal: 0.82
     - _DepthMode: 0
     - _DepthTexture: 1
-    - _DepthVertical: 0.01
+    - _DepthVertical: 1.04
     - _DisableDepthTexture: 0
     - _DistanceNormalsOn: 1
     - _DistanceNormalsTiling: 0.28000003
@@ -150,7 +149,7 @@ Material:
     - _EnvironmentReflectionsOn: 1
     - _FlatShadingOn: 0
     - _FlowSpeed: 1
-    - _FoamOn: 0
+    - _FoamOn: 1
     - _FoamOpacity: 0.686
     - _FoamSize: 0.744
     - _FoamSpeed: -0.45999995
@@ -178,7 +177,7 @@ Material:
     - _Metallicness: 0.1
     - _NORMALMAPOn: 1
     - _NormalMap: 1
-    - _NormalMapOn: 1
+    - _NormalMapOn: 0
     - _NormalSpeed: 0.2
     - _NormalStrength: 0.134
     - _NormalTiling: 0.5
@@ -254,6 +253,7 @@ Material:
     - _WorldSpaceUV: 1
     - _ZClip: 1
     - _ZWrite: 0
+    - srpBatcherFix: 0
     m_Colors:
     - _BaseColor: {r: 0.009211458, g: 0.052796926, b: 0.21698111, a: 1}
     - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
