@@ -18,6 +18,7 @@ Material:
   - _FOAM
   - _REFRACTION
   - _SMOOTH_INTERSECTION
+  - _TRANSLUCENCY
   - _WAVES
   m_InvalidKeywords:
   - ADVANCED_LIGHTING
@@ -125,7 +126,7 @@ Material:
     - _BumpScale: 1
     - _CROSSPAN_INTERSECTIONOn: 1
     - _CausticsBrightness: 2
-    - _CausticsDistortion: 0.304
+    - _CausticsDistortion: 0.383
     - _CausticsOn: 1
     - _CausticsSpeed: 0.1
     - _CausticsTiling: 0.12000031
@@ -134,15 +135,15 @@ Material:
     - _Cutoff: 0.5
     - _Depth: 0.55
     - _DepthExp: 1
-    - _DepthHorizontal: 0.71
+    - _DepthHorizontal: 0.45
     - _DepthMode: 0
     - _DepthTexture: 1
-    - _DepthVertical: 1.2
+    - _DepthVertical: 1.31
     - _DisableDepthTexture: 0
     - _DistanceNormalsOn: 1
     - _DistanceNormalsTiling: 0.3
     - _DstBlend: 0
-    - _EdgeFade: 10
+    - _EdgeFade: 9.99
     - _EnvironmentReflections: 1
     - _EnvironmentReflectionsOn: 1
     - _FlatShadingOn: 0
@@ -177,7 +178,7 @@ Material:
     - _NormalMap: 1
     - _NormalMapOn: 0
     - _NormalSpeed: 0.05999998
-    - _NormalStrength: 0
+    - _NormalStrength: 0.063
     - _NormalTiling: 0.03
     - _OcclusionStrength: 1
     - _PlanarReflectionsEnabled: 0
@@ -203,7 +204,7 @@ Material:
     - _RiverModeOn: 0
     - _SHARP_INERSECTIONOn: 1
     - _ShadingMode: 1
-    - _ShadowStrength: 0.14
+    - _ShadowStrength: 0.312
     - _ShoreLineLength: 0
     - _ShoreLineWaveDistance: 23
     - _ShoreLineWaveStr: 1
@@ -234,9 +235,9 @@ Material:
     - _Translucency: 1
     - _TranslucencyCurvatureMask: 0.312
     - _TranslucencyExp: 22.21
-    - _TranslucencyOn: 0
+    - _TranslucencyOn: 1
     - _TranslucencyReflectionMask: 0
-    - _TranslucencyStrength: 2.552
+    - _TranslucencyStrength: 1.214
     - _UnderwaterRefractionOffset: 0.2
     - _UnderwaterSurfaceSmoothness: 0.8
     - _VertexColorDepth: 0
@@ -255,7 +256,7 @@ Material:
     - _ZClip: 1
     - _ZWrite: 0
     m_Colors:
-    - _BaseColor: {r: 0, g: 0.3693854, b: 0.96400577, a: 1}
+    - _BaseColor: {r: 0, g: 0.041551888, b: 0.5377358, a: 1}
     - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _DepthMapBounds: {r: -402.3, g: -459.43, b: 0.0012693577, a: 0}
     - _Direction: {r: -1, g: -1, b: 0, a: 0}
@@ -265,7 +266,7 @@ Material:
     - _HorizonColor: {r: 0.68, g: 1, b: 0.99, a: 0.12156863}
     - _IntersectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShallowColor: {r: 0, g: 1, b: 0.9905014, a: 1}
+    - _ShallowColor: {r: 0.004182993, g: 0.18559238, b: 0.8867924, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
     - _WaterColor: {r: 0.21176466, g: 0.6745098, b: 1, a: 1}
     - _WaterShallowColor: {r: 0, g: 0.9394503, b: 1, a: 1}
