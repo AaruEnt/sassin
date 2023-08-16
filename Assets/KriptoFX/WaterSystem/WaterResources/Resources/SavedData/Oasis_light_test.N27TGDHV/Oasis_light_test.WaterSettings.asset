@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bf75699500d2c349aac22df3efb5415, type: 3}
   m_Name: Oasis_light_test.WaterSettings
   m_EditorClassIdentifier: 
-  Transparent: 5
+  Transparent: 4.6
   WaterColor: {r: 0.6862745, g: 0.88235295, b: 0.9411765, a: 1}
   TurbidityColor: {r: 0.039215688, g: 0.43137255, b: 0.39215687, a: 1}
-  Turbidity: 0.22
-  FFT_SimulationSize: 256
-  WindSpeed: 1.5
-  WindRotation: 0
-  WindTurbulence: 0.5
-  TimeScale: 1
+  Turbidity: 0.472
+  FFT_SimulationSize: 512
+  WindSpeed: 0.8
+  WindRotation: 103.9
+  WindTurbulence: 0.145
+  TimeScale: 0.723
   ReflectionProfile: 2
   UseScreenSpaceReflection: 1
   ScreenSpaceReflectionResolutionQuality: 50
@@ -62,7 +62,7 @@ MonoBehaviour:
   FlowMapAreaPosition: {x: -14.19, y: -7, z: -84.51}
   FlowMapAreaSize: 200
   FlowMapTextureResolution: 4096
-  FlowMapSpeed: 0.52
+  FlowMapSpeed: 0.16
   UseFluidsSimulation: 0
   FluidsAreaSize: 35
   FluidsSimulationIterrations: 2
@@ -79,7 +79,7 @@ MonoBehaviour:
   DynamicWavesPropagationSpeed: 1
   UseDynamicWavesRainEffect: 0
   DynamicWavesRainStrength: 0.2
-  ShorelineProfile: 2
+  ShorelineProfile: 0
   UseShorelineRendering: 1
   ShorelineColor: {r: 0.85, g: 0.85, b: 0.85, a: 0.9}
   ShorelineFoamLodQuality: 0
