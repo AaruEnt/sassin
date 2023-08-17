@@ -34,6 +34,9 @@ public class Spell : MonoBehaviour
     [SerializeField, Tooltip("The particles activated on collision")]
     internal GameObject collisionParticle;
 
+    internal LayerMask fireMask;
+    internal bool waitFireOnSight = false;
+
     
     // Unserialized vars
     internal Enemy origin; // origin point for the spell to spawn
@@ -63,12 +66,30 @@ public class Spell : MonoBehaviour
         {
             targetPosition = targetPos.position;
         }
-        targetPosition.y += (float)Randomizer.GetDouble(1);
+
+        if (waitFireOnSight && targetPos != null)
+        {
+            RaycastHit hitinfo;
+            while (!isThrown && Physics.Linecast(transform.position, targetPos.position, out hitinfo, fireMask))
+            {
+                if (!hitinfo.rigidbody.transform.CompareTag(targetPos.tag))
+                {
+                    UnityEngine.Debug.Log(hitinfo.rigidbody.transform.name);
+                    yield return null;
+                }
+                else
+                {
+                    isThrown = true;
+                    targetPosition = targetPos.position;
+                }
+            }
+        }
+
+        targetPosition.y += (0.25f + (float)Randomizer.GetDouble(0.75));
         var r = GetComponent<Rigidbody>();
         r.isKinematic = false;
         GetComponent<FollowObjectWithOffset>().enabled = false;
         transform.parent = null;
-        isThrown = true;
         Vector3 BA = targetPosition - transform.position;
         r.AddForce(BA.normalized * force, ForceMode.Impulse);
     }
