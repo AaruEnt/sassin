@@ -10,6 +10,7 @@ public class GourdGenecide : MonoBehaviour
     public List<GameObject> gourdSkulls = new List<GameObject>();
     public GameObject littleSkull;
     public GameObject lordSkull;
+    public GameObject squashSkull;
     public int genocideAmount = 11;
 
     private int killedGourds = 0;
@@ -84,5 +85,11 @@ public class GourdGenecide : MonoBehaviour
         if (lordSkull)
             lordSkull.SetActive(true);
         gourdLordKilled = true;
+    }
+
+    public void SquashKilled()
+    {
+        if (squashSkull)
+            squashSkull.SetActive(true);
     }
 }

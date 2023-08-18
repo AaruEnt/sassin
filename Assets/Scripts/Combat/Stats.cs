@@ -389,5 +389,11 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         if (respawnBarrier)
             respawnBarrier.SetActive(false);
         health = maxHealth;
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb)
+        {
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
     }
 }
