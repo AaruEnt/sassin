@@ -553,13 +553,14 @@ namespace Autohand {
                         {
                             holdingObj.ForceHandRelease(this as Hand);
                             SetHandLocation(movePos, transform.rotation);
-                            g.DistanceExceededEvent.Invoke();
+                            g.DistanceExceededEvent.Invoke(this as Hand, g);
                         }
                         else
                         {
                             if (holdingObj.TryGetComponent<JointVR.StabManager>(out var stabManager))
                             {
                                 stabManager.UnstabAll();
+                                g.DistanceExceededEvent.Invoke(this as Hand, g);
                             }
                             holdingObj.transform.parent = this.transform;
 

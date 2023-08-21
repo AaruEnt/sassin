@@ -547,6 +547,7 @@ MonoBehaviour:
   ignoreStabTag: Effect
   stabEffect: {fileID: 0}
   createOneEffect: 1
+  models: {fileID: 0}
 --- !u!114 &4098599877513415008
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -805,6 +806,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onRelease:
     m_PersistentCalls:
       m_Calls:
@@ -898,10 +911,10 @@ MonoBehaviour:
   onUnsqueeze:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4098599877513415009}
-        m_TargetAssemblyTypeName: JointVR.StabManager, Assembly-CSharp
-        m_MethodName: UnstabAll
-        m_Mode: 1
+      - m_Target: {fileID: 4098599877513415019}
+        m_TargetAssemblyTypeName: Climber, Assembly-CSharp
+        m_MethodName: RemoveClimb
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -910,10 +923,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 4098599877513415019}
-        m_TargetAssemblyTypeName: Climber, Assembly-CSharp
-        m_MethodName: RemoveClimb
-        m_Mode: 0
+      - m_Target: {fileID: 4098599877513415009}
+        m_TargetAssemblyTypeName: JointVR.StabManager, Assembly-CSharp
+        m_MethodName: UnFreezeRigidbody
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -932,7 +945,23 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   breakHoldWhenGrabActive: 0
+  teleportWhenDistanceExceeded: 1
   lockHandOnGrab: 0
+  DistanceExceededEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4098599877513415019}
+        m_TargetAssemblyTypeName: Climber, Assembly-CSharp
+        m_MethodName: RemoveClimb
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &4098599877513415021
 MonoBehaviour:
   m_ObjectHideFlags: 0
