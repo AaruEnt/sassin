@@ -178,7 +178,6 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
                 VolumeParameter<float> sat = new VolumeParameter<float>();
                 sat.value = -100f;
                 CA.saturation.SetValue(sat);
-                health = maxHealth;
             }
             player.useMovement = false;
             timer = 0f;
@@ -199,7 +198,6 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
                     VolumeParameter<float> sat = new VolumeParameter<float>();
                     sat.value = -100f;
                     CA.saturation.SetValue(sat);
-                    health = maxHealth;
                 }
             }
             player.useMovement = false;
@@ -362,7 +360,15 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
             newPos.y = respawnBarrier.transform.position.y;
             respawnBarrier.transform.position = newPos;
         }
-            
+
+
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb)
+        {
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
         while (timer < respawnTimer)
         {
             float blendVal = ((timer / respawnTimer) * 50);
@@ -389,11 +395,5 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         if (respawnBarrier)
             respawnBarrier.SetActive(false);
         health = maxHealth;
-        Rigidbody rb = GetComponent<Rigidbody>();
-        if (rb)
-        {
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-        }
     }
 }

@@ -13,6 +13,9 @@ public class PlayerFootstepPlayer : MonoBehaviour
     [SerializeField, Tooltip("The amont of time, in seconds, between each footstep when constantly moving at 0 momentum")]
     private float baseFootstepTime = 0.5f;
 
+    [SerializeField, Tooltip("")]
+    private Stats playerStats;
+
     // Internal Vars
 
     // Amount of time, in seconds, between each footstep at current momentum
@@ -82,7 +85,7 @@ public class PlayerFootstepPlayer : MonoBehaviour
         }
 
         // If the player is moving, and wallrunning or on the ground, and not crouching, increment time until next footstep is played
-        if (speed > 0f && (player.IsGrounded() || momentum.isWallRunning) && !player.crouching)
+        if (speed > 0f && (player.IsGrounded() || momentum.isWallRunning) && !player.crouching && playerStats.health > 0f)
             currFootstepTime += Time.deltaTime;
 
         // If the time has met or exceeded the time the next footstep should be played, reset the time and play a footstep
