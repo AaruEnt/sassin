@@ -22,6 +22,7 @@ public class LoadingScene : MonoBehaviour
         UnityEngine.Debug.Log(LoadingData.sceneToLoad);
         if (LoadingData.sceneToLoad == 0)
         {
+            minTime *= 2;
             if (PlayerPrefs.HasKey("BeatTutorial") && PlayerPrefs.GetInt("BeatTutorial") == 1)
                 LoadingData.sceneToLoad = 1;
             else
