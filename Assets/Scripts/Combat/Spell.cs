@@ -72,9 +72,10 @@ public class Spell : MonoBehaviour
             RaycastHit hitinfo;
             while (!isThrown && Physics.Linecast(transform.position, targetPos.position, out hitinfo, fireMask))
             {
-                if (!hitinfo.rigidbody.transform.CompareTag(targetPos.tag))
+                bool? tmp = hitinfo.rigidbody?.transform.CompareTag(targetPos.tag);
+                bool tmp2 = tmp != null ? (bool)tmp : false;
+                if (!tmp2)
                 {
-                    UnityEngine.Debug.Log(hitinfo.rigidbody.transform.name);
                     yield return null;
                 }
                 else
