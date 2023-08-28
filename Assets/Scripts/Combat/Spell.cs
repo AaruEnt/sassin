@@ -34,6 +34,9 @@ public class Spell : MonoBehaviour
     [SerializeField, Tooltip("The particles activated on collision")]
     internal GameObject collisionParticle;
 
+    internal LayerMask fireMask;
+    internal bool waitFireOnSight = false;
+
     
     // Unserialized vars
     internal Enemy origin; // origin point for the spell to spawn
@@ -57,13 +60,37 @@ public class Spell : MonoBehaviour
 
     // Called by enemy script
     // Sends the spell effect towards target position
-    internal IEnumerator ThrowSpell() {
+    internal IEnumerator ThrowSpell(Transform? targetPos = null) {
         yield return new WaitForSeconds(chargeTime);
+        if (targetPos != null)
+        {
+            targetPosition = targetPos.position;
+        }
+
+        if (waitFireOnSight && targetPos != null)
+        {
+            RaycastHit hitinfo;
+            while (!isThrown && Physics.Linecast(transform.position, targetPos.position, out hitinfo, fireMask))
+            {
+                bool? tmp = hitinfo.rigidbody?.transform.CompareTag(targetPos.tag);
+                bool tmp2 = tmp != null ? (bool)tmp : false;
+                if (!tmp2)
+                {
+                    yield return null;
+                }
+                else
+                {
+                    isThrown = true;
+                    targetPosition = targetPos.position;
+                }
+            }
+        }
+
+        targetPosition.y += (0.25f + (float)Randomizer.GetDouble(0.75));
         var r = GetComponent<Rigidbody>();
         r.isKinematic = false;
         GetComponent<FollowObjectWithOffset>().enabled = false;
         transform.parent = null;
-        isThrown = true;
         Vector3 BA = targetPosition - transform.position;
         r.AddForce(BA.normalized * force, ForceMode.Impulse);
     }

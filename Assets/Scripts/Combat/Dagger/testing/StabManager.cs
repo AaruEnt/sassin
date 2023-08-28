@@ -29,6 +29,8 @@ namespace JointVR
         public bool createOneEffect = true;
         public GameObject models;
 
+        private DaggerHelper dh;
+
         
         // Start is called before the first frame update
         void Start()
@@ -48,7 +50,7 @@ namespace JointVR
             foreach(Stabber s in stabbers)
                 foreach (StabJoint joint in s.stabJoints)
                     joint.jointRb = rb;
-
+            dh = GetComponent<DaggerHelper>();
             
         }
 
@@ -246,6 +248,8 @@ namespace JointVR
             }
             maintainParent = null;
             transform.parent = null;
+            UnFreezeRigidbody();
+            dh.UpdateParent();
         }
 
         public void UnstabTarget(Collider col)

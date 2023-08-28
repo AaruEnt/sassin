@@ -25,27 +25,19 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Boolean SmoothMovement
+        public virtual SteamVR_Action_Boolean Grab
         {
             get
             {
-                return SteamVR_Actions.default_SmoothMovement;
+                return SteamVR_Actions.default_Grab;
             }
         }
         
-        public virtual SteamVR_Action_Boolean GrabPinch
+        public virtual SteamVR_Action_Boolean Squeeze
         {
             get
             {
-                return SteamVR_Actions.default_GrabPinch;
-            }
-        }
-        
-        public virtual SteamVR_Action_Boolean GrabGrip
-        {
-            get
-            {
-                return SteamVR_Actions.default_GrabGrip;
+                return SteamVR_Actions.default_Squeeze;
             }
         }
         
@@ -73,14 +65,6 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Single Squeeze
-        {
-            get
-            {
-                return SteamVR_Actions.default_Squeeze;
-            }
-        }
-        
         public virtual SteamVR_Action_Boolean HeadsetOnHead
         {
             get
@@ -105,19 +89,19 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Boolean PrimaryButtonRight
+        public virtual SteamVR_Action_Boolean JumpButton
         {
             get
             {
-                return SteamVR_Actions.default_PrimaryButtonRight;
+                return SteamVR_Actions.default_JumpButton;
             }
         }
         
-        public virtual SteamVR_Action_Boolean PrimaryButtonLeft
+        public virtual SteamVR_Action_Boolean Slide
         {
             get
             {
-                return SteamVR_Actions.default_PrimaryButtonLeft;
+                return SteamVR_Actions.default_Slide;
             }
         }
         
@@ -134,6 +118,14 @@ namespace Valve.VR
             get
             {
                 return SteamVR_Actions.default_Sprint;
+            }
+        }
+        
+        public virtual SteamVR_Action_Single SqueezeDepth
+        {
+            get
+            {
+                return SteamVR_Actions.default_SqueezeDepth;
             }
         }
         

@@ -131,6 +131,7 @@ namespace Autohand {
         public UnityHandGrabEvent OnJointBreak = new UnityHandGrabEvent();
 
         public bool breakHoldWhenGrabActive = true;
+        public bool teleportWhenDistanceExceeded = false;
 
 
         //Advanced Hidden Settings
@@ -152,10 +153,15 @@ namespace Autohand {
         public HandGrabEvent OnHighlightEvent;
         public HandGrabEvent OnUnhighlightEvent;
 
+        public UnityHandGrabEvent DistanceExceededEvent;
+
         public PlacePointEvent OnPlacePointHighlightEvent;
         public PlacePointEvent OnPlacePointUnhighlightEvent;
         public PlacePointEvent OnPlacePointAddEvent;
         public PlacePointEvent OnPlacePointRemoveEvent;
+
+        private float heldBy2HandsCD = 0f;
+        internal bool heldBy2Hands = false;
 
 
         /// <summary>Whether or not this object was force released (dropped) when last released (as opposed to being intentionally released)</summary>
@@ -211,6 +217,18 @@ namespace Autohand {
         void Update()
         {
             UpdateHeldInterpolation();
+
+            if (heldBy.Count == 2)
+            {
+                heldBy2Hands = true;
+                heldBy2HandsCD = 0f;
+            } else if (heldBy2Hands)
+            {
+                if (heldBy2HandsCD >= 1f)
+                    heldBy2Hands = false;
+                else
+                    heldBy2HandsCD += Time.deltaTime;
+            }
         }
 
         protected override void FixedUpdate() {

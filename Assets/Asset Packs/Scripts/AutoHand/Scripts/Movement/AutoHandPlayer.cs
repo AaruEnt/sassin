@@ -5,6 +5,7 @@ using Autohand.Demo;
 using System;
 using NaughtyAttributes;
 using UnityEngine.Serialization;
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -111,6 +112,8 @@ namespace Autohand {
         public float climbUpStepHeightMultiplier = 1;
         [Tooltip("Multiplies the body's velocity on ending climb, allowing the player to fling themselves easier")]
         public float climbFlingForceMultiplier = 1.2f;
+        [Tooltip("Multiplies the body's velocity on ending climb, allowing the player to fling themselves easier")]
+        public float twoHandClimbFlingForceMultiplier = 2.2f;
 
         [AutoToggleHeader("Enable Pushing")]
         [Tooltip("Whether or not the player can use Pushable objects (Objects with the Pushable component)")]
@@ -179,6 +182,8 @@ namespace Autohand {
         bool ignoreIterpolationFrame;
         Vector3 targetPosOffset;
         int handPlayerMask;
+
+        private bool climbingLastFrame = false;
 
 
 
@@ -728,6 +733,7 @@ namespace Autohand {
         }
 
         protected virtual void UpdatePlayerHeight() {
+            
             if(crouching != lastCrouching) {
                 if(lastCrouching)
                     heightOffset += lastCrouchingHeight;
@@ -738,11 +744,38 @@ namespace Autohand {
                 lastCrouchingHeight = crouchHeight;
             }
 
-            if(autoAdjustColliderHeight) {
+            if (IsClimbing())
+            {
+                bodyCapsule.height = 0.2f;
+                bodyCapsule.center = new Vector3(0, 1f, 0);
+                climbingLastFrame = true;
+                return;
+            }
+
+            if (autoAdjustColliderHeight) {
                 playerHeight = Mathf.Clamp(headCamera.transform.position.y - transform.position.y, minMaxHeight.x, minMaxHeight.y);
                 bodyCapsule.height = playerHeight;
                 var centerHeight = playerHeight / 2f > bodyCapsule.radius ? playerHeight / 2f : bodyCapsule.radius;
                 bodyCapsule.center = new Vector3(0, centerHeight, 0);
+                if (climbingLastFrame)
+                {
+                    var direction = new Vector3 { [bodyCapsule.direction] = 1 };
+                    var offset = bodyCapsule.height / 2 - bodyCapsule.radius;
+                    var localPoint0 = bodyCapsule.center - direction * offset;
+                    var localPoint1 = bodyCapsule.center + direction * offset;
+                    var point0 = transform.TransformPoint(localPoint0);
+                    var point1 = transform.TransformPoint(localPoint1);
+                    var r = transform.TransformVector(bodyCapsule.radius - 0.01f, bodyCapsule.radius - 0.01f, bodyCapsule.radius - 0.01f);
+                    var radius = Enumerable.Range(0, 3).Select(xyz => xyz == bodyCapsule.direction ? 0 : r[xyz]).Select(Mathf.Abs).Max();
+                    if(Physics.CheckCapsule(point0, point1, radius, groundLayerMask, QueryTriggerInteraction.Ignore))
+                    {
+                        Vector3 tmp = body.transform.position;
+                        tmp.y += 1f;
+                        body.transform.position = tmp;
+                    }
+                    climbingLastFrame = false;
+                    
+                }
             }
         }
 
@@ -981,7 +1014,10 @@ namespace Autohand {
                 Vector3 newVel = body.velocity;
                 newVel.x *= 0.15f;
                 newVel.z *= 0.15f;
-                newVel.y *= climbFlingForceMultiplier;
+                if (grab.heldBy2Hands)
+                    newVel.y *= twoHandClimbFlingForceMultiplier;
+                else
+                    newVel.y *= climbFlingForceMultiplier;
                 body.velocity = newVel;
             }
         }

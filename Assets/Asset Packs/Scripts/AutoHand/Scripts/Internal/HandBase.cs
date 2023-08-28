@@ -547,8 +547,27 @@ namespace Autohand {
                         tryMaxDistanceCount += 2;
                     }
                     else if(!holdingObj.parentOnGrab || tryMaxDistanceCount >= 1) {
-                        holdingObj.ForceHandRelease(this as Hand);
-                        SetHandLocation(movePos, transform.rotation);
+                        Grabbable g = holdingObj;
+
+                        if (!g.teleportWhenDistanceExceeded)
+                        {
+                            holdingObj.ForceHandRelease(this as Hand);
+                            SetHandLocation(movePos, transform.rotation);
+                            g.DistanceExceededEvent.Invoke(this as Hand, g);
+                        }
+                        else
+                        {
+                            if (holdingObj.TryGetComponent<JointVR.StabManager>(out var stabManager))
+                            {
+                                stabManager.UnstabAll();
+                                g.DistanceExceededEvent.Invoke(this as Hand, g);
+                            }
+                            holdingObj.transform.parent = this.transform;
+
+                            SetHandLocation(movePos, transform.rotation);
+                            tryMaxDistanceCount += 2;
+                            holdingObj.transform.parent = null;
+                        }
                     }
                 }
                 else {

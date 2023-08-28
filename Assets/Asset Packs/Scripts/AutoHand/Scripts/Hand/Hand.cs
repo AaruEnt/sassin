@@ -281,7 +281,10 @@ namespace Autohand {
                 }
                 else
                 {
-                    ct.SummonDagger(this);
+                    //Vector3 tmp = transform.TransformDirection(palmTransform.forward);
+                    Vector3 distance = (ct.transform.position - palmTransform.position).normalized;
+                    if ((!left && Vector3.Angle(-palmTransform.right, distance) <= 50f) || (left && Vector3.Angle(palmTransform.right, distance) <= 50f))
+                        ct.SummonDagger(this);
                 }
             }
             else if(holdingObj != null && holdingObj.CanGetComponent(out GrabLock grabLock)) {
