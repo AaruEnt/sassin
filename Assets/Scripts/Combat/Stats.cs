@@ -287,7 +287,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
                 Weapon we = col.body.gameObject.GetComponent<Weapon>();
                 Rigidbody velRB = col.body as Rigidbody;
                 float vel = 1f;
-                if (velRB)
+                if (velRB && !velRB.isKinematic)
                 {
                     vel = velRB.velocity.magnitude;
                 }
