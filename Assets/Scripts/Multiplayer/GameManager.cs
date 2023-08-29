@@ -89,7 +89,8 @@ namespace Com.Aaru.Sassin
                 return;
             }
             UnityEngine.Debug.LogFormat("PhotonNetwork : Loading Level : {0}", PhotonNetwork.CurrentRoom.PlayerCount);
-            PhotonNetwork.LoadLevel("Room for " + PhotonNetwork.CurrentRoom.PlayerCount);
+            //PhotonNetwork.LoadLevel("Room for " + PhotonNetwork.CurrentRoom.PlayerCount);
+            PhotonNetwork.LoadLevel("Multiplayer Arena");
         }
 
         #if UNITY_5_4_OR_NEWER

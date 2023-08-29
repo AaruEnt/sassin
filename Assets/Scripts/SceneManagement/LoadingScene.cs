@@ -11,6 +11,7 @@ public class LoadingScene : MonoBehaviour
 {
     private float t = 0f;
     public float minTime = 4f;
+    public int sceneLoadOverride = -1;
     private bool faded = false;
 
     [Button]
@@ -27,6 +28,11 @@ public class LoadingScene : MonoBehaviour
                 LoadingData.sceneToLoad = 1;
             else
                 LoadingData.sceneToLoad = 2;
+
+            if (sceneLoadOverride != -1)
+            {
+                LoadingData.sceneToLoad = sceneLoadOverride;
+            }
         }
 
         StartCoroutine(LoadSceneAsync());

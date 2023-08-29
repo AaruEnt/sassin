@@ -23,6 +23,8 @@ namespace Com.Aaru.Sassin
         [SerializeField]
         private GameObject progressLabel;
 
+        public bool connectOnStart = false;
+
         #endregion
 
         #region Private Fields
@@ -61,6 +63,11 @@ namespace Com.Aaru.Sassin
             //Connect();
             progressLabel.SetActive(false);
             controlPanel.SetActive(true);
+
+            if (connectOnStart)
+            {
+                Connect();
+            }
         }
 
         #endregion
@@ -136,7 +143,8 @@ namespace Com.Aaru.Sassin
 
                 // #Critical
                 // Load the Room Level.
-                PhotonNetwork.LoadLevel("Room for 1");
+                //PhotonNetwork.LoadLevel("Room for 1");
+                PhotonNetwork.LoadLevel("Multiplayer Arena");
             }
         }
 

@@ -73,6 +73,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
         copyTo.radius = copyFrom.radius;
         copyTo.center = copyFrom.center;
         copyTo.transform.position = copyFrom.transform.position;
+
     }
 
     #region IPunObservable implementation
