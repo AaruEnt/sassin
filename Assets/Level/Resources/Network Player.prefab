@@ -2043,6 +2043,8 @@ GameObject:
   - component: {fileID: 5893827232652737910}
   - component: {fileID: 1294767500138108716}
   - component: {fileID: 3550854633211397318}
+  - component: {fileID: 8454055794166877934}
+  - component: {fileID: 8704623335058136124}
   m_Layer: 28
   m_Name: Network Player
   m_TagString: Player
@@ -2146,6 +2148,51 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &8454055794166877934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4235139737230343873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81b1ba98e7f54f043af2ebd89c128921, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  newObj: {fileID: 5448320773322436899, guid: 9e280d33e40183749a3e6f292ae40ad7, type: 3}
+  isPaper: 0
+  paperText: You're A Cunt
+--- !u!114 &8704623335058136124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4235139737230343873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4f404bf437851f47bdfe1fb90897d4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnStabbedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8454055794166877934}
+        m_TargetAssemblyTypeName: CreateObject, Assembly-CSharp
+        m_MethodName: CreateNewObject
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnUnStabbedEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &4344490591510606292
 GameObject:
   m_ObjectHideFlags: 0
