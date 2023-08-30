@@ -51,7 +51,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
         InputDevices.GetDeviceAtXRNode(node).TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion rotation);
 
         target.localPosition = position;
-        target.rotation = rotation * Quaternion.Euler(rotOffset);
+        target.localRotation = rotation * Quaternion.Euler(rotOffset);
     }
 
     void MapPosition(Transform target, GameObject node)
