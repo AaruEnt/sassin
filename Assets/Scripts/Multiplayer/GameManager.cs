@@ -43,6 +43,7 @@ namespace Com.Aaru.Sassin
 
         public void LeaveRoom()
         {
+            SteamVR_Fade.View(Color.black, 0.1f);
             PhotonNetwork.LeaveRoom();
         }
 
@@ -90,7 +91,7 @@ namespace Com.Aaru.Sassin
             }
             UnityEngine.Debug.LogFormat("PhotonNetwork : Loading Level : {0}", PhotonNetwork.CurrentRoom.PlayerCount);
             //PhotonNetwork.LoadLevel("Room for " + PhotonNetwork.CurrentRoom.PlayerCount);
-            PhotonNetwork.LoadLevel("Multiplayer Arena");
+            //PhotonNetwork.LoadLevel(Launcher.sceneConnectTo);
         }
 
         #if UNITY_5_4_OR_NEWER
