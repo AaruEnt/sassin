@@ -79,7 +79,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
         //tmp2.y = tmp2.y - (((scale * 0.8f) - (scale * copyFrom.center.y)));
         copyTo.transform.position = copyFrom.transform.position;
         var tmp2 = copyTo.transform.localPosition;
-        tmp2.y = (((1f - scale) / 0.25f) * 0.05f) + -0.2f;
+        tmp2.y = (((1f - scale) / 0.25f) * 0.05f) + -0.2f; // Lot of magic numbers here, I had to plot out the expected values and make a function that resulted in them, but it works perfectly
         copyTo.transform.localPosition = tmp2;
 
     }
