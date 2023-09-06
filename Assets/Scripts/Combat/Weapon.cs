@@ -5,5 +5,9 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     [SerializeField, Tooltip("The base damage dealt by this object")]
-    internal float damage;
+    public float damage;
+    [SerializeField, Tooltip("If enabled, this does not scale damage to speed, and instead always applies max damage")]
+    internal bool speedOverride = false;
+
+    public void SetDamage(float dmg) { damage = dmg; }
 }

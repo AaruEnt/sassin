@@ -259,6 +259,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
 
         if (col.gameObject.tag == "Effect" || col.body.gameObject.tag == "Effect" || (col.gameObject.tag == "Enemy" && gameObject.tag != "Enemy"))
         { // Includes spells and weapons that deal damage, heal, or create some form of effect
+            UnityEngine.Debug.LogFormat("Hit: {0}", col.gameObject.name);
             Collider hitCol = col.contacts[0].thisCollider;
             WeakPoint w = hitCol.gameObject.GetComponent<WeakPoint>();
 
@@ -287,7 +288,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
                 Weapon we = col.body.gameObject.GetComponent<Weapon>();
                 Rigidbody velRB = col.body as Rigidbody;
                 float vel = 1f;
-                if (velRB && !velRB.isKinematic)
+                if (velRB && !velRB.isKinematic && !we.speedOverride)
                 {
                     vel = velRB.velocity.magnitude;
                 }
