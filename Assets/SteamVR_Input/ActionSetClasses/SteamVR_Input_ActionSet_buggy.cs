@@ -25,14 +25,6 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Single Throttle
-        {
-            get
-            {
-                return SteamVR_Actions.buggy_Throttle;
-            }
-        }
-        
         public virtual SteamVR_Action_Boolean Brake
         {
             get

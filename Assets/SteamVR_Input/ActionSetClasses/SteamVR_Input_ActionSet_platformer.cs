@@ -17,14 +17,6 @@ namespace Valve.VR
     public class SteamVR_Input_ActionSet_platformer : Valve.VR.SteamVR_ActionSet
     {
         
-        public virtual SteamVR_Action_Vector2 Move
-        {
-            get
-            {
-                return SteamVR_Actions.platformer_Move;
-            }
-        }
-        
         public virtual SteamVR_Action_Boolean Jump
         {
             get

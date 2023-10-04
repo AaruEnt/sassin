@@ -11,24 +11,6 @@
          "sources" : [
             {
                "inputs" : {
-                  "pull" : {
-                     "output" : "/actions/buggy/in/throttle"
-                  }
-               },
-               "mode" : "trigger",
-               "path" : "/user/hand/left/input/trigger"
-            },
-            {
-               "inputs" : {
-                  "pull" : {
-                     "output" : "/actions/buggy/in/throttle"
-                  }
-               },
-               "mode" : "trigger",
-               "path" : "/user/hand/right/input/trigger"
-            },
-            {
-               "inputs" : {
                   "position" : {
                      "output" : "/actions/buggy/in/steering"
                   }
@@ -121,10 +103,6 @@
             {
                "output" : "/actions/default/in/pose",
                "path" : "/user/hand/right/pose/raw"
-            },
-            {
-               "output" : "none",
-               "path" : "/user/hand/left/pose/base"
             }
          ],
          "skeleton" : [
@@ -212,15 +190,6 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/default/in/primarybuttonleft"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/right/input/x"
-            },
-            {
-               "inputs" : {
-                  "click" : {
                      "output" : "/actions/default/in/jumpbutton"
                   },
                   "touch" : {
@@ -229,18 +198,6 @@
                },
                "mode" : "button",
                "path" : "/user/hand/right/input/a"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/default/in/sprint"
-                  },
-                  "touch" : {
-                     "output" : "/actions/default/in/thumbsticktouch"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/left/input/joystick"
             },
             {
                "inputs" : {
@@ -253,42 +210,51 @@
             },
             {
                "inputs" : {
-                  "click" : {
-                     "output" : "/actions/default/in/pause"
-                  },
-                  "touch" : {
-                     "output" : "/actions/default/in/thumbsticktouch"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/right/input/b"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/default/in/squeeze"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/left/input/trigger"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/default/in/squeeze"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/right/input/trigger"
-            },
-            {
-               "inputs" : {
                   "touch" : {
                      "output" : "/actions/default/in/thumbsticktouch"
                   }
                },
                "mode" : "button",
                "path" : "/user/hand/left/input/y"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/sprint"
+                  },
+                  "position" : {
+                     "output" : "/actions/default/in/move"
+                  },
+                  "touch" : {
+                     "output" : "/actions/default/in/thumbsticktouch"
+                  }
+               },
+               "mode" : "joystick",
+               "path" : "/user/hand/left/input/joystick"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/squeeze"
+                  },
+                  "pull" : {
+                     "output" : "/actions/default/in/throttle"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/left/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/squeeze"
+                  },
+                  "pull" : {
+                     "output" : "/actions/default/in/throttle"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/right/input/trigger"
             }
          ]
       },
@@ -329,7 +295,7 @@
    "controller_type" : "oculus_touch",
    "description" : "",
    "interaction_profile" : "",
-   "name" : "Official Sassin bindings for Oculus Touch controllers",
+   "name" : "Saved [Testing] Sassin configuration for Oculus Touch Controller",
    "options" : {},
    "simulated_actions" : []
 }

@@ -6,26 +6,6 @@
       "haptics": [],
       "sources": [
         {
-          "path": "/user/hand/left/input/primary",
-          "mode": "trigger",
-          "parameters": {},
-          "inputs": {
-            "pull": {
-              "output": "/actions/buggy/in/throttle"
-            }
-          }
-        },
-        {
-          "path": "/user/hand/right/input/primary",
-          "mode": "trigger",
-          "parameters": {},
-          "inputs": {
-            "pull": {
-              "output": "/actions/buggy/in/throttle"
-            }
-          }
-        },
-        {
           "path": "/user/hand/left/input/touchstrip",
           "mode": "trackpad",
           "parameters": {},
@@ -162,26 +142,6 @@
           "inputs": {
             "click": {
               "output": "/actions/platformer/in/jump"
-            }
-          }
-        },
-        {
-          "path": "/user/hand/left/input/touchstrip",
-          "mode": "trackpad",
-          "parameters": {},
-          "inputs": {
-            "position": {
-              "output": "/actions/platformer/in/move"
-            }
-          }
-        },
-        {
-          "path": "/user/hand/right/input/touchstrip",
-          "mode": "trackpad",
-          "parameters": {},
-          "inputs": {
-            "position": {
-              "output": "/actions/platformer/in/move"
             }
           }
         }

@@ -45,15 +45,15 @@ namespace Valve.VR
         
         private static SteamVR_Action_Single p_default_SqueezeDepth;
         
-        private static SteamVR_Action_Vibration p_default_Haptic;
+        private static SteamVR_Action_Vector2 p_default_Move;
         
-        private static SteamVR_Action_Vector2 p_platformer_Move;
+        private static SteamVR_Action_Single p_default_Throttle;
+        
+        private static SteamVR_Action_Vibration p_default_Haptic;
         
         private static SteamVR_Action_Boolean p_platformer_Jump;
         
         private static SteamVR_Action_Vector2 p_buggy_Steering;
-        
-        private static SteamVR_Action_Single p_buggy_Throttle;
         
         private static SteamVR_Action_Boolean p_buggy_Brake;
         
@@ -173,19 +173,27 @@ namespace Valve.VR
             }
         }
         
+        public static SteamVR_Action_Vector2 default_Move
+        {
+            get
+            {
+                return SteamVR_Actions.p_default_Move.GetCopy<SteamVR_Action_Vector2>();
+            }
+        }
+        
+        public static SteamVR_Action_Single default_Throttle
+        {
+            get
+            {
+                return SteamVR_Actions.p_default_Throttle.GetCopy<SteamVR_Action_Single>();
+            }
+        }
+        
         public static SteamVR_Action_Vibration default_Haptic
         {
             get
             {
                 return SteamVR_Actions.p_default_Haptic.GetCopy<SteamVR_Action_Vibration>();
-            }
-        }
-        
-        public static SteamVR_Action_Vector2 platformer_Move
-        {
-            get
-            {
-                return SteamVR_Actions.p_platformer_Move.GetCopy<SteamVR_Action_Vector2>();
             }
         }
         
@@ -202,14 +210,6 @@ namespace Valve.VR
             get
             {
                 return SteamVR_Actions.p_buggy_Steering.GetCopy<SteamVR_Action_Vector2>();
-            }
-        }
-        
-        public static SteamVR_Action_Single buggy_Throttle
-        {
-            get
-            {
-                return SteamVR_Actions.p_buggy_Throttle.GetCopy<SteamVR_Action_Single>();
             }
         }
         
@@ -254,11 +254,11 @@ namespace Valve.VR
                     SteamVR_Actions.default_ThumbstickTouch,
                     SteamVR_Actions.default_Sprint,
                     SteamVR_Actions.default_SqueezeDepth,
+                    SteamVR_Actions.default_Move,
+                    SteamVR_Actions.default_Throttle,
                     SteamVR_Actions.default_Haptic,
-                    SteamVR_Actions.platformer_Move,
                     SteamVR_Actions.platformer_Jump,
                     SteamVR_Actions.buggy_Steering,
-                    SteamVR_Actions.buggy_Throttle,
                     SteamVR_Actions.buggy_Brake,
                     SteamVR_Actions.buggy_Reset,
                     SteamVR_Actions.mixedreality_ExternalCamera};
@@ -277,10 +277,10 @@ namespace Valve.VR
                     SteamVR_Actions.default_ThumbstickTouch,
                     SteamVR_Actions.default_Sprint,
                     SteamVR_Actions.default_SqueezeDepth,
-                    SteamVR_Actions.platformer_Move,
+                    SteamVR_Actions.default_Move,
+                    SteamVR_Actions.default_Throttle,
                     SteamVR_Actions.platformer_Jump,
                     SteamVR_Actions.buggy_Steering,
-                    SteamVR_Actions.buggy_Throttle,
                     SteamVR_Actions.buggy_Brake,
                     SteamVR_Actions.buggy_Reset,
                     SteamVR_Actions.mixedreality_ExternalCamera};
@@ -307,9 +307,9 @@ namespace Valve.VR
                     SteamVR_Actions.buggy_Reset};
             Valve.VR.SteamVR_Input.actionsSingle = new Valve.VR.SteamVR_Action_Single[] {
                     SteamVR_Actions.default_SqueezeDepth,
-                    SteamVR_Actions.buggy_Throttle};
+                    SteamVR_Actions.default_Throttle};
             Valve.VR.SteamVR_Input.actionsVector2 = new Valve.VR.SteamVR_Action_Vector2[] {
-                    SteamVR_Actions.platformer_Move,
+                    SteamVR_Actions.default_Move,
                     SteamVR_Actions.buggy_Steering};
             Valve.VR.SteamVR_Input.actionsVector3 = new Valve.VR.SteamVR_Action_Vector3[0];
             Valve.VR.SteamVR_Input.actionsSkeleton = new Valve.VR.SteamVR_Action_Skeleton[] {
@@ -327,10 +327,10 @@ namespace Valve.VR
                     SteamVR_Actions.default_ThumbstickTouch,
                     SteamVR_Actions.default_Sprint,
                     SteamVR_Actions.default_SqueezeDepth,
-                    SteamVR_Actions.platformer_Move,
+                    SteamVR_Actions.default_Move,
+                    SteamVR_Actions.default_Throttle,
                     SteamVR_Actions.platformer_Jump,
                     SteamVR_Actions.buggy_Steering,
-                    SteamVR_Actions.buggy_Throttle,
                     SteamVR_Actions.buggy_Brake,
                     SteamVR_Actions.buggy_Reset};
         }
@@ -351,11 +351,11 @@ namespace Valve.VR
             SteamVR_Actions.p_default_ThumbstickTouch = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/default/in/ThumbstickTouch")));
             SteamVR_Actions.p_default_Sprint = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/default/in/Sprint")));
             SteamVR_Actions.p_default_SqueezeDepth = ((SteamVR_Action_Single)(SteamVR_Action.Create<SteamVR_Action_Single>("/actions/default/in/SqueezeDepth")));
+            SteamVR_Actions.p_default_Move = ((SteamVR_Action_Vector2)(SteamVR_Action.Create<SteamVR_Action_Vector2>("/actions/default/in/Move")));
+            SteamVR_Actions.p_default_Throttle = ((SteamVR_Action_Single)(SteamVR_Action.Create<SteamVR_Action_Single>("/actions/default/in/Throttle")));
             SteamVR_Actions.p_default_Haptic = ((SteamVR_Action_Vibration)(SteamVR_Action.Create<SteamVR_Action_Vibration>("/actions/default/out/Haptic")));
-            SteamVR_Actions.p_platformer_Move = ((SteamVR_Action_Vector2)(SteamVR_Action.Create<SteamVR_Action_Vector2>("/actions/platformer/in/Move")));
             SteamVR_Actions.p_platformer_Jump = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/platformer/in/Jump")));
             SteamVR_Actions.p_buggy_Steering = ((SteamVR_Action_Vector2)(SteamVR_Action.Create<SteamVR_Action_Vector2>("/actions/buggy/in/Steering")));
-            SteamVR_Actions.p_buggy_Throttle = ((SteamVR_Action_Single)(SteamVR_Action.Create<SteamVR_Action_Single>("/actions/buggy/in/Throttle")));
             SteamVR_Actions.p_buggy_Brake = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/buggy/in/Brake")));
             SteamVR_Actions.p_buggy_Reset = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/buggy/in/Reset")));
             SteamVR_Actions.p_mixedreality_ExternalCamera = ((SteamVR_Action_Pose)(SteamVR_Action.Create<SteamVR_Action_Pose>("/actions/mixedreality/in/ExternalCamera")));

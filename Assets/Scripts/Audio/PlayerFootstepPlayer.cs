@@ -85,7 +85,7 @@ public class PlayerFootstepPlayer : MonoBehaviour
         }
 
         // If the player is moving, and wallrunning or on the ground, and not crouching, increment time until next footstep is played
-        if (speed > 0f && (player.IsGrounded() || momentum.isWallRunning) && !player.crouching && playerStats.health > 0f)
+        if (speed > 0f && (player.IsGrounded() || momentum.isWallRunning) && !player.crouching && (!playerStats || playerStats.health > 0f))
             currFootstepTime += Time.deltaTime;
 
         // If the time has met or exceeded the time the next footstep should be played, reset the time and play a footstep

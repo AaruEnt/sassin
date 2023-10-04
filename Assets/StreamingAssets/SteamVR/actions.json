@@ -61,12 +61,16 @@
       "type": "vector1"
     },
     {
-      "name": "/actions/default/out/Haptic",
-      "type": "vibration"
+      "name": "/actions/default/in/Move",
+      "type": "vector2"
     },
     {
-      "name": "/actions/platformer/in/Move",
-      "type": "vector2"
+      "name": "/actions/default/in/Throttle",
+      "type": "vector1"
+    },
+    {
+      "name": "/actions/default/out/Haptic",
+      "type": "vibration"
     },
     {
       "name": "/actions/platformer/in/Jump",
@@ -75,10 +79,6 @@
     {
       "name": "/actions/buggy/in/Steering",
       "type": "vector2"
-    },
-    {
-      "name": "/actions/buggy/in/Throttle",
-      "type": "vector1"
     },
     {
       "name": "/actions/buggy/in/Brake",
@@ -181,7 +181,9 @@
       "/actions/default/in/Squeeze": "Squeeze",
       "/actions/default/in/Grab": "Grab",
       "/actions/default/in/Slide": "Slide",
-      "/actions/default/in/Sprint": "Sprint"
+      "/actions/default/in/Sprint": "Sprint",
+      "/actions/default/in/Move": "Move",
+      "/actions/default/in/Throttle": "Throttle"
     }
   ]
 }
