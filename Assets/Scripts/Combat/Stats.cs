@@ -49,7 +49,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     private float respawnTimer = 5f;
 
     [SerializeField, ShowIf("moveToSpawnOnDeath")]
-    private GameObject trackedObjects;
+    internal GameObject trackedObjects;
 
     [SerializeField, ShowIf("moveToSpawnOnDeath")]
     private GameObject respawnBarrier;
