@@ -26,6 +26,9 @@ namespace Com.Aaru.Sassin
         public bool connectOnStart = false;
         public bool useOfflineMode = false;
 
+        private string MAP_PROP_KEY = "map";
+        private string MODE_PROP_KEY = "mod";
+
         public void UseOfflineMode(bool mode)
         {
             useOfflineMode = mode;
@@ -132,7 +135,10 @@ namespace Com.Aaru.Sassin
                 else
                 {
                     // #Critical: The first we try to do is to join a potential existing room. If there is, good, else, we'll be called back with OnJoinRandomFailed()
-                    PhotonNetwork.JoinRandomRoom();
+                    ExitGames.Client.Photon.Hashtable RoomCustomProps = new ExitGames.Client.Photon.Hashtable();
+                    RoomCustomProps.Add(MAP_PROP_KEY, sceneConnectTo);
+                    RoomCustomProps.Add(MODE_PROP_KEY, "tmp");
+                    PhotonNetwork.JoinRandomRoom(RoomCustomProps, 0);
                     isConnecting = false;
                 }
             }
@@ -153,8 +159,25 @@ namespace Com.Aaru.Sassin
         {
             UnityEngine.Debug.Log("PUN Basics Tutorial/Launcher:OnJoinRandomFailed() was called by PUN. No random room available, so we create one.\nCalling: PhotonNetwork.CreateRoom");
 
+            RoomOptions roomOptions =
+                new RoomOptions()
+                {
+                    MaxPlayers = maxPlayersPerRoom,
+                    IsVisible = true,
+                    IsOpen = true,
+                };
+
+            ExitGames.Client.Photon.Hashtable RoomCustomProps = new ExitGames.Client.Photon.Hashtable();
+            RoomCustomProps.Add(MAP_PROP_KEY, sceneConnectTo);
+            RoomCustomProps.Add(MODE_PROP_KEY, "tmp");
+            roomOptions.CustomRoomProperties = RoomCustomProps;
+
+            string[] customLobbyProperties = {MAP_PROP_KEY, MODE_PROP_KEY};
+
+            roomOptions.CustomRoomPropertiesForLobby = customLobbyProperties;
+
             // #Critical: we failed to join a random room, maybe none exists or they are all full. No worries, we create a new room.
-            PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
+            PhotonNetwork.CreateRoom(null, roomOptions);
         }
 
         public override void OnJoinedRoom()
