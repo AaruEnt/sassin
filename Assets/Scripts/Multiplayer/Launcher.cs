@@ -24,6 +24,12 @@ namespace Com.Aaru.Sassin
         private GameObject progressLabel;
 
         public bool connectOnStart = false;
+        public bool useOfflineMode = false;
+
+        public void UseOfflineMode(bool mode)
+        {
+            useOfflineMode = mode;
+        }    
 
         public static string sceneConnectTo = "Multiplayer Arena";
 
@@ -84,6 +90,7 @@ namespace Com.Aaru.Sassin
         /// </summary>
         public void Connect(string toConnectTo)
         {
+            PhotonNetwork.OfflineMode = useOfflineMode;
             progressLabel.SetActive(true);
             controlPanel.SetActive(false);
             sceneConnectTo = toConnectTo;
@@ -118,6 +125,8 @@ namespace Com.Aaru.Sassin
                 PhotonNetwork.JoinRandomRoom();
                 isConnecting = false;
             }
+            else if (PhotonNetwork.OfflineMode)
+                PhotonNetwork.JoinRandomRoom();
         }
 
         public override void OnDisconnected(DisconnectCause cause)
