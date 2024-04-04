@@ -71,6 +71,7 @@ namespace Com.Aaru.Sassin
             //Connect();
             progressLabel.SetActive(false);
             controlPanel.SetActive(true);
+            PhotonNetwork.Disconnect();
 
             if (connectOnStart)
             {
@@ -90,12 +91,14 @@ namespace Com.Aaru.Sassin
         /// </summary>
         public void Connect(string toConnectTo)
         {
-            PhotonNetwork.OfflineMode = useOfflineMode;
             progressLabel.SetActive(true);
             controlPanel.SetActive(false);
             sceneConnectTo = toConnectTo;
+            PhotonNetwork.OfflineMode = useOfflineMode;
+            if (PhotonNetwork.OfflineMode)
+                return;
             // we check if we are connected or not, we join if we are , else we initiate the connection to the server.
-            if (PhotonNetwork.IsConnected)
+            else if (PhotonNetwork.IsConnected)
             {
                 // #Critical we need at this point to attempt joining a Random Room. If it fails, we'll get notified in OnJoinRandomFailed() and we'll create one.
                 PhotonNetwork.JoinRandomRoom();
@@ -121,12 +124,21 @@ namespace Com.Aaru.Sassin
             // we don't want to do anything.
             if (isConnecting)
             {
-                // #Critical: The first we try to do is to join a potential existing room. If there is, good, else, we'll be called back with OnJoinRandomFailed()
-                PhotonNetwork.JoinRandomRoom();
-                isConnecting = false;
+                if (PhotonNetwork.OfflineMode)
+                {
+                    PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 1 });
+                    isConnecting = false;
+                }
+                else
+                {
+                    // #Critical: The first we try to do is to join a potential existing room. If there is, good, else, we'll be called back with OnJoinRandomFailed()
+                    PhotonNetwork.JoinRandomRoom();
+                    isConnecting = false;
+                }
             }
             else if (PhotonNetwork.OfflineMode)
-                PhotonNetwork.JoinRandomRoom();
+                PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 1 });
+            //PhotonNetwork.JoinRandomRoom();
         }
 
         public override void OnDisconnected(DisconnectCause cause)
