@@ -14,10 +14,7 @@ public class Winner : MonoBehaviourPun
 
     public void OnWin(Collider winningCol)
     {
-        PhotonView view = winningCol.GetComponent<PhotonView>();
-        string winnerName = "";
-        if (view)
-            winnerName = view.Owner.NickName;
+        string winnerName = PhotonNetwork.LocalPlayer.NickName;
         this.photonView.RPC("CallOnWin", RpcTarget.All, winnerName);
     }
 
