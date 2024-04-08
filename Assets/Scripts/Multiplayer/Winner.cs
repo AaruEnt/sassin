@@ -32,10 +32,20 @@ public class Winner : MonoBehaviourPun
         }
 
         Vector3 pos = endPoint.position;
-        pos.x = Randomizer.Prob(50f) ? pos.x + (float)Randomizer.GetDouble(0.5f) : pos.x - (float)Randomizer.GetDouble(0.5f);
-        pos.z = Randomizer.Prob(50f) ? pos.z + (float)Randomizer.GetDouble(0.5f) : pos.z - (float)Randomizer.GetDouble(0.5f);
+        pos.x = Randomizer.Prob(50f) ? pos.x + (float)Randomizer.GetDouble(0.3f) : pos.x - (float)Randomizer.GetDouble(0.3f);
+        pos.z = Randomizer.Prob(50f) ? pos.z + (float)Randomizer.GetDouble(0.3f) : pos.z - (float)Randomizer.GetDouble(0.3f);
 
         player.transform.position = endPoint.position;
         player.GetComponent<Stats>().trackedObjects.transform.position = endPoint.position;
+        player.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        player.useMovement = false;
+        player.GetComponent<Stats>().AddIFrames(2f);
+        StartCoroutine(EnableMovement());
+    }
+
+    private IEnumerator EnableMovement()
+    {
+        yield return new WaitForSeconds(1f);
+        player.useMovement = true;
     }
 }

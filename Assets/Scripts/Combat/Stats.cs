@@ -11,6 +11,7 @@ using Autohand;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Diagnostics;
+using UnityEditorInternal;
 
 public class Stats : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -83,6 +84,8 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     private Vector3 _startPos;
 
     private float timer = 0f;
+    private bool iFrames = false;
+    private float iFrameTimer = 0f;
 
     #region IPunObservable implementation
 
@@ -124,6 +127,13 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         }
         if (stabCD > 0)
             stabCD -= Time.deltaTime;
+        if (iFrameTimer > 0)
+            iFrameTimer -= Time.deltaTime;
+        else
+        {
+            iFrameTimer = 0f;
+            iFrames = false;
+        }
     }
 
     void Awake()
@@ -134,11 +144,22 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     // When damage is received
     internal void OnDamageReceived(float damage)
     {
+        if (iFrames)
+            return;
         OnTakeDamage.Invoke();
         if (damage > 0)
             health -= damage;
         if (health <= 0)
             OnKill();
+        iFrames = true;
+        iFrameTimer = 6f;
+    }
+
+    internal void AddIFrames(float time)
+    {
+        iFrameTimer += time;
+        if (iFrameTimer > 0)
+            iFrames = true;
     }
 
     // When damage is healed
