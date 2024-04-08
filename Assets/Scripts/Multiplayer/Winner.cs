@@ -23,6 +23,12 @@ public class Winner : MonoBehaviourPun
     {
         winningText.text = string.Format("{0} has won!", winner);
 
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+            PhotonNetwork.CurrentRoom.IsVisible = false;
+        }
+
         Vector3 pos = endPoint.position;
         pos.x = Randomizer.Prob(50f) ? pos.x + (float)Randomizer.GetDouble(0.5f) : pos.x - (float)Randomizer.GetDouble(0.5f);
         pos.z = Randomizer.Prob(50f) ? pos.z + (float)Randomizer.GetDouble(0.5f) : pos.z - (float)Randomizer.GetDouble(0.5f);
