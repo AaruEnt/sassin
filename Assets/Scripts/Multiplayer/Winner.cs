@@ -10,6 +10,7 @@ public class Winner : MonoBehaviourPun
     public TMP_Text winningText;
     public AutoHandPlayer player;
     public Transform endPoint;
+    public GameObject endCol;
     
 
     public void OnWin(Collider winningCol)
@@ -22,6 +23,7 @@ public class Winner : MonoBehaviourPun
     public void CallOnWin(string winner, PhotonMessageInfo info)
     {
         winningText.text = string.Format("{0} has won!", winner);
+        endCol.SetActive(false);
 
         if (PhotonNetwork.IsMasterClient)
         {
