@@ -11,18 +11,25 @@ public class Winner : MonoBehaviourPun
     public AutoHandPlayer player;
     public Transform endPoint;
     public GameObject endCol;
+    public bool cheated = false;
+    public int deaths = 0;
     
 
     public void OnWin(Collider winningCol)
     {
         string winnerName = PhotonNetwork.LocalPlayer.NickName;
-        this.photonView.RPC("CallOnWin", RpcTarget.All, winnerName);
+        this.photonView.RPC("CallOnWin", RpcTarget.All, winnerName, (int)Time.time, cheated, deaths);
     }
 
     [PunRPC]
-    public void CallOnWin(string winner, PhotonMessageInfo info)
+    public void CallOnWin(string winner, int seconds, bool cheated, int deaths, PhotonMessageInfo info)
     {
-        winningText.text = string.Format("{0} has won!", winner);
+        winningText.text = string.Format("{0} has won in {1} seconds", winner, seconds);
+        winningText.text += string.Format("\nwith only {0} death(s)!", deaths);
+        if (cheated)
+        {
+            winningText.text += string.Format("\n...but they cheated.");
+        }
         endCol.SetActive(false);
 
         if (PhotonNetwork.IsMasterClient)
@@ -47,5 +54,15 @@ public class Winner : MonoBehaviourPun
     {
         yield return new WaitForSeconds(1f);
         player.useMovement = true;
+    }
+
+    public void IncrementDeaths()
+    {
+        deaths++;
+    }
+
+    public void Cheated()
+    {
+        cheated = true;
     }
 }
