@@ -10,4 +10,13 @@ public class Weapon : MonoBehaviour
     internal bool speedOverride = false;
 
     public void SetDamage(float dmg) { damage = dmg; }
+
+    internal void OnTriggerEnter(Collider col) {
+        if (col.gameObject.CompareTag("Player")) {
+            Stats s = col.gameObject.GetComponent<Stats>();
+            if (s) {
+                s.OnDamageReceived(damage);
+            }
+        }
+    }
 }

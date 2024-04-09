@@ -13,12 +13,13 @@ public class Winner : MonoBehaviourPun
     public GameObject endCol;
     public bool cheated = false;
     public int deaths = 0;
+    privaate float t = 0f;
     
 
     public void OnWin(Collider winningCol)
     {
         string winnerName = PhotonNetwork.LocalPlayer.NickName;
-        this.photonView.RPC("CallOnWin", RpcTarget.All, winnerName, (int)Time.time, cheated, deaths);
+        this.photonView.RPC("CallOnWin", RpcTarget.All, winnerName, (int)t, cheated, deaths);
     }
 
     [PunRPC]
@@ -64,5 +65,9 @@ public class Winner : MonoBehaviourPun
     public void Cheated()
     {
         cheated = true;
+    }
+
+    private void Update() {
+        t += Time.deltaTime;
     }
 }

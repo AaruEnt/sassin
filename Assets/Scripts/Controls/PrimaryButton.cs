@@ -121,7 +121,7 @@ public class PrimaryButton : MonoBehaviourPunCallbacks
     }
 
     private void Jump() {
-        UnityEngine.Debug.Log("Jump");
+        //UnityEngine.Debug.Log("Jump");
         if (photonView && !photonView.IsMine)
             return;
         if (jumpCD > 0)
