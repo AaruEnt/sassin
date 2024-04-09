@@ -10,8 +10,6 @@ using NaughtyAttributes;
 using Autohand;
 using Photon.Pun;
 using Photon.Realtime;
-using System.Diagnostics;
-using UnityEditorInternal;
 
 public class Stats : MonoBehaviourPunCallbacks, IPunObservable
 {
