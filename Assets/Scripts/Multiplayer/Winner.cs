@@ -13,7 +13,7 @@ public class Winner : MonoBehaviourPun
     public GameObject endCol;
     public bool cheated = false;
     public int deaths = 0;
-    privaate float t = 0f;
+    private float t = 0f;
     
 
     public void OnWin(Collider winningCol)
