@@ -15,9 +15,12 @@ public class SettingsMenuInit : MonoBehaviour
     public Slider smooth;
 
     public Toggle snapSmooth;
+    public Toggle forwardFollow;
+    public Toggle swapHand;
 
     public GameObject snapParent;
     public GameObject smoothParent;
+    public GameObject swapHandParent;
 
 
     private string masterVolumeName = "MasterVolume";
@@ -55,6 +58,20 @@ public class SettingsMenuInit : MonoBehaviour
         {
             player.smoothTurnSpeed = PlayerPrefs.GetFloat("SmoothSpeed");
         }
+        if (PlayerPrefs.HasKey("ForwardFollow"))
+        {
+            bool isOn = PlayerPrefs.GetInt("ForwardFollow") == 1;
+            forwardFollow.isOn = isOn;
+            SwapHandToggle(isOn);
+            if (!isOn)
+            {
+                if (PlayerPrefs.HasKey("HandFollowUsed"))
+                {
+                    bool handIsOn = PlayerPrefs.GetInt("HandFollowUsed") == 1;
+                    swapHand.isOn = handIsOn;
+                }
+            }
+        }
     }
 
     public void SnapParentToggle(bool toggle)
@@ -69,5 +86,10 @@ public class SettingsMenuInit : MonoBehaviour
             snapParent.SetActive(false);
             smoothParent.SetActive(true);
         }
+    }
+
+    public void SwapHandToggle(bool toggle)
+    {
+        swapHandParent.SetActive(!toggle);
     }
 }

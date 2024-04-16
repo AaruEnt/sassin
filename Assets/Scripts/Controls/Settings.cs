@@ -14,6 +14,10 @@ public class Settings : MonoBehaviour
     private string bgmVolumeName = "BGMMain";
     private string sfxVolumeName = "SFXMain";
 
+    public Transform cameraForward;
+    public Transform controllerForward;
+    public Transform offControllerForward;
+
     private void Start()
     {
         if (PlayerPrefs.HasKey(masterVolumeName))
@@ -40,6 +44,14 @@ public class Settings : MonoBehaviour
         if (PlayerPrefs.HasKey("SmoothSpeed"))
         {
             player.smoothTurnSpeed = PlayerPrefs.GetFloat("SmoothSpeed") * 100f;
+        }
+        if (PlayerPrefs.HasKey("ForwardFollow"))
+        {
+            SetForwardTransform(PlayerPrefs.GetInt("ForwardFollow") == 1);
+        }
+        if (PlayerPrefs.HasKey("HandFollowUsed"))
+        {
+            SwapForwardHand(PlayerPrefs.GetInt("HandFollowUsed") == 1);
         }
     }
 
@@ -88,5 +100,22 @@ public class Settings : MonoBehaviour
     {
         player.smoothTurnSpeed = speed * 100f;
         PlayerPrefs.SetFloat("SmoothSpeed", speed);
+    }
+
+    public void SetForwardTransform(bool forward)
+    {
+        // true is camera (default) false is right controller
+        player.forwardFollow = forward == true ? cameraForward : controllerForward;
+        PlayerPrefs.SetInt("ForwardFollow", forward == true ? 1 : 0);
+        if (PlayerPrefs.HasKey("HandFollowUsed"))
+            SwapForwardHand(PlayerPrefs.GetInt("HandFollowUsed") == 1);
+    }
+
+    public void SwapForwardHand(bool swap)
+    {
+        // false is right, true is left
+        if (PlayerPrefs.GetInt("ForwardFollow") == 0)
+            player.forwardFollow = swap == true ? offControllerForward : controllerForward;
+        PlayerPrefs.SetInt("HandFollowUsed", swap == true ? 1 : 0);
     }
 }
