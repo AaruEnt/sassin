@@ -39,7 +39,7 @@ public class Settings : MonoBehaviour
         }
         if (PlayerPrefs.HasKey("SmoothSpeed"))
         {
-            player.smoothTurnSpeed = PlayerPrefs.GetFloat("SmoothSpeed");
+            player.smoothTurnSpeed = PlayerPrefs.GetFloat("SmoothSpeed") * 100f;
         }
     }
 
@@ -67,7 +67,7 @@ public class Settings : MonoBehaviour
     public float GetConvertedVolume(float volume)
     {
         float p = volume * 80f;
-        float p2 = 80f - p;
+        float p2 = -(80f - p);
         // range is -80 to 0, but input is 0-1
         return p2;
     }
@@ -86,7 +86,7 @@ public class Settings : MonoBehaviour
 
     public void SetSmoothSpeed(float speed)
     {
-        player.smoothTurnSpeed = speed * 10f;
+        player.smoothTurnSpeed = speed * 100f;
         PlayerPrefs.SetFloat("SmoothSpeed", speed);
     }
 }

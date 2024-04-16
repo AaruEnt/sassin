@@ -44,16 +44,8 @@ public class SettingsMenuInit : MonoBehaviour
         {
             bool s = PlayerPrefs.GetInt("Snap") == 1 ? true : false;
             player.snapTurning = s;
-            if (s)
-            {
-                snapParent.SetActive(true);
-                smoothParent.SetActive(false);
-            }
-            else
-            {
-                snapParent.SetActive(false);
-                smoothParent.SetActive(true);
-            }
+            SnapParentToggle(s);
+            snapSmooth.isOn = s;
         }
         if (PlayerPrefs.HasKey("SnapAngle"))
         {
