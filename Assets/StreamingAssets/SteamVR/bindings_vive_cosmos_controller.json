@@ -11,6 +11,24 @@
          "sources" : [
             {
                "inputs" : {
+                  "position" : {
+                     "output" : "/actions/buggy/in/steering"
+                  }
+               },
+               "mode" : "joystick",
+               "path" : "/user/hand/left/input/thumbstick"
+            },
+            {
+               "inputs" : {
+                  "position" : {
+                     "output" : "/actions/buggy/in/steering"
+                  }
+               },
+               "mode" : "joystick",
+               "path" : "/user/hand/right/input/thumbstick"
+            },
+            {
+               "inputs" : {
                   "pull" : {
                      "output" : "/actions/buggy/in/throttle"
                   }
@@ -29,39 +47,12 @@
             },
             {
                "inputs" : {
-                  "position" : {
-                     "output" : "/actions/buggy/in/steering"
-                  }
-               },
-               "mode" : "joystick",
-               "path" : "/user/hand/left/input/joystick"
-            },
-            {
-               "inputs" : {
-                  "position" : {
-                     "output" : "/actions/buggy/in/steering"
-                  }
-               },
-               "mode" : "joystick",
-               "path" : "/user/hand/right/input/joystick"
-            },
-            {
-               "inputs" : {
                   "click" : {
                      "output" : "/actions/buggy/in/brake"
                   }
                },
                "mode" : "button",
-               "path" : "/user/hand/left/input/x"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/buggy/in/reset"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/left/input/y"
+               "path" : "/user/hand/left/input/a"
             },
             {
                "inputs" : {
@@ -71,6 +62,15 @@
                },
                "mode" : "button",
                "path" : "/user/hand/right/input/a"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/buggy/in/reset"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/b"
             },
             {
                "inputs" : {
@@ -147,7 +147,7 @@
                "parameters" : {
                   "sub_mode" : "touch"
                },
-               "path" : "/user/hand/right/input/joystick"
+               "path" : "/user/hand/right/input/thumbstick"
             },
             {
                "inputs" : {
@@ -170,26 +170,17 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/default/in/grab"
+                     "output" : "/actions/default/in/sprint"
                   },
-                  "pull" : {
-                     "output" : "/actions/default/in/squeezedepth"
+                  "position" : {
+                     "output" : "/actions/default/in/move"
+                  },
+                  "touch" : {
+                     "output" : "/actions/default/in/thumbsticktouch"
                   }
                },
-               "mode" : "trigger",
-               "path" : "/user/hand/left/input/grip"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/default/in/grab"
-                  },
-                  "pull" : {
-                     "output" : "/actions/default/in/squeezedepth"
-                  }
-               },
-               "mode" : "trigger",
-               "path" : "/user/hand/right/input/grip"
+               "mode" : "joystick",
+               "path" : "/user/hand/left/input/thumbstick"
             },
             {
                "inputs" : {
@@ -201,16 +192,7 @@
                   }
                },
                "mode" : "button",
-               "path" : "/user/hand/left/input/x"
-            },
-            {
-               "inputs" : {
-                  "touch" : {
-                     "output" : "/actions/default/in/thumbsticktouch"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/right/input/joystick"
+               "path" : "/user/hand/left/input/a"
             },
             {
                "inputs" : {
@@ -226,18 +208,44 @@
             },
             {
                "inputs" : {
-                  "click" : {
-                     "output" : "/actions/default/in/sprint"
-                  },
-                  "position" : {
-                     "output" : "/actions/default/in/move"
-                  },
-                  "touch" : {
-                     "output" : "/actions/default/in/thumbsticktouch"
+                  "pull" : {
+                     "output" : "/actions/default/in/squeezedepth"
                   }
                },
-               "mode" : "joystick",
-               "path" : "/user/hand/left/input/joystick"
+               "mode" : "trigger",
+               "path" : "/user/hand/left/input/grip"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/grab"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/grip"
+            },
+            {
+               "inputs" : {
+                  "pull" : {
+                     "output" : "/actions/default/in/squeezedepth"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/right/input/grip"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/grab"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/grip"
+            },
+            {
+               "inputs" : {},
+               "mode" : "button",
+               "path" : "/user/hand/right/input/thumbstick"
             }
          ]
       },
@@ -249,27 +257,39 @@
          "sources" : [
             {
                "inputs" : {
-                  "click" : {
-                     "output" : "/actions/platformer/in/jump"
-                  },
                   "position" : {
                      "output" : "/actions/platformer/in/move"
                   }
                },
                "mode" : "joystick",
-               "path" : "/user/hand/left/input/joystick"
+               "path" : "/user/hand/left/input/thumbstick"
+            },
+            {
+               "inputs" : {
+                  "position" : {
+                     "output" : "/actions/platformer/in/move"
+                  }
+               },
+               "mode" : "joystick",
+               "path" : "/user/hand/right/input/thumbstick"
             },
             {
                "inputs" : {
                   "click" : {
                      "output" : "/actions/platformer/in/jump"
-                  },
-                  "position" : {
-                     "output" : "/actions/platformer/in/move"
                   }
                },
-               "mode" : "joystick",
-               "path" : "/user/hand/right/input/joystick"
+               "mode" : "button",
+               "path" : "/user/hand/left/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/platformer/in/jump"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/trigger"
             }
          ]
       }
@@ -278,7 +298,7 @@
    "controller_type" : "vive_cosmos_controller",
    "description" : "",
    "interaction_profile" : "",
-   "name" : "Saved [Testing] Sassin configuration for vive_cosmos_controller",
+   "name" : "My [Testing] Sassin configuration for vive_cosmos_controller",
    "options" : {},
    "simulated_actions" : []
 }
