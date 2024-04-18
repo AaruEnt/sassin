@@ -63,13 +63,11 @@ public class SettingsMenuInit : MonoBehaviour
             bool isOn = PlayerPrefs.GetInt("ForwardFollow") == 1;
             forwardFollow.isOn = isOn;
             SwapHandToggle(isOn);
-            if (!isOn)
+            if (PlayerPrefs.HasKey("HandFollowUsed"))
             {
-                if (PlayerPrefs.HasKey("HandFollowUsed"))
-                {
-                    bool handIsOn = PlayerPrefs.GetInt("HandFollowUsed") == 1;
+                bool handIsOn = PlayerPrefs.GetInt("HandFollowUsed") == 1;
+                if (!isOn)
                     swapHand.isOn = handIsOn;
-                }
             }
         }
     }
