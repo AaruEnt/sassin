@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using NaughtyAttributes;
+using Autohand;
 
 public class CheckCanSee : MonoBehaviour
 {
@@ -15,6 +16,19 @@ public class CheckCanSee : MonoBehaviour
     private bool canSee = false;
     private Transform target;
 
+    public bool defaultOnSee = false;
+    private GameObject player;
+    private AutoHandPlayer aPlayer;
+
+    private void Start()
+    {
+        if (defaultOnSee)
+        {
+            player = GameObject.Find("SteamVR Player Container Variant");
+            aPlayer = player.GetComponentInChildren<AutoHandPlayer>();
+        }
+    }
+
     void Update()
     {
         RaycastHit hitinfo;
@@ -22,7 +36,10 @@ public class CheckCanSee : MonoBehaviour
         {
             bool tmp = Physics.Linecast(eyes.transform.position, target.transform.position, out hitinfo);
             if (tmp && hitinfo.collider.gameObject.CompareTag(tag)) {
-                OnSee.Invoke();
+                if (defaultOnSee)
+                    aPlayer.GetComponent<Stats>().DebugKill();
+                else
+                    OnSee.Invoke();
             } else
             {
                 UnityEngine.Debug.Log(hitinfo.collider.name);

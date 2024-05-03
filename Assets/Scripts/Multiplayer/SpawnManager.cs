@@ -3,11 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CrystalManager : MonoBehaviour
+public class SpawnManager : MonoBehaviour
 {
     public GameObject crystalPrefab;
+    public GameObject goardPrefab;
     public Dictionary<GameObject, Transform> crystalList = new Dictionary<GameObject, Transform>();
     public List<Transform> spawnLocations;
+
+    [Range(0f, 100f)]
+    public float goardSpawnOdds = 10f;
 
 
     public float spawnTimer = 10f;
@@ -32,29 +36,35 @@ public class CrystalManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (crystalList.Count < maxCrystals)
         {
-            if (crystalList.Count < maxCrystals)
-            {
-                timer += Time.deltaTime;
-            }
-            if (timer >= spawnTimer)
-            {
-                timer = 0f;
-                SpawnCrystal();
-            }
+            timer += Time.deltaTime;
+        }
+        if (timer >= spawnTimer)
+        {
+            timer = 0f;
+            SpawnCrystal();
         }
     }
 
     internal void SpawnCrystal()
     {
         List<Transform> tmp = new List<Transform>(crystalList.Values);
-        Transform loc = Randomizer.PickRandomObject(spawnLocations);
-        while (tmp.Contains(loc))
+        List<Transform> tmp2 = new List<Transform>(spawnLocations);
+        foreach (Transform t in tmp)
         {
-            loc = Randomizer.PickRandomObject(spawnLocations);
+            tmp2.Remove(t);
         }
-        crystalList.Add(PhotonNetwork.Instantiate(crystalPrefab.name, loc.position, Quaternion.identity, 0), loc);
+        if (tmp2.Count == 0)
+        {
+            UnityEngine.Debug.LogWarning("No valid spawn locations found");
+            return;
+        }
+        Transform loc = Randomizer.PickRandomObject(tmp2);
+        GameObject toSpawn = crystalPrefab;
+        if (Randomizer.Prob(goardSpawnOdds))
+            toSpawn = goardPrefab;
+        crystalList.Add(PhotonNetwork.Instantiate(toSpawn.name, loc.position, Quaternion.identity, 0), loc);
     }
 
     public void RemoveCrystal(GameObject crystal)
