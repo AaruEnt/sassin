@@ -9,6 +9,7 @@ public class SpawnManager : MonoBehaviour
     public GameObject goardPrefab;
     public Dictionary<GameObject, Transform> crystalList = new Dictionary<GameObject, Transform>();
     public List<Transform> spawnLocations;
+    public ScoreDisplay sd;
 
     [Range(0f, 100f)]
     public float goardSpawnOdds = 10f;
@@ -20,7 +21,7 @@ public class SpawnManager : MonoBehaviour
 
 
     private float timer = 0f;
-    internal Dictionary<string, float> scores = new Dictionary<string, float>();
+    internal Dictionary<string,int> scores = new Dictionary<string, int>();
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +33,7 @@ public class SpawnManager : MonoBehaviour
                 SpawnCrystal();
             }
         }
+        sd.UpdatePoints(scores);
     }
     // Update is called once per frame
     void Update()
@@ -81,6 +83,7 @@ public class SpawnManager : MonoBehaviour
                 scores[name] += 1;
             else
                 scores.Add(name, 1);
+            sd.UpdatePoints(scores);
         }
     }
 }

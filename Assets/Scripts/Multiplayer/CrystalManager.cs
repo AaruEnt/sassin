@@ -8,6 +8,7 @@ public class CrystalManager : MonoBehaviour
     public GameObject crystalPrefab;
     public Dictionary<GameObject, Transform> crystalList = new Dictionary<GameObject, Transform>();
     public List<Transform> spawnLocations;
+    public ScoreDisplay sd;
 
 
     public float spawnTimer = 10f;
@@ -16,7 +17,7 @@ public class CrystalManager : MonoBehaviour
 
 
     private float timer = 0f;
-    internal Dictionary<string, float> scores = new Dictionary<string, float>();
+    internal Dictionary<string, int> scores = new Dictionary<string, int>();
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +29,7 @@ public class CrystalManager : MonoBehaviour
                 SpawnCrystal();
             }
         }
+        sd.UpdatePoints(scores);
     }
     // Update is called once per frame
     void Update()
@@ -72,5 +74,6 @@ public class CrystalManager : MonoBehaviour
             else
                 scores.Add(name, 1);
         }
+        sd.UpdatePoints(scores);
     }
 }
