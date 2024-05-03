@@ -69,10 +69,14 @@ public class SpawnManager : MonoBehaviour
         crystalList.Add(PhotonNetwork.Instantiate(toSpawn.name, loc.position, Quaternion.identity, 0), loc);
     }
 
-    public void RemoveCrystal(GameObject crystal)
+    public bool RemoveCrystal(GameObject crystal)
     {
         if (crystalList.ContainsKey(crystal))
+        {
             crystalList.Remove(crystal);
+            return true;
+        }
+        return false;
     }
 
     public void AddPoints(string name)
