@@ -12,15 +12,16 @@ public class GoardRandomizer : MonoBehaviourPun
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            this.photonView.RPC("InitializeServerValues", RpcTarget.All, Randomizer.Prob(50f), Randomizer.RandomRange(-1f, 1f));
+            this.photonView.RPC("InitializeServerValues", RpcTarget.All, Randomizer.Prob(50f), (float)Randomizer.RandomRange(-1f, 1f), (float)Randomizer.RandomRange(-180f, 180f));
         }
     }
 
     [PunRPC]
-    public void InitializeServerValues(bool rotate, float speed)
+    public void InitializeServerValues(bool rotate, float speed, float startRotDegrees)
     {
         r.enabled = rotate;
         r.rotVector.y = speed;
+        r.gameObject.transform.Rotate(new Vector3(0f, 1f, 0f) * startRotDegrees, Space.Self);
         StartCoroutine(EnableSight());
     }
 

@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 8317246257703270466}
   - component: {fileID: 603240477761070965}
   - component: {fileID: 2384029813529272471}
+  - component: {fileID: 7604510782222001895}
   m_Layer: 0
   m_Name: Marrow
   m_TagString: Untagged
@@ -232,7 +233,7 @@ MonoBehaviour:
   releaseOnSmash: 0
   effect: {fileID: 607072170870981580, guid: e124c07fd4cb0f7489cd0835aa912c56, type: 3}
   createNewEffect: 1
-  applyVelocityOnSmash: 1
+  applyVelocityOnSmash: 0
   smashSound: {fileID: 8300000, guid: 3c73ab236391cd748b00945c22254c46, type: 3}
   smashVolume: 1
   OnSmash:
@@ -277,18 +278,6 @@ MonoBehaviour:
   OnStabbedEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4098599877513415009, guid: a513e9c6124784d4d949f251b0809b77, type: 3}
-        m_TargetAssemblyTypeName: JointVR.StabManager, Assembly-CSharp
-        m_MethodName: UnstabAll
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 4173661197987006593}
         m_TargetAssemblyTypeName: NetworkSmash, Assembly-CSharp
         m_MethodName: CallInvokeEvent
@@ -302,6 +291,73 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   OnUnStabbedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  forceUnstabOnStab: 1
+--- !u!114 &7604510782222001895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1945786887414317918}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 822bc9090447b9c40833509c4a32e597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ignoreMe: 0
+  body: {fileID: 0}
+  hightlightMaterial: {fileID: 0}
+  isGrabbable: 1
+  CopySettings: {fileID: 0}
+  grabType: 0
+  handType: 0
+  singleHandOnly: 0
+  allowHeldSwapping: 1
+  instantGrab: 0
+  useGentleGrab: 0
+  maintainGrabOffset: 0
+  ignoreWeight: 0
+  parentOnGrab: 1
+  throwPower: 1
+  jointBreakForce: 3500
+  showAdvancedSettings: 1
+  makeChildrenGrabbable: 1
+  grabPriorityWeight: 1
+  ignoreReleaseTime: 0.5
+  heldPositionOffset: {x: 0, y: 0, z: 0}
+  heldRotationOffset: {x: 0, y: 0, z: 0}
+  customGrabJoint: {fileID: 0}
+  jointedBodies: []
+  heldIgnoreColliders: []
+  pullApartBreakOnly: 1
+  showEvents: 1
+  onGrab:
+    m_PersistentCalls:
+      m_Calls: []
+  onRelease:
+    m_PersistentCalls:
+      m_Calls: []
+  onSqueeze:
+    m_PersistentCalls:
+      m_Calls: []
+  onUnsqueeze:
+    m_PersistentCalls:
+      m_Calls: []
+  onHighlight:
+    m_PersistentCalls:
+      m_Calls: []
+  onUnhighlight:
+    m_PersistentCalls:
+      m_Calls: []
+  OnJointBreak:
+    m_PersistentCalls:
+      m_Calls: []
+  breakHoldWhenGrabActive: 1
+  teleportWhenDistanceExceeded: 0
+  lockHandOnGrab: 0
+  DistanceExceededEvent:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &2133436695733392256
@@ -442,7 +498,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2802919972838552756}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -97.47808, y: 7.307114, z: -40.02726}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5238682650398577531}
@@ -484,21 +540,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92dfe289548708d40a7770bf6fe52f96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  e:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 603240477761070965}
-        m_TargetAssemblyTypeName: Autohand.Demo.Smash, Assembly-CSharp
-        m_MethodName: DoSmash
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  s: {fileID: 603240477761070965}
+  spawnOnDeath: {fileID: 703953900783486649, guid: e1d31d163ea41ce40a638159b0c89fcb, type: 3}
+  crystalSpawnOdds: 25
 --- !u!114 &7017198247742388327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -544,7 +588,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5240028239253814767}
   m_LocalRotation: {x: -0, y: 0.2701688, z: -0, w: 0.96281296}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -1.696, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7739745678004890487}
@@ -612,7 +656,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 1
+  m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 43730614141412474, guid: 830a29e35693eda40a88b662443707d0, type: 2}
 --- !u!54 &1274345041778117641
@@ -626,7 +670,7 @@ Rigidbody:
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 14

@@ -5,11 +5,11 @@ using Photon.Pun;
 
 public class Crystal : MonoBehaviourPun
 {
-    public CrystalManager manager;
+    public SpawnManager manager;
     // Start is called before the first frame update
     void Start()
     {
-        manager = GameObject.Find("CrystalManager").GetComponent<CrystalManager>();
+        manager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
     }
 
     public void GrabEffect()
