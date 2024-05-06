@@ -9,6 +9,7 @@ using Photon.Realtime;
 using System.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
 using Valve.VR;
+using UnityEngine.Events;
 
 namespace Com.Aaru.Sassin
 {
@@ -24,6 +25,7 @@ namespace Com.Aaru.Sassin
         public GameObject PlayerUiPrefab;
 
         public static GameManager Instance;
+        public UnityEvent OnPlayerJoinRoom;
 
         #endregion
 
@@ -90,6 +92,7 @@ namespace Com.Aaru.Sassin
                 return;
             }
             UnityEngine.Debug.LogFormat("PhotonNetwork : Loading Level : {0}", PhotonNetwork.CurrentRoom.PlayerCount);
+            OnPlayerJoinRoom.Invoke();
             //PhotonNetwork.LoadLevel("Room for " + PhotonNetwork.CurrentRoom.PlayerCount);
             //PhotonNetwork.LoadLevel(Launcher.sceneConnectTo);
         }

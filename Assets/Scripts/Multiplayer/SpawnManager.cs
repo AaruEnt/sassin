@@ -86,4 +86,9 @@ public class SpawnManager : MonoBehaviour
             sd.UpdatePoints(scores);
         }
     }
+
+    public void UpdatePointTotal()
+    {
+        sd.UpdatePoints(scores);
+    }
 }
