@@ -14,8 +14,8 @@ public class Crystal : MonoBehaviourPun
 
     public void GrabEffect()
     {
-        manager.RemoveCrystal(this.gameObject);
-        this.photonView.RPC("AddPointToPlayer", RpcTarget.All, this.photonView.Owner.NickName);
+        if (manager.RemoveCrystal(this.gameObject))
+            this.photonView.RPC("AddPointToPlayer", RpcTarget.All, this.photonView.Owner.NickName);
     }
 
     [PunRPC]
