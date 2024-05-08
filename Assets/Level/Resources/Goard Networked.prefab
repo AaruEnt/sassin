@@ -263,6 +263,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 4827821317786866087}
+        m_TargetAssemblyTypeName: Crystal, Assembly-CSharp
+        m_MethodName: RemoveCrystalNoPoints
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 1438068373363792038}
         m_TargetAssemblyTypeName: DestroySelf, Assembly-CSharp
         m_MethodName: CallDestroy
@@ -496,6 +508,7 @@ GameObject:
   - component: {fileID: 4173661197987006593}
   - component: {fileID: 7017198247742388327}
   - component: {fileID: 1438068373363792038}
+  - component: {fileID: 4827821317786866087}
   m_Layer: 0
   m_Name: Goard Networked
   m_TagString: Untagged
@@ -586,6 +599,19 @@ MonoBehaviour:
   delay: 0
   autoDestroyOnCreate: 0
   networkDestroy: 1
+--- !u!114 &4827821317786866087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2802919972838552756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a5cce6b4e576254199200cc231c0d6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  manager: {fileID: 0}
 --- !u!1 &5240028239253814767
 GameObject:
   m_ObjectHideFlags: 0

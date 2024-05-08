@@ -24,4 +24,9 @@ public class Crystal : MonoBehaviourPun
         UnityEngine.Debug.Log("Added 1 point to player: " + player);
         manager.AddPoints(player);
     }
+
+    public void RemoveCrystalNoPoints()
+    {
+        manager.RemoveCrystal(this.gameObject);
+    }
 }
