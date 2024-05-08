@@ -33,6 +33,8 @@ public class SpawnManager : MonoBehaviour
                 SpawnCrystal();
             }
         }
+        else
+            this.enabled = false;
         sd.UpdatePoints(scores);
     }
     // Update is called once per frame
@@ -81,14 +83,11 @@ public class SpawnManager : MonoBehaviour
 
     public void AddPoints(string name)
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
             if (scores.ContainsKey(name))
                 scores[name] += 1;
             else
                 scores.Add(name, 1);
             sd.UpdatePoints(scores);
-        }
     }
 
     public void UpdatePointTotal()

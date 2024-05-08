@@ -7,6 +7,7 @@ using TMPro;
 public class ScoreDisplay : MonoBehaviourPun
 {
     public TMP_Text txt;
+    public SpawnManager sm;
     public void UpdatePoints(Dictionary<string, int> scores)
     {
         this.photonView.RPC("SetScores", RpcTarget.All, scores);
@@ -20,5 +21,6 @@ public class ScoreDisplay : MonoBehaviourPun
         {
             txt.text += string.Format("{0}: {1}\n", pair.Key, pair.Value);
         }
+        sm.scores = scores;
     }
 }
