@@ -13,6 +13,9 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
 
     private float timeToTeleport = 6f;
     private float teleportCD = 0f;
+    private float helperCD;
+
+    private bool isCasting = false;
 
     // Start is called before the first frame update
     void Start()
@@ -33,9 +36,17 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
             return;
         }
         teleportCD += Time.deltaTime;
-        if (teleportCD > timeToTeleport)
+        helperCD += Time.deltaTime;
+        if (teleportCD > timeToTeleport && !isCasting)
         {
             teleportCD = 0f;
+            helperCD = 0f;
+            InitiateTeleport();
+        }
+        if (helperCD >= 1f && !isCasting && Vector3.Distance(transform.position, GetClosestPlayer().position) >= 30f)
+        {
+            teleportCD = 0f;
+            helperCD = 0f;
             InitiateTeleport();
         }
     }
@@ -45,7 +56,7 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
         players = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject player in players)
         {
-            if (!sortedPlayers.Contains(player.transform.root.gameObject))
+            if (!sortedPlayers.Contains(player.transform.root.gameObject) && player.transform.root.gameObject.activeSelf)
             {
                 sortedPlayers.Add(player.transform.root.gameObject);
             }
