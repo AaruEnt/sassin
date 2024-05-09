@@ -6,8 +6,6 @@ using UnityEngine.SceneManagement;
 
 using Photon.Pun;
 using Photon.Realtime;
-using System.Diagnostics;
-using static System.Net.Mime.MediaTypeNames;
 using Valve.VR;
 using UnityEngine.Events;
 

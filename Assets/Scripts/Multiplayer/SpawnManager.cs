@@ -2,14 +2,18 @@ using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using NaughtyAttributes;
 
 public class SpawnManager : MonoBehaviour
 {
     public GameObject crystalPrefab;
     public GameObject goardPrefab;
+    public GameObject goardLordPrefab;
     public Dictionary<GameObject, Transform> crystalList = new Dictionary<GameObject, Transform>();
     public List<Transform> spawnLocations;
     public ScoreDisplay sd;
+    [Button]
+    public void DebugCreateLord() { SpawnGourdLord(); }
 
     [Range(0f, 100f)]
     public float goardSpawnOdds = 10f;
@@ -21,6 +25,9 @@ public class SpawnManager : MonoBehaviour
 
 
     private float timer = 0f;
+    private float roundTime = 0f;
+    private float goardLordSpawnTime = 300f; // 5 minutes
+    private bool spawnedLord = false;
     internal Dictionary<string,int> scores = new Dictionary<string, int>();
 
     // Start is called before the first frame update
@@ -48,6 +55,12 @@ public class SpawnManager : MonoBehaviour
         {
             timer = 0f;
             SpawnCrystal();
+        }
+        roundTime += Time.deltaTime;
+        if (roundTime >= goardLordSpawnTime && !spawnedLord)
+        {
+            spawnedLord = true;
+            PhotonNetwork.Instantiate(goardLordPrefab.name, Vector3.zero, Quaternion.identity, 0);
         }
     }
 
@@ -93,5 +106,11 @@ public class SpawnManager : MonoBehaviour
     public void UpdatePointTotal()
     {
         sd.UpdatePoints(scores);
+    }
+
+    public void SpawnGourdLord()
+    {
+        spawnedLord = true;
+        PhotonNetwork.Instantiate(goardLordPrefab.name, Vector3.zero, Quaternion.identity, 0);
     }
 }

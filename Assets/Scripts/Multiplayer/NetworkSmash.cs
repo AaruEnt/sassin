@@ -16,10 +16,12 @@ public class NetworkSmash : MonoBehaviourPun
     public void CallInvokeEvent()
     {
         UnityEngine.Debug.LogWarning("Called invoke event");
-        this.photonView.RPC("InvokeEvent", RpcTarget.All);
+        foreach (Collider c in GetComponentsInChildren<Collider>())
+            StabManager.LocalDaggerInstance.UnstabTarget(c);
         if (Randomizer.Prob(crystalSpawnOdds))
             PhotonNetwork.Instantiate(spawnOnDeath.name, transform.position, Quaternion.identity);
-        StartCoroutine(DestroyAfterSeconds(3f));
+        this.photonView.RPC("InvokeEvent", RpcTarget.All);
+        //StartCoroutine(DestroyAfterSeconds(3f));
     }
 
     [PunRPC]
