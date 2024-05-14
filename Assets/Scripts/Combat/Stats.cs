@@ -335,6 +335,27 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
             if (tmp.HasValue)
                 lastCheckpoint = (Vector3)tmp;
         }
+        if (col.gameObject.transform.root.CompareTag("Effect"))
+        {
+
+            if ((currCollisions.Contains(col.attachedRigidbody.gameObject)) || stabCD > 0)
+            {
+                return;
+            }
+
+            if (weakpointDamageOnly)
+            {
+                return;
+            }
+
+            currCollisions.Add(col.attachedRigidbody.gameObject);
+
+            NetworkSpell s = col.attachedRigidbody.gameObject.GetComponent<NetworkSpell>();
+            if (s)
+            {
+                OnDamageReceived(s.damage);
+            }
+        }
     }
 
     internal void OnCollisionExit(Collision col)
@@ -344,6 +365,14 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         if (currCollisions.Contains(col.body.gameObject))
             currCollisions.Remove(col.body.gameObject);
         stabCD = 0.25f;
+    }
+
+    internal void OnTriggerExit(Collider col)
+    {
+        if (col.attachedRigidbody as Rigidbody == null)
+            return;
+        if (col.attachedRigidbody.gameObject.CompareTag("Effect") && currCollisions.Contains(col.attachedRigidbody.gameObject))
+            currCollisions.Remove(col.attachedRigidbody.gameObject);
     }
 
     internal void OnCollisionStay(Collision col)

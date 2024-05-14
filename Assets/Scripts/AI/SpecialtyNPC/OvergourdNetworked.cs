@@ -10,12 +10,23 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
     public NavMeshAgent agent;
     public GameObject[] players;
     public List<GameObject> sortedPlayers = new List<GameObject>();
+    public LayerMask playerHitMask;
+
+    [SerializeField, Tooltip("spawn point for spell attacks")]
+    private Transform spellSpawnPoint;
+
+    [SerializeField, Tooltip("prefab for the spell to be used")]
+    private GameObject spellPrefab;
 
     private float timeToTeleport = 6f;
     private float teleportCD = 0f;
     private float helperCD;
 
     private bool isCasting = false;
+    private bool isHoldingSpell = false;
+    private GameObject lastTarget;
+    private NetworkSpell lastCastSpell = null;
+    private Coroutine? c = null;
 
     // Start is called before the first frame update
     void Start()
@@ -31,6 +42,7 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
+        CheckIsHoldingSpell();
         if (!PhotonNetwork.IsMasterClient)
         {
             return;
@@ -49,6 +61,10 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
             helperCD = 0f;
             InitiateTeleport();
         }
+        if (!isCasting && !isHoldingSpell) // 2f is magic number, just trying to make sure they aren't casting when they could teleport soon instead
+        {
+            StartCoroutine(SpellAttack());
+        }
     }
 
     void CreatePlayerList()
@@ -56,7 +72,7 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
         players = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject player in players)
         {
-            if (!sortedPlayers.Contains(player.transform.root.gameObject) && player.transform.root.gameObject.activeSelf)
+            if (!sortedPlayers.Contains(player.transform.root.gameObject) && player.transform.root.GetComponent<PhotonView>())
             {
                 sortedPlayers.Add(player.transform.root.gameObject);
             }
@@ -105,5 +121,67 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
     public override void OnPlayerEnteredRoom(Player other)
     {
         CreatePlayerList();
+    }
+
+    private void CheckIsHoldingSpell()
+    {
+        if (lastCastSpell && !lastCastSpell.isThrown)
+            isHoldingSpell = true;
+        else
+        {
+            if (c == null)
+            {
+                c = StartCoroutine(SetIsHoldingSpellFalse());
+            }
+        }
+    }
+
+    private IEnumerator SetIsHoldingSpellFalse()
+    {
+        lastCastSpell = null;
+        yield return new WaitForSeconds(0.25f);
+
+        isHoldingSpell = false;
+        c = null;
+    }
+
+    private IEnumerator SpellAttack()
+    {
+        isCasting = true;
+        var tmp = PhotonNetwork.Instantiate(spellPrefab.name, spellSpawnPoint.position, Quaternion.identity, 0);
+        yield return new WaitForSeconds(1 / 90f);
+        var s = tmp.GetComponent<NetworkSpell>();
+        lastCastSpell = s;
+        var f = tmp.AddComponent<FollowObjectWithOffset>();
+
+
+        tmp.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        //s.origin = this;
+        s.targetPosition = GetClosestPlayer().position;
+        s.waitFireOnSight = true;
+        s.fireMask = playerHitMask;
+        f.Parent = spellSpawnPoint.gameObject.transform;
+        f.enabled = true;
+        f.pos = Vector3.zero;
+        f._startPos = Vector3.zero;
+        
+        StartCoroutine(SpellCooldown(s.chargeTime));
+        StartCoroutine(s.ThrowSpell(GetClosestPlayer()));
+        yield return null;
+    }
+
+    private IEnumerator SpellCooldown(float time)
+    {
+        yield return new WaitForSeconds(time);
+        isCasting = false;
+    }
+
+    public void DestroyLastSpell()
+    {
+        UnityEngine.Debug.Log(string.Format("Last spell: {0}", lastCastSpell?.transform.name));
+        if (lastCastSpell != null)
+        {
+            PhotonNetwork.Destroy(lastCastSpell.gameObject);
+        }
     }
 }
