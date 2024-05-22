@@ -18,15 +18,18 @@ public class NetworkSmash : MonoBehaviourPun
         UnityEngine.Debug.LogWarning("Called invoke event");
         foreach (Collider c in GetComponentsInChildren<Collider>())
             StabManager.LocalDaggerInstance.UnstabTarget(c);
+        bool spawnCrystal = false;
         if (Randomizer.Prob(crystalSpawnOdds))
-            PhotonNetwork.Instantiate(spawnOnDeath.name, transform.position, Quaternion.identity);
-        this.photonView.RPC("InvokeEvent", RpcTarget.All);
+            spawnCrystal = true;
+        this.photonView.RPC("InvokeEvent", RpcTarget.All, spawnCrystal);
         //StartCoroutine(DestroyAfterSeconds(3f));
     }
 
     [PunRPC]
-    public void InvokeEvent()
+    public void InvokeEvent(bool spawnCrystal)
     {
+        if (spawnCrystal && PhotonNetwork.IsMasterClient)
+            PhotonNetwork.Instantiate(spawnOnDeath.name, transform.position, Quaternion.identity);
         s.DoSmash();
     }
 

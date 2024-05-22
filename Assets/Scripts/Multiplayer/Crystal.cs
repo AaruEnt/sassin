@@ -35,6 +35,14 @@ public class Crystal : MonoBehaviourPun
 
     public void RemoveCrystalNoPoints()
     {
+        this.photonView.RPC("PhotonRemoveCrystalNoPoints", RpcTarget.All);
+    }
+
+    [PunRPC]
+    internal void PhotonRemoveCrystalNoPoints()
+    {
+        if (!PhotonNetwork.IsMasterClient)
+            return;
         manager.RemoveCrystal(this.gameObject);
     }
 }
