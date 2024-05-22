@@ -6,7 +6,7 @@ public class NetworkSpell : MonoBehaviour
 {
     [Header("Variables")]
     [SerializeField, Tooltip("The charge time between the spell spawning and firing")]
-    internal float chargeTime = 3f;
+    internal float chargeTime = 2f;
 
     [SerializeField, Tooltip("The max time the spell can exist")]
     internal float timeOut = 15f;

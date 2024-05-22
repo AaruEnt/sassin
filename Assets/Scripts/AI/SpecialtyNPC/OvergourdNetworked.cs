@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.AI;
+using static UnityEngine.GraphicsBuffer;
 
 public class OvergourdNetworked : MonoBehaviourPunCallbacks
 {
@@ -68,6 +69,9 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
         {
             sc = StartCoroutine(SpellAttack());
         }
+        Transform cp = GetClosestPlayer();
+        var targetConverted = new Vector3(cp.position.x, transform.position.y, cp.position.z);
+        transform.LookAt(targetConverted);
     }
 
     void CreatePlayerList()
