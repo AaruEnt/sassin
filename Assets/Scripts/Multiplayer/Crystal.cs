@@ -14,8 +14,16 @@ public class Crystal : MonoBehaviourPun
 
     public void GrabEffect()
     {
+        this.photonView.RPC("PhotonGrabEffect", RpcTarget.All, this.photonView.Owner.NickName);
+    }
+
+    [PunRPC]
+    internal void PhotonGrabEffect(string player)
+    {
+        if (!PhotonNetwork.IsMasterClient)
+            return;
         if (manager.RemoveCrystal(this.gameObject))
-            this.photonView.RPC("AddPointToPlayer", RpcTarget.All, this.photonView.Owner.NickName);
+            this.photonView.RPC("AddPointToPlayer", RpcTarget.All, player);
     }
 
     [PunRPC]
