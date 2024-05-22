@@ -27,6 +27,7 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
     private GameObject lastTarget;
     private NetworkSpell lastCastSpell = null;
     private Coroutine? c = null;
+    private Coroutine? sc = null;
 
     // Start is called before the first frame update
     void Start()
@@ -47,6 +48,8 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
         {
             return;
         }
+        if (isHoldingSpell && Vector3.Distance(lastCastSpell.transform.position, spellSpawnPoint.transform.position) >= 0.1f)
+            DestroyLastSpell();
         teleportCD += Time.deltaTime;
         helperCD += Time.deltaTime;
         if (teleportCD > timeToTeleport && !isCasting)
@@ -61,9 +64,9 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
             helperCD = 0f;
             InitiateTeleport();
         }
-        if (!isCasting && !isHoldingSpell) // 2f is magic number, just trying to make sure they aren't casting when they could teleport soon instead
+        if (!isCasting && !isHoldingSpell && sc == null) // 2f is magic number, just trying to make sure they aren't casting when they could teleport soon instead
         {
-            StartCoroutine(SpellAttack());
+            sc = StartCoroutine(SpellAttack());
         }
     }
 
@@ -138,8 +141,8 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
 
     private IEnumerator SetIsHoldingSpellFalse()
     {
-        lastCastSpell = null;
         yield return new WaitForSeconds(0.25f);
+        lastCastSpell = null;
 
         isHoldingSpell = false;
         c = null;
@@ -174,6 +177,7 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(time);
         isCasting = false;
+        sc = null;
     }
 
     public void DestroyLastSpell()
