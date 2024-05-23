@@ -27,7 +27,7 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
     private bool isCasting = false;
     private bool isHoldingSpell = false;
     private GameObject lastTarget;
-    private NetworkSpell lastCastSpell = null;
+    private NetworkSpell? lastCastSpell = null;
     private Coroutine? c = null;
     private Coroutine? sc = null;
 
@@ -50,7 +50,7 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
         {
             return;
         }
-        if (isHoldingSpell && Vector3.Distance(lastCastSpell.transform.position, spellSpawnPoint.transform.position) >= 0.1f)
+        if (isHoldingSpell && lastCastSpell && Vector3.Distance(lastCastSpell.transform.position, spellSpawnPoint.transform.position) >= 0.1f)
             DestroyLastSpell();
         teleportCD += Time.deltaTime;
         helperCD += Time.deltaTime;
