@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.Events;
 
 public class Crystal : MonoBehaviourPun
 {
     public SpawnManager manager;
+    public UnityEvent OnGrabEffectComplete;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +17,7 @@ public class Crystal : MonoBehaviourPun
     public void GrabEffect()
     {
         this.photonView.RPC("PhotonGrabEffect", RpcTarget.All, this.photonView.Owner.NickName);
+        StartCoroutine(GrabEffectDelayed());
     }
 
     [PunRPC]
@@ -44,5 +47,11 @@ public class Crystal : MonoBehaviourPun
         if (!PhotonNetwork.IsMasterClient)
             return;
         manager.RemoveCrystal(this.gameObject);
+    }
+
+    IEnumerator GrabEffectDelayed()
+    {
+        yield return new WaitForSeconds(1 / 90f);
+        OnGrabEffectComplete.Invoke();
     }
 }
