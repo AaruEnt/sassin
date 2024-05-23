@@ -124,7 +124,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.1
+  m_Radius: 0.2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1502962235283449621
 GameObject:
@@ -10184,7 +10184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentObj: {fileID: 1502962235283449621}
-  useNetworkDestroy: 0
+  useNetworkDestroy: 1
   OnBeforeDestroy:
     m_PersistentCalls:
       m_Calls: []
@@ -10258,6 +10258,10 @@ PrefabInstance:
     - target: {fileID: 5623835019506186275, guid: 7bc7a473621637646bade3a7f128574e, type: 3}
       propertyPath: m_Name
       value: HCFX_ElementOrb_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 5623835019506186275, guid: 7bc7a473621637646bade3a7f128574e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7bc7a473621637646bade3a7f128574e, type: 3}
@@ -10367,20 +10371,3 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &5945011899788115282
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3429942813766781849}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 126f1af14fde1f743ad9eae762a9a4ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  parentObj: {fileID: 1502962235283449621}
-  useNetworkDestroy: 1
-  OnBeforeDestroy:
-    m_PersistentCalls:
-      m_Calls: []

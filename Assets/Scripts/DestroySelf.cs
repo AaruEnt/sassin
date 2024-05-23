@@ -18,8 +18,8 @@ public class DestroySelf : MonoBehaviour
     public void CallDestroy()
     {
         if (networkDestroy)
-            PhotonNetwork.Destroy(toDestroy);
-        if (toDestroy == null)
+            StartCoroutine(PhotonDestroy());
+        else if (toDestroy == null)
         {
             Destroy(this.gameObject, delay);
         }
@@ -42,5 +42,11 @@ public class DestroySelf : MonoBehaviour
                 Destroy(toDestroy, delay);
             }
         }
+    }
+
+    private IEnumerator PhotonDestroy()
+    {
+        yield return new WaitForSeconds(1 / 90f);
+        PhotonNetwork.Destroy(toDestroy);
     }
 }
