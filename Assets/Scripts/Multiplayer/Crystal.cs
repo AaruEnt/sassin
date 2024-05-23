@@ -16,7 +16,7 @@ public class Crystal : MonoBehaviourPun
 
     public void GrabEffect()
     {
-        this.photonView.RPC("PhotonGrabEffect", RpcTarget.All, this.photonView.Owner.NickName);
+        this.photonView.RPC("PhotonGrabEffect", RpcTarget.All, PlayerManager.LocalPlayerInstance.GetPhotonView().Owner.NickName);
         StartCoroutine(GrabEffectDelayed());
     }
 
