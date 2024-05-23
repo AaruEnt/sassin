@@ -12,6 +12,7 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
     public GameObject[] players;
     public List<GameObject> sortedPlayers = new List<GameObject>();
     public LayerMask playerHitMask;
+    public AudioSource audio;
 
     [SerializeField, Tooltip("spawn point for spell attacks")]
     private Transform spellSpawnPoint;
@@ -53,13 +54,13 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
             DestroyLastSpell();
         teleportCD += Time.deltaTime;
         helperCD += Time.deltaTime;
-        if (teleportCD > timeToTeleport && !isCasting)
+        if (teleportCD > timeToTeleport && !isCasting && !isHoldingSpell)
         {
             teleportCD = 0f;
             helperCD = 0f;
             InitiateTeleport();
         }
-        if (helperCD >= 1f && !isCasting && Vector3.Distance(transform.position, GetClosestPlayer().position) >= 30f)
+        if (helperCD >= 1f && !isCasting && !isHoldingSpell && Vector3.Distance(transform.position, GetClosestPlayer().position) >= 30f)
         {
             teleportCD = 0f;
             helperCD = 0f;
@@ -115,6 +116,7 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
         var rotation = Quaternion.LookRotation(lookPos);
         transform.rotation = rotation;
         StartCoroutine(FlickerAgent());
+        StartCoroutine(TeleportSound());
     }
 
     private IEnumerator FlickerAgent()
@@ -173,7 +175,7 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
         f._startPos = Vector3.zero;
         
         StartCoroutine(SpellCooldown(s.chargeTime));
-        StartCoroutine(s.ThrowSpell(GetClosestPlayer()));
+        s.c = StartCoroutine(s.ThrowSpell(GetClosestPlayer()));
         yield return null;
     }
 
@@ -186,10 +188,16 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
 
     public void DestroyLastSpell()
     {
-        UnityEngine.Debug.Log(string.Format("Last spell: {0}", lastCastSpell?.transform.name));
         if (lastCastSpell != null)
         {
             PhotonNetwork.Destroy(lastCastSpell.gameObject);
         }
+        lastCastSpell = null;
+    }
+
+    IEnumerator TeleportSound()
+    {
+        yield return new WaitForSeconds(1/90f);
+        audio.Play();
     }
 }

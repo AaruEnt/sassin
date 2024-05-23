@@ -45,6 +45,8 @@ public class NetworkSpell : MonoBehaviour
     internal bool isThrown = false; // has the spell been fired
     private float cd = 0f; // How long has it been since the spell was thrown
 
+    internal Coroutine? c;
+
     void Update()
     {
         if (isThrown)
@@ -105,5 +107,11 @@ public class NetworkSpell : MonoBehaviour
         body.SetActive(false);
         effectParticle.SetActive(false);
         collisionParticle.SetActive(true);
+    }
+
+    private void OnDestroy()
+    {
+        if (c != null)
+            StopCoroutine(c);
     }
 }
