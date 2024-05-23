@@ -31,6 +31,8 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
     private Coroutine? c = null;
     private Coroutine? sc = null;
 
+    private bool lastFrameDistance = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -76,7 +78,14 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
     private void LateUpdate()
     {
         if (isHoldingSpell && lastCastSpell && Vector3.Distance(lastCastSpell.transform.position, spellSpawnPoint.transform.position) >= 0.1f)
-            DestroyLastSpell();
+        {
+            if (lastFrameDistance)
+                DestroyLastSpell();
+            else
+                lastFrameDistance = true;
+        }
+        else
+            lastFrameDistance = false;
     }
 
     void CreatePlayerList()

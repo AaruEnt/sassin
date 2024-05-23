@@ -91,6 +91,7 @@ public class NetworkSpell : MonoBehaviour
             }
         }
 
+        isThrown = true;
         targetPosition.y += (0.25f + (float)Randomizer.GetDouble(0.75));
         var r = GetComponent<Rigidbody>();
         r.isKinematic = false;
