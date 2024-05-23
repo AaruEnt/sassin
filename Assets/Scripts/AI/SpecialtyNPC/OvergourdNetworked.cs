@@ -50,8 +50,6 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
         {
             return;
         }
-        if (isHoldingSpell && lastCastSpell && Vector3.Distance(lastCastSpell.transform.position, spellSpawnPoint.transform.position) >= 0.1f)
-            DestroyLastSpell();
         teleportCD += Time.deltaTime;
         helperCD += Time.deltaTime;
         if (teleportCD > timeToTeleport && !isCasting && !isHoldingSpell)
@@ -73,6 +71,12 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
         Transform cp = GetClosestPlayer();
         var targetConverted = new Vector3(cp.position.x, transform.position.y, cp.position.z);
         transform.LookAt(targetConverted);
+    }
+
+    private void LateUpdate()
+    {
+        if (isHoldingSpell && lastCastSpell && Vector3.Distance(lastCastSpell.transform.position, spellSpawnPoint.transform.position) >= 0.1f)
+            DestroyLastSpell();
     }
 
     void CreatePlayerList()
@@ -132,6 +136,11 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
         CreatePlayerList();
     }
 
+    public override void OnPlayerLeftRoom(Player other)
+    {
+        CreatePlayerList();
+    }
+
     private void CheckIsHoldingSpell()
     {
         if (lastCastSpell && !lastCastSpell.isThrown)
@@ -167,7 +176,7 @@ public class OvergourdNetworked : MonoBehaviourPunCallbacks
         tmp.GetComponent<Rigidbody>().velocity = Vector3.zero;
         //s.origin = this;
         s.targetPosition = GetClosestPlayer().position;
-        s.waitFireOnSight = true;
+        s.waitFireOnSight = false;
         s.fireMask = playerHitMask;
         f.Parent = spellSpawnPoint.gameObject.transform;
         f.enabled = true;
