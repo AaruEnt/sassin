@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 2817957176256557324}
   - component: {fileID: 2780952087842970509}
   - component: {fileID: 6808895428576755737}
+  - component: {fileID: 509373693}
   m_Layer: 0
   m_Name: Paper
   m_TagString: Untagged
@@ -212,6 +213,7 @@ MonoBehaviour:
   defaultLayer: 30
   tearingLayer: 14
   tearSound: {fileID: 2817957176256557324}
+  startStabbed: 0
 --- !u!82 &2817957176256557324
 AudioSource:
   m_ObjectHideFlags: 0
@@ -368,6 +370,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  forceUnstabOnStab: 0
 --- !u!114 &6808895428576755737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -381,6 +384,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paperText: {fileID: 527212012113507713}
+--- !u!114 &509373693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2712090953132601037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 937a7f5898b757549ae0f3f72b498f12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  burnShader: {fileID: -6465566751694194690, guid: 6b3cd7d594ab22b47a2101cf25974cd9, type: 3}
+  burnTime: 5
+  burnShaderPercentCap: 1.2
 --- !u!1 &3608659592579667809
 GameObject:
   m_ObjectHideFlags: 0
