@@ -32,8 +32,9 @@ public class Burnable : MonoBehaviour
             {
                 _m.material.shader = burnShader;
             }
+            gameObject.tag = "Fire";
             timer += Time.deltaTime;
-            float conv = timer / burnTime;
+            float conv = (timer / burnTime) * burnShaderPercentCap;
             _m.material.SetFloat("_burnAmount", conv);
         }
 
@@ -46,6 +47,13 @@ public class Burnable : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (isBurning || !other.gameObject.CompareTag("Fire")) { return; }
+
+        isBurning = true;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (isBurning || !collision.gameObject.CompareTag("Fire")) { return; }
 
         isBurning = true;
     }
