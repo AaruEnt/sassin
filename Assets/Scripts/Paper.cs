@@ -37,11 +37,19 @@ public class Paper : MonoBehaviour
             tearSound.Play();
             stabbedBy = null;
         }
-        if (startStabbed)
+        else
         {
+            Joint j = gameObject.GetComponent<Joint>();
+            if (j != null)
+            {
+                Destroy(j);
+            }
+            if (startStabbed)
+            {
             gameObject.layer = tearingLayer;
             timer = 0.5f;
             tearSound.Play();
+            }
         }
         startStabbed = false;
     }

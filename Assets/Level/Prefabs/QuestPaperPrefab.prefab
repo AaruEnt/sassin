@@ -42,10 +42,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1890337733288196674}
   - component: {fileID: 1890337733288196672}
-  - component: {fileID: 1890337733288196673}
-  - component: {fileID: 1890337733288196671}
-  - component: {fileID: 1890337733288196670}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: StabPin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,104 +82,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1890337733288196673
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1890337733288196675}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd32c0afb97321f458a654fa02d930dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stabbers:
-  - {fileID: 1890337732913220388}
-  ignoreStab: []
-  ignoreStabTag: Effect
-  rb: {fileID: 0}
-  stabEffect: {fileID: 5235641888470476132, guid: 26e6cb9edaf15794fbe1f1eac30797e7, type: 3}
-  createOneEffect: 1
-  models: {fileID: 1890337733668743809}
---- !u!114 &1890337733288196671
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1890337733288196675}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 822bc9090447b9c40833509c4a32e597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ignoreMe: 0
-  body: {fileID: 0}
-  hightlightMaterial: {fileID: 0}
-  isGrabbable: 1
-  CopySettings: {fileID: 0}
-  grabType: 0
-  handType: 0
-  singleHandOnly: 0
-  allowHeldSwapping: 1
-  instantGrab: 0
-  useGentleGrab: 0
-  maintainGrabOffset: 0
-  ignoreWeight: 0
-  parentOnGrab: 0
-  throwPower: 1
-  jointBreakForce: 3500
-  showAdvancedSettings: 1
-  makeChildrenGrabbable: 1
-  grabPriorityWeight: 1
-  ignoreReleaseTime: 0.5
-  heldPositionOffset: {x: 0, y: 0, z: 0}
-  heldRotationOffset: {x: 0, y: 0, z: 0}
-  customGrabJoint: {fileID: 0}
-  jointedBodies: []
-  heldIgnoreColliders: []
-  pullApartBreakOnly: 1
-  showEvents: 1
-  onGrab:
-    m_PersistentCalls:
-      m_Calls: []
-  onRelease:
-    m_PersistentCalls:
-      m_Calls: []
-  onSqueeze:
-    m_PersistentCalls:
-      m_Calls: []
-  onUnsqueeze:
-    m_PersistentCalls:
-      m_Calls: []
-  onHighlight:
-    m_PersistentCalls:
-      m_Calls: []
-  onUnhighlight:
-    m_PersistentCalls:
-      m_Calls: []
-  OnJointBreak:
-    m_PersistentCalls:
-      m_Calls: []
-  breakHoldWhenGrabActive: 1
-  teleportWhenDistanceExceeded: 0
-  lockHandOnGrab: 0
-  DistanceExceededEvent:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &1890337733288196670
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1890337733288196675}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48b6404775f311843b5c6c955e68022e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1890337733494262419
 GameObject:
   m_ObjectHideFlags: 0
@@ -193,7 +92,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1890337733494262418}
   - component: {fileID: 1890337733494262417}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: col
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -236,7 +135,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1890337733668743808}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: tmp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -324,6 +223,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pin_4
       objectReference: {fileID: 0}
+    - target: {fileID: 7577176743488122079, guid: c1e11964666992546a339d1bb6e5b55a, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1e11964666992546a339d1bb6e5b55a, type: 3}
 --- !u!1 &8294608231141648375 stripped
@@ -349,67 +252,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.030106176, y: 0.021535767, z: 0.048163798}
   m_Center: {x: 0.00020682372, y: 0.0020076693, z: 0.0021655217}
---- !u!114 &1890337732913220388
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8294608231141648375}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c48c0804eb4b8b45a7b6d0ec655cbc1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  root: {fileID: 1890337733288196674}
-  stabDirectionTransform: {fileID: 1890337733494262418}
-  stabDirection:
-    xMotion: 0
-    yMotion: 0
-    zMotion: 1
-    inverse: 1
-  rb: {fileID: 1890337733288196672}
-  colliders:
-  - {fileID: 1890337732913220389}
-  - {fileID: 1890337733494262417}
-  stabJoints: []
-  disableStabJointGroupsOnStab: []
-  ignoreCollisionOnStab: []
-  angleThreshold: 0.5
-  velocityThreshold: 1.5
-  dampOverTime:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0.016666412
-      value: 0.0023498535
-      inSlope: 3.3323889
-      outSlope: 3.3323889
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.07557354
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0.091079846
-      outSlope: 0.091079846
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.15393007
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  stabbedMassScale: 1
-  stabbedConnectedMassScale: 1
-  stabAmount: 5
-  stabLength: 0.23
-  restistance: 0.5
-  damper: 5000
-  unstabTimeThreshold: 0.2
-  unstabDepthThreshold: -0.01
-  setStabbedColliderAsChild: 0
 --- !u!1001 &1890337733567203490
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -483,8 +325,28 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbb29b13ff4f5324495736134b93c533, type: 3}
+--- !u!1 &4582584683661796975 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2712090953132601037, guid: bbb29b13ff4f5324495736134b93c533, type: 3}
+  m_PrefabInstance: {fileID: 1890337733567203490}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2179616058357079691 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 289454574770984489, guid: bbb29b13ff4f5324495736134b93c533, type: 3}
   m_PrefabInstance: {fileID: 1890337733567203490}
   m_PrefabAsset: {fileID: 0}
+--- !u!138 &9122296024069939564
+FixedJoint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4582584683661796975}
+  m_ConnectedBody: {fileID: 1890337733288196672}
+  m_ConnectedArticulationBody: {fileID: 0}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_EnableCollision: 0
+  m_EnablePreprocessing: 1
+  m_MassScale: 1
+  m_ConnectedMassScale: 1
