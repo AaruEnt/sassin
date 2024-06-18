@@ -451,9 +451,9 @@ MonoBehaviour:
   m_fontSize: 0.04
   m_fontSizeBase: 0.04
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 0.02
+  m_fontSizeMax: 0.04
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -510,6 +510,7 @@ GameObject:
   - component: {fileID: 2213313659127654249}
   - component: {fileID: 4668345342819289997}
   - component: {fileID: 2624042340844850878}
+  - component: {fileID: 3793909726412449846}
   m_Layer: 0
   m_Name: Paper
   m_TagString: Untagged
@@ -905,6 +906,19 @@ FixedJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &3793909726412449846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7307656646812977597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7938f10af249324591f3ba143c55cea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneToLoad: TutorialDemo
 --- !u!1 &8276986770375045137
 GameObject:
   m_ObjectHideFlags: 0

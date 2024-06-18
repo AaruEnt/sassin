@@ -1256,6 +1256,7 @@ GameObject:
   - component: {fileID: 592260204552870392}
   - component: {fileID: 6216708929816917276}
   - component: {fileID: 8351194951461435183}
+  - component: {fileID: 8558577793861909186}
   m_Layer: 0
   m_Name: Paper
   m_TagString: Untagged
@@ -1651,6 +1652,19 @@ FixedJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &8558577793861909186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8351194951461435180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7938f10af249324591f3ba143c55cea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneToLoad: TutorialDemo
 --- !u!1 &8861851496930592305
 GameObject:
   m_ObjectHideFlags: 0
@@ -1716,7 +1730,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You're a cunt
+  m_text: You're a cunt aaaaaa aaaaaaaaa aaaaaaaaaa aaaaaaaaaaa   aaaaaaaaa aaaaaaaaa
+    aaa aaaaaa aaaaaaa aaaaaaaaaa aaaaaaa aaaaa aaaaaaaaaaaa aaaaaaaaaa aaaaaaaaaa
+    aaaaa
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e472d3251fcc8f7499d75b785d77b22f, type: 2}
   m_sharedMaterial: {fileID: -4370373207833688852, guid: e472d3251fcc8f7499d75b785d77b22f, type: 2}
@@ -1743,12 +1759,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 0.04
+  m_fontSize: 0.02
   m_fontSizeBase: 0.04
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 0.02
+  m_fontSizeMax: 0.04
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
