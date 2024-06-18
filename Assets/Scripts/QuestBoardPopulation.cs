@@ -31,7 +31,7 @@ public class QuestBoardPopulation : MonoBehaviour
 
         foreach (var quest in quests)
         {
-            Transform t = Randomizer.PickRandomObject(targets);
+            Transform t = quest.requiredSpawnLoc != null ? quest.requiredSpawnLoc : Randomizer.PickRandomObject(targets);
             GameObject paperToUse = quest.requiredPaper != null ? quest.requiredPaper : Randomizer.PickRandomObjectWeighted(convertedWeights);
             if (convertedWeights.ContainsKey(paperToUse))
             {
@@ -86,9 +86,12 @@ public class QuestBoardInfo
     public string sceneToLoad;
     [TextArea(3, 20)]
     public string paperText;
-    [Tooltip("Optional variable, allows for this quest to always use a specific paper prefab, i.e. quests from the tavern wench always having a dagger.")]
-    public GameObject? requiredPaper = null;
     public string assignedBy;
+    public bool showOptionalVars = false;
+    [AllowNesting, ShowIf("showOptionalVars"), Tooltip("Optional variable, allows for this quest to always use a specific paper prefab, i.e. quests from the tavern wench always having a dagger.")]
+    public GameObject? requiredPaper = null;
+    [AllowNesting, ShowIf("showOptionalVars"), Tooltip("Optional variable, allows for this quest to always use a specific paper prefab, i.e. quests from the tavern wench always having a dagger.")]
+    public Transform? requiredSpawnLoc = null;
 }
 
 [System.Serializable]
