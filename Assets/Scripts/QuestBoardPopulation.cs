@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
+using System.Linq;
 
 public class QuestBoardPopulation : MonoBehaviour
 {
@@ -32,15 +33,37 @@ public class QuestBoardPopulation : MonoBehaviour
         {
             Transform t = Randomizer.PickRandomObject(targets);
             GameObject paperToUse = quest.requiredPaper != null ? quest.requiredPaper : Randomizer.PickRandomObjectWeighted(convertedWeights);
+            if (convertedWeights.ContainsKey(paperToUse))
+            {
+                UnityEngine.Debug.Log(string.Format("Paper {0} chosen with weight {1}", paperToUse.name, convertedWeights[paperToUse]));
+                convertedWeights[paperToUse] = convertedWeights[paperToUse] - 10 >= 0 ? convertedWeights[paperToUse] - 10 : 0;
+            }
             StartCoroutine(CreateNewPaper(quest, paperToUse, t));
             targets.Remove(t);
+            CheckResetConvertedWeights();
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void CheckResetConvertedWeights()
     {
-        
+        List<GameObject> tmp = convertedWeights.Keys.ToList();
+        int count = 0;
+        foreach (var paper in tmp)
+        {
+            if (convertedWeights[paper] > 0)
+            {
+                count++;
+                break;
+            }
+        }
+        if (count == 0)
+        {
+            convertedWeights.Clear();
+            foreach (var paper in papers)
+            {
+                convertedWeights.Add(paper.paperPrefab, paper.weight);
+            }
+        }
     }
 
     private IEnumerator CreateNewPaper(QuestBoardInfo quest, GameObject prefab, Transform loc)
