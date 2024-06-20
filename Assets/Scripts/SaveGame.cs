@@ -54,7 +54,7 @@ public class SaveGame : MonoBehaviour
             UnityEngine.Debug.Log("Decrypted file: " + dec);
         }
         catch (Exception e) {
-            UnityEngine.Debug.Log("Error loading save: File may have been tampered with");
+            UnityEngine.Debug.Log("Error loading save: File may be corrupt or have been tampered with");
         }
     }
 }
