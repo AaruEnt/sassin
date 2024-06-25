@@ -78,8 +78,10 @@ namespace Com.Aaru.Sassin
         void Start()
         {
             //Connect();
-            progressLabel.SetActive(false);
-            controlPanel.SetActive(true);
+            if (progressLabel)
+                progressLabel.SetActive(false);
+            if (controlPanel)
+                controlPanel.SetActive(true);
             PhotonNetwork.Disconnect();
 
             if (connectOnStart)

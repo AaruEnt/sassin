@@ -35,7 +35,7 @@ public class QuestBoardPopulation : MonoBehaviour
             GameObject paperToUse = quest.requiredPaper != null ? quest.requiredPaper : Randomizer.PickRandomObjectWeighted(convertedWeights);
             if (convertedWeights.ContainsKey(paperToUse))
             {
-                UnityEngine.Debug.Log(string.Format("Paper {0} chosen with weight {1}", paperToUse.name, convertedWeights[paperToUse]));
+                //UnityEngine.Debug.Log(string.Format("Paper {0} chosen with weight {1}", paperToUse.name, convertedWeights[paperToUse]));
                 convertedWeights[paperToUse] = convertedWeights[paperToUse] - 10 >= 0 ? convertedWeights[paperToUse] - 10 : 0;
             }
             StartCoroutine(CreateNewPaper(quest, paperToUse, t));

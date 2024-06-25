@@ -130,17 +130,18 @@ namespace Com.Aaru.Sassin
             }
         }
 
+
         #endregion
 
         #region MonoBehavior Callbacks
 
-        #if !UNITY_5_4_OR_NEWER
+#if !UNITY_5_4_OR_NEWER
         /// <summary>See CalledOnLevelWasLoaded. Outdated in Unity 5.4.</summary>
         void OnLevelWasLoaded(int level)
         {
             this.CalledOnLevelWasLoaded(level);
         }
-        #endif
+#endif
 
         void CalledOnLevelWasLoaded(int level)
         {
