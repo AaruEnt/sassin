@@ -27,10 +27,12 @@ public class ResourceTracker : MonoBehaviourPun
     {
         if (sm)
         {
-            if (sm.scores.ContainsKey(PlayerManager.LocalPlayerInstance.GetPhotonView().Owner.NickName))
-            {
-                stone = sm.scores[PlayerManager.LocalPlayerInstance.GetPhotonView().Owner.NickName];
-            }
+            sandCrystal = sm.localResourcesGathered.sandCrystal;
+            oceanCrystal = sm.localResourcesGathered.oceanCrystal;
+            wood = sm.localResourcesGathered.wood;
+            stone = sm.localResourcesGathered.stone;
+            food = sm.localResourcesGathered.food;
+            leather = sm.localResourcesGathered.leather;
         }
     }
 }

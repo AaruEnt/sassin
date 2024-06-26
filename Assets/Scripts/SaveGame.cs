@@ -40,6 +40,7 @@ public class SaveGame : MonoBehaviour
             _saveInfo.resources.stone = r.stone + _lastLoadedSave.resources.stone;
             _saveInfo.resources.wood = r.wood + _lastLoadedSave.resources.wood;
             _saveInfo.resources.food = r.food + _lastLoadedSave.resources.food;
+            _saveInfo.resources.leather = r.leather + _lastLoadedSave.resources.leather;
         }
 
         _saveData = JsonUtility.ToJson(_saveInfo);

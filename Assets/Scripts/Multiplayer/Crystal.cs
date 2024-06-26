@@ -8,6 +8,8 @@ public class Crystal : MonoBehaviourPun
 {
     public SpawnManager manager;
     public UnityEvent OnGrabEffectComplete;
+    public AvailableResources resourceType = new AvailableResources();
+    private bool localIsGrabbed = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,8 +18,14 @@ public class Crystal : MonoBehaviourPun
 
     public void GrabEffect()
     {
-        this.photonView.RPC("PhotonGrabEffect", RpcTarget.All, PlayerManager.LocalPlayerInstance.GetPhotonView().Owner.NickName);
-        StartCoroutine(GrabEffectDelayed());
+        if (!localIsGrabbed)
+        {
+            if (manager)
+                manager.AddLocalResources(resourceType);
+            this.photonView.RPC("PhotonGrabEffect", RpcTarget.All, PlayerManager.LocalPlayerInstance.GetPhotonView().Owner.NickName);
+            StartCoroutine(GrabEffectDelayed());
+            localIsGrabbed = true;
+        }
     }
 
     [PunRPC]

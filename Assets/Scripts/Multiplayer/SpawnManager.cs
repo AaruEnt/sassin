@@ -6,7 +6,10 @@ using NaughtyAttributes;
 
 public class SpawnManager : MonoBehaviour
 {
-    public GameObject crystalPrefab;
+    public List<GameObject> allowedSpawnables;
+    public List<GameObject> spawnables;
+    [Range(1,5)]
+    public int maxResourceTypesAllowed = 1;
     public GameObject goardPrefab;
     public GameObject goardLordPrefab;
     public Dictionary<GameObject, Transform> crystalList = new Dictionary<GameObject, Transform>();
@@ -29,10 +32,12 @@ public class SpawnManager : MonoBehaviour
     private float goardLordSpawnTime = 300f; // 5 minutes
     private bool spawnedLord = false;
     internal Dictionary<string,int> scores = new Dictionary<string, int>();
+    internal AvailableResources localResourcesGathered = new AvailableResources();
 
     // Start is called before the first frame update
     void Start()
     {
+        SelectResourceType();
         if (PhotonNetwork.IsMasterClient)
         {
             for (int i = 0; i < minCrystals; i++)
@@ -64,6 +69,15 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    internal void SelectResourceType()
+    {
+        int spawnNum = Randomizer.RandomInt(maxResourceTypesAllowed, 1);
+        for (int i = 0; i < spawnNum; i++)
+        {
+            spawnables.Add(Randomizer.PickRandomObject(allowedSpawnables));
+        }
+    }
+
     internal void SpawnCrystal()
     {
         List<Transform> tmp = new List<Transform>(crystalList.Values);
@@ -78,7 +92,7 @@ public class SpawnManager : MonoBehaviour
             return;
         }
         Transform loc = Randomizer.PickRandomObject(tmp2);
-        GameObject toSpawn = crystalPrefab;
+        GameObject toSpawn = Randomizer.PickRandomObject(spawnables);
         if (Randomizer.Prob(goardSpawnOdds))
             toSpawn = goardPrefab;
         crystalList.Add(PhotonNetwork.Instantiate(toSpawn.name, loc.position, Quaternion.identity, 0), loc);
@@ -112,5 +126,15 @@ public class SpawnManager : MonoBehaviour
     {
         spawnedLord = true;
         PhotonNetwork.Instantiate(goardLordPrefab.name, Vector3.zero, Quaternion.identity, 0);
+    }
+
+    internal void AddLocalResources(AvailableResources r)
+    {
+        localResourcesGathered.sandCrystal += r.sandCrystal;
+        localResourcesGathered.oceanCrystal += r.oceanCrystal;
+        localResourcesGathered.wood += r.wood;
+        localResourcesGathered.stone += r.stone;
+        localResourcesGathered.food += r.food;
+        localResourcesGathered.leather += r.leather;
     }
 }
