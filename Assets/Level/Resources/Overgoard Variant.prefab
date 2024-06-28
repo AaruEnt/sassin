@@ -1173,6 +1173,34 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2384029813529272471, guid: 7d690208a122fa14591ed155d0ed129a, type: 3}
+      propertyPath: OnStabbedEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2384029813529272471, guid: 7d690208a122fa14591ed155d0ed129a, type: 3}
+      propertyPath: OnStabbedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2384029813529272471, guid: 7d690208a122fa14591ed155d0ed129a, type: 3}
+      propertyPath: OnStabbedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 5642058151475673225}
+    - target: {fileID: 2384029813529272471, guid: 7d690208a122fa14591ed155d0ed129a, type: 3}
+      propertyPath: OnStabbedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2384029813529272471, guid: 7d690208a122fa14591ed155d0ed129a, type: 3}
+      propertyPath: OnStabbedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: RequestOwnership
+      objectReference: {fileID: 0}
+    - target: {fileID: 2384029813529272471, guid: 7d690208a122fa14591ed155d0ed129a, type: 3}
+      propertyPath: OnStabbedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: Photon.Pun.PhotonView, PhotonUnityNetworking
+      objectReference: {fileID: 0}
+    - target: {fileID: 2384029813529272471, guid: 7d690208a122fa14591ed155d0ed129a, type: 3}
+      propertyPath: OnStabbedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 2802919972838552756, guid: 7d690208a122fa14591ed155d0ed129a, type: 3}
       propertyPath: m_Name
       value: Overgoard Variant
@@ -1234,6 +1262,11 @@ MonoBehaviour:
 --- !u!4 &211564131988179153 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2364754186808609178, guid: 7d690208a122fa14591ed155d0ed129a, type: 3}
+  m_PrefabInstance: {fileID: 2467668110057324875}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4124797870131331605 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1945786887414317918, guid: 7d690208a122fa14591ed155d0ed129a, type: 3}
   m_PrefabInstance: {fileID: 2467668110057324875}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &349895175853929983 stripped
@@ -1434,6 +1467,18 @@ MonoBehaviour:
   audio: {fileID: 127101221154021586}
   spellSpawnPoint: {fileID: 1153159699}
   spellPrefab: {fileID: 1502962235283449621, guid: 3bc1688991009ac4987b8ee7acd493ee, type: 3}
+--- !u!114 &2420277598393413851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4124797870131331605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dca17d78acf8f854fabd94610b63a5b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2864203162593802533
 PrefabInstance:
   m_ObjectHideFlags: 0

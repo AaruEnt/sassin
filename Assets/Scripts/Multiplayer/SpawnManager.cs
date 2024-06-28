@@ -108,12 +108,12 @@ public class SpawnManager : MonoBehaviour
         return false;
     }
 
-    public void AddPoints(string name)
+    public void AddPoints(string name, int points = 1)
     {
             if (scores.ContainsKey(name))
-                scores[name] += 1;
+                scores[name] += points;
             else
-                scores.Add(name, 1);
+                scores.Add(name, points);
             sd.UpdatePoints(scores);
     }
 
@@ -136,5 +136,25 @@ public class SpawnManager : MonoBehaviour
         localResourcesGathered.stone += r.stone;
         localResourcesGathered.food += r.food;
         localResourcesGathered.leather += r.leather;
+    }
+
+    internal List<string> GetWinningPlayer()
+    {
+        List<string> currWinner = new List<string>();
+        int points = 0;
+        foreach (KeyValuePair<string, int> s in scores)
+        {
+            if (s.Value > points)
+            {
+                currWinner.Clear();
+                currWinner.Add(s.Key);
+                points = s.Value;
+            }
+            if (s.Value == points)
+            {
+                currWinner.Add(s.Key);
+            }
+        }
+        return currWinner;
     }
 }
