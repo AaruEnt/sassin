@@ -7,7 +7,8 @@ using System.Text;
 
 public class SaveGame : MonoBehaviour
 {
-    private SaveInfo _saveInfo;
+    private static SaveInfo _saveInfo;
+    public static SaveInfo GetSaveInfo() { return _saveInfo; }
     private string _saveData;
     private SaveInfo _lastLoadedSave = new SaveInfo();
     // Precursor save system, will eventually be ideally moved to a server side save
