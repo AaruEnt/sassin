@@ -7,15 +7,13 @@ using UnityEngine.XR;
 using System;
 using Valve.VR;
 using System.Diagnostics;
+using CloudFine.ThrowLab;
 
 namespace AaruThrowVR
 {
     [RequireComponent(typeof(Grabbable))]
-    [RequireComponent(typeof(VelocityEstimator))]
     public class ImprovedThrow : MonoBehaviour
     {
-        public ReleaseStyle releaseVelocityStyle = ReleaseStyle.GetFromHand;
-
         [Tooltip("The time offset used when releasing the object with the RawFromHand option")]
         public float releaseVelocityTimeOffset = -0.011f;
 
@@ -28,15 +26,18 @@ namespace AaruThrowVR
 
         public Rigidbody body;
 
+        public bool assistEnabled;
+
         internal VelocityTracker velocityTracker = new VelocityTracker(30);
 
         private Grabbable _grabbable;
-        protected VelocityEstimator velocityEstimator;
+        private ThrowTargetHelper currentTarget;
+
+        private AnimationCurve assistRampCustomCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
         private void Awake()
         {
             _grabbable = GetComponent<Grabbable>();
-            velocityEstimator = GetComponent<VelocityEstimator>();
         }
         private void OnEnable()
         {
@@ -50,12 +51,37 @@ namespace AaruThrowVR
 
         private void Update()
         {
-            velocityTracker.UpdateBuffer(body, _grabbable);
+            if (_grabbable)
+                velocityTracker.UpdateBuffer(body, _grabbable);
+
+            if (_grabbable != null && _grabbable.IsHeld())
+            {
+                ThrowTargetHelper best = FindBestGazeBasedThrowTarget(ThrowTargetHelper.AllTargets);
+                if (currentTarget)
+                {
+                    if (currentTarget != best)
+                    {
+                        currentTarget.RemoveTargettingHandle(this);
+                        currentTarget = best;
+                        if (currentTarget)
+                        {
+                            currentTarget.AddTargettingHandle(this);
+                        }
+                    }
+                }
+                else if (best)
+                {
+                    currentTarget = best;
+                    currentTarget.AddTargettingHandle(this);
+                }
+            }
         }
 
         public void OnThrow(Autohand.Hand hand, Grabbable g)
         {
             StartCoroutine(GetSetVelocity(hand));
+            if (currentTarget)
+                currentTarget.RemoveTargettingHandle(this);
         }
 
         private IEnumerator GetSetVelocity(Autohand.Hand hand)
@@ -63,71 +89,73 @@ namespace AaruThrowVR
             Vector3 velocity;
             Vector3 angularVelocity;
             GetReleaseVelocities(hand, out velocity, out angularVelocity);
-            velocityEstimator.BeginEstimatingVelocity();
-
-            yield return null;
 
             body.velocity = velocity;
             body.angularVelocity = angularVelocity;
+            yield return null;
         }
 
         public virtual void GetReleaseVelocities(Autohand.Hand hand, out Vector3 velocity, out Vector3 angularVelocity)
         {
-            if (releaseVelocityStyle != ReleaseStyle.NoChange)
+            velocityTracker.GetEstimatedPeakVelocities(out velocity, out angularVelocity);
+            
+            float scaleFactor = 1.0f;
+            if (scaleReleaseVelocityThreshold > 0)
             {
-                releaseVelocityStyle = ReleaseStyle.ShortEstimation;
-            }
-            switch (releaseVelocityStyle)
-            {
-                case ReleaseStyle.ShortEstimation:
-                    if (velocityEstimator != null)
-                    {
-                        velocityEstimator.FinishEstimatingVelocity();
-                        velocity = velocityEstimator.GetVelocityEstimate();
-                        angularVelocity = velocityEstimator.GetAngularVelocityEstimate();
-                        UnityEngine.Debug.Log(string.Format("vel: {0}, angVel: {1}", velocity, angularVelocity));
-                    }
-                    else
-                    {
-                        UnityEngine.Debug.LogWarning("[AaruVR System] Throwable: No Velocity Estimator component on object but release style set to short estimation. Please add one or change the release style.");
-
-                        velocity = GetComponent<Rigidbody>().velocity;
-                        angularVelocity = GetComponent<Rigidbody>().angularVelocity;
-                    }
-                    break;
-                case ReleaseStyle.NoChange:
-                    velocity = GetComponent<Rigidbody>().velocity;
-                    angularVelocity = GetComponent<Rigidbody>().angularVelocity;
-                    break;
-                case ReleaseStyle.AdvancedEstimation:
-                    velocityTracker.GetEstimatedPeakVelocities(out velocity, out angularVelocity);
-                    break;
-                default:
-                    velocity = GetComponent<Rigidbody>().velocity;
-                    angularVelocity = GetComponent<Rigidbody>().angularVelocity;
-                    break;
-
+                scaleFactor = Mathf.Clamp01(scaleReleaseVelocityCurve.Evaluate(velocity.magnitude / scaleReleaseVelocityThreshold));
             }
 
-            if (releaseVelocityStyle != ReleaseStyle.NoChange)
-            {
-                float scaleFactor = 1.0f;
-                if (scaleReleaseVelocityThreshold > 0)
-                {
-                    scaleFactor = Mathf.Clamp01(scaleReleaseVelocityCurve.Evaluate(velocity.magnitude / scaleReleaseVelocityThreshold));
-                }
+            velocity *= (scaleFactor * scaleReleaseVelocity);
 
-                velocity *= (scaleFactor * scaleReleaseVelocity);
+            UnityEngine.Debug.Log(string.Format("Pre assist: {0}", velocity));
+            UnityEngine.Debug.Log(angularVelocity);
+
+            if (currentTarget)
+            {
+                velocity = ApplyAssist(velocity, transform.position, currentTarget.GetTargetPosition());
+                angularVelocity = ApplyAssist(angularVelocity, transform.position, currentTarget.GetTargetPosition());
             }
+            UnityEngine.Debug.Log(string.Format("Post assist: {0}", velocity));
+            UnityEngine.Debug.Log(angularVelocity);
         }
-    }
 
-    public enum ReleaseStyle
-    {
-        NoChange,
-        GetFromHand,
-        ShortEstimation,
-        AdvancedEstimation,
+        private ThrowTargetHelper FindBestGazeBasedThrowTarget(List<ThrowTargetHelper> targets)
+        {
+            Camera cam = Camera.main;
+            ThrowTargetHelper best = null;
+            float minAngle = float.MaxValue;
+            for (int i = 0; i < targets.Count; i++)
+            {
+                float angle = Vector3.Angle(cam.transform.forward, (targets[i].transform.position - cam.transform.position));
+                if (angle < minAngle)
+                {
+                    minAngle = angle;
+                    best = targets[i];
+                }
+            }
+            return best;
+        }
+
+        private Vector3 ApplyAssist(Vector3 rawVelocity, Vector3 origin, Vector3 targetPosition)
+        {
+            Vector3 ideal1, ideal2;
+            int numSolutions = BallisticsUtility.solve_ballistic_arc(origin, rawVelocity.magnitude, targetPosition, -Physics.gravity.y, out ideal1, out ideal2);
+
+            //cannot apply assist
+            if (numSolutions == 0) return rawVelocity;
+
+            //find which potential solution is closer to actual throw
+            Vector3 idealVelocity = Vector3.Angle(rawVelocity, ideal1) < Vector3.Angle(rawVelocity, ideal2) ? ideal1 : ideal2;
+
+            //1 is perfect accuracy, 0 is the edge of assistable range
+            float rawAccuracy = (1 - Vector3.Angle(rawVelocity, idealVelocity) / 45); // magic number is assistrangedegrees, 0-180
+            if (rawAccuracy < 0) return rawVelocity;
+
+            float ramp = assistRampCustomCurve.Evaluate(rawAccuracy);
+            ramp *= 0.8f; // range 0-1
+
+            return Vector3.Lerp(rawVelocity, idealVelocity, ramp);
+        }
     }
 
     public class VelocityTracker {
@@ -144,6 +172,8 @@ namespace AaruThrowVR
         public void GetEstimatedPeakVelocities(out Vector3 velocity, out Vector3 angularVelocity)
         {
             int top = GetTopVelocity(10, 1);
+
+            UnityEngine.Debug.LogFormat("Top: {0}", top);
 
             velocity = Vector3.zero;
             angularVelocity = Vector3.zero;
@@ -165,7 +195,10 @@ namespace AaruThrowVR
                 Velocities currentStep = velocities[currentFrame];
 
                 if (IsValid(currentStep) == false)
+                {
+                    UnityEngine.Debug.Log("Broke");
                     break;
+                }
 
                 totalFrames++;
 
@@ -222,17 +255,9 @@ namespace AaruThrowVR
             int currentFrame = Time.frameCount;
             if (lastFrameUpdated != currentFrame)
             {
-                var gs = g?.GetHeldBy();
-                if (g && gs.Count > 0)
-                {
-                    velocities[index].vel = gs[0].body.velocity;
-                    velocities[index].angularVel = gs[0].body.angularVelocity;
-                }
-                else
-                {
-                    velocities[index].vel = rb.velocity;
-                    velocities[index].angularVel = rb.angularVelocity;
-                }
+                velocities[index] = new Velocities();
+                velocities[index].vel = rb.velocity;
+                velocities[index].angularVel = g.GetAngularVelocity();
                 velocities[index].frameCount = currentFrame;
                 index++;
                 if (index >= velocities.Length)
