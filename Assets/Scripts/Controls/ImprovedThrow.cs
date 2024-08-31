@@ -7,7 +7,6 @@ using UnityEngine.XR;
 using System;
 using Valve.VR;
 using System.Diagnostics;
-using CloudFine.ThrowLab;
 
 namespace AaruThrowVR
 {
