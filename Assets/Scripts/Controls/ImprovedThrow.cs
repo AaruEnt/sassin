@@ -26,6 +26,7 @@ namespace AaruThrowVR
         public Rigidbody body;
 
         public bool assistEnabled;
+        public bool addDelay = false;
 
         internal VelocityTracker velocityTracker = new VelocityTracker(30);
 
@@ -81,6 +82,7 @@ namespace AaruThrowVR
             StartCoroutine(GetSetVelocity(hand));
             if (currentTarget)
                 currentTarget.RemoveTargettingHandle(this);
+            currentTarget = null;
         }
 
         private IEnumerator GetSetVelocity(Autohand.Hand hand)
@@ -88,6 +90,9 @@ namespace AaruThrowVR
             Vector3 velocity;
             Vector3 angularVelocity;
             GetReleaseVelocities(hand, out velocity, out angularVelocity);
+
+            if (addDelay)
+                yield return null;
 
             body.velocity = velocity;
             body.angularVelocity = angularVelocity;
@@ -106,16 +111,16 @@ namespace AaruThrowVR
 
             velocity *= (scaleFactor * scaleReleaseVelocity);
 
-            UnityEngine.Debug.Log(string.Format("Pre assist: {0}", velocity));
-            UnityEngine.Debug.Log(angularVelocity);
+            //UnityEngine.Debug.Log(string.Format("Pre assist: {0}", velocity));
+            //UnityEngine.Debug.Log(angularVelocity);
 
             if (currentTarget)
             {
                 velocity = ApplyAssist(velocity, transform.position, currentTarget.GetTargetPosition());
                 angularVelocity = ApplyAssist(angularVelocity, transform.position, currentTarget.GetTargetPosition());
             }
-            UnityEngine.Debug.Log(string.Format("Post assist: {0}", velocity));
-            UnityEngine.Debug.Log(angularVelocity);
+            //UnityEngine.Debug.Log(string.Format("Post assist: {0}", velocity));
+            //UnityEngine.Debug.Log(angularVelocity);
         }
 
         private ThrowTargetHelper FindBestGazeBasedThrowTarget(List<ThrowTargetHelper> targets)
@@ -138,10 +143,11 @@ namespace AaruThrowVR
         private Vector3 ApplyAssist(Vector3 rawVelocity, Vector3 origin, Vector3 targetPosition)
         {
             Vector3 ideal1, ideal2;
+            //UnityEngine.Debug.LogFormat("Origin: {0}\nVelocity: {1}\nTarget Pos: {2}\n", origin, rawVelocity.magnitude, targetPosition);
             int numSolutions = BallisticsUtility.solve_ballistic_arc(origin, rawVelocity.magnitude, targetPosition, -Physics.gravity.y, out ideal1, out ideal2);
 
             //cannot apply assist
-            if (numSolutions == 0) return rawVelocity;
+            if (numSolutions == 0) return rawVelocity * scaleReleaseVelocity;
 
             //find which potential solution is closer to actual throw
             Vector3 idealVelocity = Vector3.Angle(rawVelocity, ideal1) < Vector3.Angle(rawVelocity, ideal2) ? ideal1 : ideal2;
@@ -172,7 +178,7 @@ namespace AaruThrowVR
         {
             int top = GetTopVelocity(10, 1);
 
-            UnityEngine.Debug.LogFormat("Top: {0}", top);
+            //UnityEngine.Debug.LogFormat("Top: {0}", top);
 
             velocity = Vector3.zero;
             angularVelocity = Vector3.zero;
