@@ -10,7 +10,6 @@ using NaughtyAttributes;
 using Autohand;
 using Photon.Pun;
 using Photon.Realtime;
-using System.Diagnostics;
 
 public class Stats : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -49,7 +48,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     private float respawnTimer = 5f;
 
     [SerializeField, ShowIf("moveToSpawnOnDeath")]
-    private GameObject trackedObjects;
+    internal GameObject trackedObjects;
 
     [SerializeField, ShowIf("moveToSpawnOnDeath")]
     private GameObject respawnBarrier;
@@ -83,6 +82,8 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     private Vector3 _startPos;
 
     private float timer = 0f;
+    private bool iFrames = false;
+    private float iFrameTimer = 0f;
 
     #region IPunObservable implementation
 
@@ -124,6 +125,13 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         }
         if (stabCD > 0)
             stabCD -= Time.deltaTime;
+        if (iFrameTimer > 0)
+            iFrameTimer -= Time.deltaTime;
+        else
+        {
+            iFrameTimer = 0f;
+            iFrames = false;
+        }
     }
 
     void Awake()
@@ -134,11 +142,22 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     // When damage is received
     internal void OnDamageReceived(float damage)
     {
+        if (iFrames)
+            return;
         OnTakeDamage.Invoke();
         if (damage > 0)
             health -= damage;
         if (health <= 0)
             OnKill();
+        iFrames = true;
+        iFrameTimer = 6f;
+    }
+
+    internal void AddIFrames(float time)
+    {
+        iFrameTimer += time;
+        if (iFrameTimer > 0)
+            iFrames = true;
     }
 
     // When damage is healed
@@ -259,6 +278,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
 
         if (col.gameObject.tag == "Effect" || col.body.gameObject.tag == "Effect" || (col.gameObject.tag == "Enemy" && gameObject.tag != "Enemy"))
         { // Includes spells and weapons that deal damage, heal, or create some form of effect
+            UnityEngine.Debug.LogFormat("Hit: {0}", col.gameObject.name);
             Collider hitCol = col.contacts[0].thisCollider;
             WeakPoint w = hitCol.gameObject.GetComponent<WeakPoint>();
 
@@ -287,7 +307,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
                 Weapon we = col.body.gameObject.GetComponent<Weapon>();
                 Rigidbody velRB = col.body as Rigidbody;
                 float vel = 1f;
-                if (velRB)
+                if (velRB && !velRB.isKinematic && !we.speedOverride)
                 {
                     vel = velRB.velocity.magnitude;
                 }
@@ -315,6 +335,27 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
             if (tmp.HasValue)
                 lastCheckpoint = (Vector3)tmp;
         }
+        if (col.gameObject.transform.root.CompareTag("Effect"))
+        {
+
+            if ((currCollisions.Contains(col.attachedRigidbody.gameObject)) || stabCD > 0)
+            {
+                return;
+            }
+
+            if (weakpointDamageOnly)
+            {
+                return;
+            }
+
+            currCollisions.Add(col.attachedRigidbody.gameObject);
+
+            NetworkSpell s = col.attachedRigidbody.gameObject.GetComponent<NetworkSpell>();
+            if (s)
+            {
+                OnDamageReceived(s.damage);
+            }
+        }
     }
 
     internal void OnCollisionExit(Collision col)
@@ -324,6 +365,14 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         if (currCollisions.Contains(col.body.gameObject))
             currCollisions.Remove(col.body.gameObject);
         stabCD = 0.25f;
+    }
+
+    internal void OnTriggerExit(Collider col)
+    {
+        if (col.attachedRigidbody as Rigidbody == null)
+            return;
+        if (col.attachedRigidbody.gameObject.CompareTag("Effect") && currCollisions.Contains(col.attachedRigidbody.gameObject))
+            currCollisions.Remove(col.attachedRigidbody.gameObject);
     }
 
     internal void OnCollisionStay(Collision col)

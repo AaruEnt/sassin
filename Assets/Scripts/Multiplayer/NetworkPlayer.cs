@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.XR;
 using Photon.Pun;
 using System.Diagnostics;
+using System.Collections.Specialized;
 
 public class NetworkPlayer : MonoBehaviourPunCallbacks
 {
@@ -51,7 +52,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
         InputDevices.GetDeviceAtXRNode(node).TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion rotation);
 
         target.localPosition = position;
-        target.rotation = rotation * Quaternion.Euler(rotOffset);
+        target.localRotation = rotation * Quaternion.Euler(rotOffset);
     }
 
     void MapPosition(Transform target, GameObject node)
@@ -69,10 +70,18 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
 
     void UpdateCollider(CapsuleCollider copyTo, CapsuleCollider copyFrom)
     {
-        copyTo.height = copyFrom.height;
-        copyTo.radius = copyFrom.radius;
-        copyTo.center = copyFrom.center;
+        float scale = copyFrom.height / 1.6f; // 1.6 is the base height of the collider pre scaling.
+        Vector3 tmp = new Vector3(1f, scale, 1f);
+        copyTo.transform.localScale = tmp;
+        //copyTo.radius = copyFrom.radius;
+        //copyTo.center = copyFrom.center;
+        //var tmp2 = copyFrom.transform.localPosition;
+        //tmp2.y = tmp2.y - (((scale * 0.8f) - (scale * copyFrom.center.y)));
         copyTo.transform.position = copyFrom.transform.position;
+        var tmp2 = copyTo.transform.localPosition;
+        tmp2.y = (((1f - scale) / 0.25f) * 0.05f) + -0.2f; // Lot of magic numbers here, I had to plot out the expected values and make a function that resulted in them, but it works perfectly
+        copyTo.transform.localPosition = tmp2;
+
     }
 
     #region IPunObservable implementation

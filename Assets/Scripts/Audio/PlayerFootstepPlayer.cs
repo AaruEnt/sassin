@@ -55,6 +55,9 @@ public class PlayerFootstepPlayer : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         momentum = GetComponent<MomentumController>();
 
+        if (!playerStats)
+            playerStats = GetComponent<Stats>();
+
         nextFootstepTime = baseFootstepTime;
         baseMaxMovespeed = player.maxMoveSpeed;
     }

@@ -25,15 +25,9 @@ namespace Valve.VR
 
         private void Start()
         {
-            UnityEngine.Debug.Log(dontRerunCode);
-            if (dontRerunCode >= 3)
+            if (actionSet != null && activateOnStart && !actionSet.IsActive(SteamVR_Input_Sources.Any))
             {
-                return;
-            }
-            dontRerunCode += 1;
-            if (actionSet != null && activateOnStart)
-            {
-                //Debug.Log(string.Format("[SteamVR] Activating {0} action set.", actionSet.fullPath));
+                Debug.Log(string.Format("[SteamVR] Activating {0} action set.", actionSet.fullPath));
                 actionSet.Activate(forSources, initialPriority, disableAllOtherActionSets);
             }
         }

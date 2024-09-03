@@ -18,6 +18,7 @@ namespace JointVR
         [SerializeField] public List<Stabber> stabbers = new List<Stabber>();
         [SerializeField] public List<Rigidbody> ignoreStab = new List<Rigidbody>();
         [Tag] public string ignoreStabTag;
+        [SerializeField]
         private Rigidbody rb;
 
         internal Transform maintainParent;

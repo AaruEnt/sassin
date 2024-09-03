@@ -6,9 +6,8 @@ using UnityEngine.SceneManagement;
 
 using Photon.Pun;
 using Photon.Realtime;
-using System.Diagnostics;
-using static System.Net.Mime.MediaTypeNames;
 using Valve.VR;
+using UnityEngine.Events;
 
 namespace Com.Aaru.Sassin
 {
@@ -24,6 +23,7 @@ namespace Com.Aaru.Sassin
         public GameObject PlayerUiPrefab;
 
         public static GameManager Instance;
+        public UnityEvent OnPlayerJoinRoom;
 
         #endregion
 
@@ -43,6 +43,7 @@ namespace Com.Aaru.Sassin
 
         public void LeaveRoom()
         {
+            SteamVR_Fade.View(Color.black, 0.1f);
             PhotonNetwork.LeaveRoom();
         }
 
@@ -89,7 +90,9 @@ namespace Com.Aaru.Sassin
                 return;
             }
             UnityEngine.Debug.LogFormat("PhotonNetwork : Loading Level : {0}", PhotonNetwork.CurrentRoom.PlayerCount);
-            PhotonNetwork.LoadLevel("Room for " + PhotonNetwork.CurrentRoom.PlayerCount);
+            OnPlayerJoinRoom.Invoke();
+            //PhotonNetwork.LoadLevel("Room for " + PhotonNetwork.CurrentRoom.PlayerCount);
+            //PhotonNetwork.LoadLevel(Launcher.sceneConnectTo);
         }
 
         #if UNITY_5_4_OR_NEWER
@@ -127,17 +130,18 @@ namespace Com.Aaru.Sassin
             }
         }
 
+
         #endregion
 
         #region MonoBehavior Callbacks
 
-        #if !UNITY_5_4_OR_NEWER
+#if !UNITY_5_4_OR_NEWER
         /// <summary>See CalledOnLevelWasLoaded. Outdated in Unity 5.4.</summary>
         void OnLevelWasLoaded(int level)
         {
             this.CalledOnLevelWasLoaded(level);
         }
-        #endif
+#endif
 
         void CalledOnLevelWasLoaded(int level)
         {
