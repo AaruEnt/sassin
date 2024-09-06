@@ -76,6 +76,8 @@ public class QuestBoardPopulation : MonoBehaviour
         QuestStarter qs = g.GetComponentInChildren<QuestStarter>();
         qs.launcher = launcher;
         qs.sceneToLoad = quest.sceneToLoad;
+        if (quest.disableUse)
+            Destroy(qs);
     }
 }
 
@@ -83,7 +85,7 @@ public class QuestBoardPopulation : MonoBehaviour
 public class QuestBoardInfo
 {
     [Scene]
-    public string sceneToLoad;
+    public string sceneToLoad = "";
     [TextArea(3, 20)]
     public string paperText;
     public string assignedBy;
@@ -92,6 +94,7 @@ public class QuestBoardInfo
     public GameObject? requiredPaper = null;
     [AllowNesting, ShowIf("showOptionalVars"), Tooltip("Optional variable, allows for this quest to always use a specific paper prefab, i.e. quests from the tavern wench always having a dagger.")]
     public Transform? requiredSpawnLoc = null;
+    public bool disableUse = false;
 }
 
 [System.Serializable]
