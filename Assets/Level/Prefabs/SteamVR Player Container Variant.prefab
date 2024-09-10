@@ -24074,6 +24074,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4904617705076360061, guid: 7ddaef112cded9a4bbca3e89c198134e, type: 3}
+      propertyPath: useMovement
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4904617705076360061, guid: 7ddaef112cded9a4bbca3e89c198134e, type: 3}
       propertyPath: climbingDrag
       value: 3
       objectReference: {fileID: 0}
@@ -24541,6 +24545,7 @@ MonoBehaviour:
   landSound: {fileID: 0}
   coyoteTime: 0.25
   slideForce: 30
+  omniJumpHelper: 0
 --- !u!114 &465443277723091336
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24850,7 +24855,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b60dd0c186edb1489343b43bce0dc9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1
+  moveSpeed: 10
   moveController: 1
   moveAxis:
     actionPath: /actions/default/in/Move
@@ -24859,6 +24864,7 @@ MonoBehaviour:
   forwardFollow: {fileID: 1767383050238608169}
   rb: {fileID: 3230564732466509245}
   player: {fileID: 3230564732466509244}
+  usePlayerSpeed: 0
 --- !u!114 &1336202705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24924,6 +24930,7 @@ MonoBehaviour:
   landSound: {fileID: 368951059}
   coyoteTime: 0.3
   slideForce: 30
+  omniJumpHelper: 1
 --- !u!114 &4459031788057297943
 MonoBehaviour:
   m_ObjectHideFlags: 0
