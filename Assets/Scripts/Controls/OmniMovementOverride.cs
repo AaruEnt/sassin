@@ -15,6 +15,7 @@ public class OmniMovementOverride : MonoBehaviour
     public Transform forwardFollow;
     public Rigidbody rb;
     public AutoHandPlayer player;
+    public bool usePlayerSpeed = true;
 
     // Update is called once per frame
     void LateUpdate()
@@ -30,7 +31,8 @@ public class OmniMovementOverride : MonoBehaviour
             Debug.Log(moveDir);
             //player.SyncBodyHead();
 
-            moveSpeed = player.maxMoveSpeed;
+            if (usePlayerSpeed)
+                moveSpeed = player.maxMoveSpeed;
 
             rb.MovePosition(transform.position + (moveDir * Time.deltaTime * moveSpeed));
             steamObjectContainer.position = transform.position;

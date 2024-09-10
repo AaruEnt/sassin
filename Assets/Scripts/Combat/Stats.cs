@@ -430,7 +430,8 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
             transform.position = _startPos;
             yield return null;
         }
-        player.useMovement = true;
+        // OMNI MOVEMENT CHANGE
+        //player.useMovement = true;
         sat.value = 1.1f;
         CA.saturation.SetValue(sat);
         if (moveToCheckpointOnDeath)

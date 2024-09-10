@@ -71,6 +71,8 @@ public class PrimaryButton : MonoBehaviourPunCallbacks
 
     private float jumpTime = 0f;
 
+    public bool omniJumpHelper = false;
+
     void Update() {
         //if (!isSliding && player.IsCrouching())
         //    Slide();
@@ -78,7 +80,7 @@ public class PrimaryButton : MonoBehaviourPunCallbacks
             return;
         if (jumpOnPress)
         {
-            if (player.IsGrounded())
+            if (player.IsGrounded() || omniJumpHelper)
                 jumpTime = 0f;
             else
                 jumpTime += Time.deltaTime;
@@ -91,7 +93,7 @@ public class PrimaryButton : MonoBehaviourPunCallbacks
             StartCoroutine(JumpRoutine());
         }
 
-        if (player.IsGrounded() && hasJumped && jumpCD <= 0f)
+        if ((player.IsGrounded() || omniJumpHelper) && hasJumped && jumpCD <= 0f)
         {
             hasWallRunJumped = false;
             momentum.isWallJumping = false;
@@ -127,6 +129,8 @@ public class PrimaryButton : MonoBehaviourPunCallbacks
         if (jumpCD > 0)
             return;
         float blendJumpHeight = jumpHeight + (((maxJumpHeight - jumpHeight) / 14) * ((momentum.counter >= 900 ? 630 : momentum.counter - 270) / 45));
+        if (omniJumpHelper)
+            blendJumpHeight = maxJumpHeight;
         if (hasJumped == false && jumpTime < coyoteTime) {
             rb.AddForce(new Vector3(0, blendJumpHeight, 0), ForceMode.Impulse);
             jumpSound.Play();
