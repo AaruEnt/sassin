@@ -66,7 +66,7 @@ namespace Autohand {
         [ShowIf("overrideParticle")]
         public float debugSpeed = 6f;
 
-        private float magnitudePercentThreshhold = 0.95f;
+        public float magnitudePercentThreshhold = 0.95f;
 
         internal bool isWallRunning = false;
 
