@@ -15,7 +15,7 @@ public class Burnable : MonoBehaviour
     public bool destroyOnFinish = true;
     MeshRenderer _m;
     Grabbable _g;
-    bool isBurning = false;
+    public bool isBurning = false;
     float timer = 0f;
     Shader tmpShader = default(Shader);
 
