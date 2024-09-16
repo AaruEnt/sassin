@@ -18,6 +18,13 @@ public class Burnable : MonoBehaviour
     public bool isBurning = false;
     float timer = 0f;
     Shader tmpShader = default(Shader);
+    public bool useFlashColor = false;
+    [ShowIf("useFlashColor")]
+    public Material flashMat;
+
+    public Texture baseTex;
+    public Color baseColor = Color.white;
+
 
     [Button]
     public void editorStartButn() { StartBurnManual(); }
@@ -47,6 +54,10 @@ public class Burnable : MonoBehaviour
             if (reverse)
                 conv = burnShaderPercentCap - conv;
             _m.material.SetFloat("_burnAmount", conv);
+            _m.material.SetColor("_baseColor", baseColor);
+            if (baseTex)
+                _m.material.SetTexture("_baseTexture", baseTex);
+           //_m.material.SetColor("_hotColor", hotColor);
         }
 
         if ((timer >= burnTime || (earlyCutTime > 0 && timer >= earlyCutTime)) && destroyOnFinish) {
@@ -55,10 +66,29 @@ public class Burnable : MonoBehaviour
             Destroy(this.gameObject);
         } else if ((timer >= burnTime || (earlyCutTime > 0 && timer >= earlyCutTime)) && !destroyOnFinish)
         {
-            _m.material.shader = tmpShader;
-            isBurning = false;
-            timer = 0f;
+            if (useFlashColor)
+            {
+                _m.material.shader = flashMat.shader;
+                _m.material.SetColor("_baseColor", flashMat.color);
+                _m.material.EnableKeyword("_EMISSION");
+                _m.material.SetColor("_EmissionColor", Color.white);
+                isBurning = false;
+                timer = 0f;
+                StartCoroutine(ResetMaterialToBase());
+            }
+            else
+            {
+                _m.material.shader = tmpShader;
+                isBurning = false;
+                timer = 0f;
+            }
         }
+    }
+
+    private IEnumerator ResetMaterialToBase()
+    {
+        yield return new WaitForSeconds(0.08f);
+        _m.material.shader = tmpShader;
     }
 
     private void OnTriggerEnter(Collider other)
