@@ -25,7 +25,7 @@ public class LoadingScene : MonoBehaviour
         {
             minTime *= 2;
             if (PlayerPrefs.HasKey("BeatTutorial") && PlayerPrefs.GetInt("BeatTutorial") == 1)
-                LoadingData.sceneToLoad = 1;
+                LoadingData.sceneToLoad = 5;
             else
                 LoadingData.sceneToLoad = 2;
 
