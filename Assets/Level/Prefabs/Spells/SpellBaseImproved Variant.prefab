@@ -15005,7 +15005,6 @@ GameObject:
   - component: {fileID: 4076856910368006030}
   - component: {fileID: 4076856910368006031}
   - component: {fileID: 2194474736639610711}
-  - component: {fileID: 8724556970727935757}
   - component: {fileID: 2194474736639610710}
   m_Layer: 0
   m_Name: HCFX_Explosion_01
@@ -15023,15 +15022,15 @@ Transform:
   m_GameObject: {fileID: 4076856910368006024}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4076856910495554092}
   - {fileID: 3738534251912210246}
   - {fileID: 2194474736488332303}
   - {fileID: 4076856910934865041}
   - {fileID: 4076856910928285363}
-  m_Father: {fileID: 4029747604583927043}
-  m_RootOrder: 1
+  m_Father: {fileID: 5410057476333366769}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &4076856910368006030
 ParticleSystem:
@@ -19980,22 +19979,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &8724556970727935757
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4076856910368006024}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 0
 --- !u!114 &2194474736639610710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40105,7 +40088,6 @@ GameObject:
   - component: {fileID: 5800556065583039634}
   - component: {fileID: 5800556065583039635}
   - component: {fileID: 5800556065583039632}
-  - component: {fileID: 4164403103543024813}
   m_Layer: 0
   m_Name: HCFX_ElementOrb_01
   m_TagString: Untagged
@@ -40122,12 +40104,12 @@ Transform:
   m_GameObject: {fileID: 5800556065583039633}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children:
   - {fileID: 5800556065367555578}
   - {fileID: 3745600363046629792}
-  m_Father: {fileID: 4029747604583927043}
-  m_RootOrder: 0
+  m_Father: {fileID: 5410057476333366769}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &5800556065583039635
 ParticleSystem:
@@ -44980,22 +44962,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &4164403103543024813
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5800556065583039633}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 0
 --- !u!1 &8478005540770939562
 GameObject:
   m_ObjectHideFlags: 0
@@ -45026,11 +44992,9 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
-  m_Children:
-  - {fileID: 5800556065583039634}
-  - {fileID: 4076856910368006029}
+  m_Children: []
   m_Father: {fileID: 5410057476333366769}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2424727954416615723
 MeshFilter:
@@ -45089,7 +45053,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8478005540770939562}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
@@ -45103,7 +45067,7 @@ SphereCollider:
   m_GameObject: {fileID: 8478005540770939562}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.2
   m_Center: {x: 0, y: 0, z: 0}
@@ -45180,7 +45144,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8451535518627173996, guid: 62c1360f32bcb3f499ead24fca34c5a3, type: 3}
       propertyPath: m_Name
-      value: SpellBaseImproved
+      value: SpellBaseImproved Variant
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 62c1360f32bcb3f499ead24fca34c5a3, type: 3}

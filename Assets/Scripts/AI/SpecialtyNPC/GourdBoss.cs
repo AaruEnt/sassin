@@ -53,7 +53,7 @@ public class GourdBoss : MonoBehaviour
             transform.LookAt(tmp1);
             cd -= Time.deltaTime;
             float distance = Vector3.Distance(transform.position, player.position);
-            if (!isCasting && !isHoldingSpell && (cd >= 0.5f || distance >= 10f)) // 2f is magic number, just trying to make sure they aren't casting when they could teleport soon instead
+            if (!isCasting && !isHoldingSpell && (cd >= 0.5f || distance >= 10f || disableTeleport)) // 2f is magic number, just trying to make sure they aren't casting when they could teleport soon instead
             {
                 StartCoroutine(SpellAttack());
             }
