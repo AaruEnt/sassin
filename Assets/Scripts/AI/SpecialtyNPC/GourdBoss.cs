@@ -12,6 +12,8 @@ public class GourdBoss : MonoBehaviour
     public AudioSource tp;
     public LayerMask playerHitMask;
 
+    public bool disableTeleport = false;
+
     [SerializeField, Tooltip("spawn point for spell attacks")]
     private Transform spellSpawnPoint;
 
@@ -55,7 +57,7 @@ public class GourdBoss : MonoBehaviour
             {
                 StartCoroutine(SpellAttack());
             }
-            else if (!isCasting && !isHoldingSpell && cd <= 0f && distance < 10f)
+            else if (!isCasting && !isHoldingSpell && cd <= 0f && distance < 10f && !disableTeleport)
             {
                 cd = teleportCD;
                 List<GameObject> tmp2 = new List<GameObject>(spawns);
