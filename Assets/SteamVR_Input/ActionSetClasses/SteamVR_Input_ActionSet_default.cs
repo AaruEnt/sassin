@@ -137,6 +137,14 @@ namespace Valve.VR
             }
         }
         
+        public virtual SteamVR_Action_Single TriggerDepth
+        {
+            get
+            {
+                return SteamVR_Actions.default_TriggerDepth;
+            }
+        }
+        
         public virtual SteamVR_Action_Vibration Haptic
         {
             get

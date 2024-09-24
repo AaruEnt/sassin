@@ -11,30 +11,30 @@
          "sources" : [
             {
                "inputs" : {
-                  "pull" : {
-                     "output" : "/actions/buggy/in/throttle"
-                  }
-               },
-               "mode" : "trigger",
-               "path" : "/user/hand/left/input/trigger"
-            },
-            {
-               "inputs" : {
-                  "pull" : {
-                     "output" : "/actions/buggy/in/throttle"
-                  }
-               },
-               "mode" : "trigger",
-               "path" : "/user/hand/right/input/trigger"
-            },
-            {
-               "inputs" : {
                   "position" : {
                      "output" : "/actions/buggy/in/steering"
                   }
                },
                "mode" : "joystick",
                "path" : "/user/hand/left/input/joystick"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/buggy/in/brake"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/x"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/buggy/in/reset"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/y"
             },
             {
                "inputs" : {
@@ -52,25 +52,7 @@
                   }
                },
                "mode" : "button",
-               "path" : "/user/hand/left/input/x"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/buggy/in/brake"
-                  }
-               },
-               "mode" : "button",
                "path" : "/user/hand/right/input/x"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/buggy/in/reset"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/left/input/y"
             },
             {
                "inputs" : {
@@ -83,21 +65,21 @@
             },
             {
                "inputs" : {
-                  "click" : {
-                     "output" : "/actions/buggy/in/brake"
+                  "pull" : {
+                     "output" : "/actions/buggy/in/throttle"
                   }
                },
-               "mode" : "button",
-               "path" : "/user/hand/right/input/a"
+               "mode" : "trigger",
+               "path" : "/user/hand/left/input/trigger"
             },
             {
                "inputs" : {
-                  "click" : {
-                     "output" : "/actions/buggy/in/reset"
+                  "pull" : {
+                     "output" : "/actions/buggy/in/throttle"
                   }
                },
-               "mode" : "button",
-               "path" : "/user/hand/right/input/b"
+               "mode" : "trigger",
+               "path" : "/user/hand/right/input/trigger"
             }
          ]
       },
@@ -121,10 +103,6 @@
             {
                "output" : "/actions/default/in/pose",
                "path" : "/user/hand/right/pose/raw"
-            },
-            {
-               "output" : "none",
-               "path" : "/user/hand/left/pose/base"
             }
          ],
          "skeleton" : [
@@ -212,15 +190,6 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/default/in/primarybuttonleft"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/right/input/x"
-            },
-            {
-               "inputs" : {
-                  "click" : {
                      "output" : "/actions/default/in/jumpbutton"
                   },
                   "touch" : {
@@ -238,36 +207,6 @@
                },
                "mode" : "button",
                "path" : "/user/hand/right/input/joystick"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/default/in/pause"
-                  },
-                  "touch" : {
-                     "output" : "/actions/default/in/thumbsticktouch"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/right/input/b"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/default/in/squeeze"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/left/input/trigger"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/default/in/squeeze"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/right/input/trigger"
             },
             {
                "inputs" : {
@@ -292,6 +231,30 @@
                },
                "mode" : "joystick",
                "path" : "/user/hand/left/input/joystick"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/squeeze"
+                  },
+                  "pull" : {
+                     "output" : "/actions/default/in/triggerdepth"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/left/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/squeeze"
+                  },
+                  "pull" : {
+                     "output" : "/actions/default/in/triggerdepth"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/right/input/trigger"
             }
          ]
       },
