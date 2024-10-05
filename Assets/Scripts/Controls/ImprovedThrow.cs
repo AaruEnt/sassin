@@ -113,12 +113,13 @@ namespace AaruThrowVR
 
             //UnityEngine.Debug.Log(string.Format("Pre assist: {0}", velocity));
             //UnityEngine.Debug.Log(angularVelocity);
-
+            var pa = velocity;
             if (currentTarget)
             {
                 velocity = ApplyAssist(velocity, transform.position, currentTarget.GetTargetPosition());
                 angularVelocity = ApplyAssist(angularVelocity, transform.position, currentTarget.GetTargetPosition());
             }
+            velocity.y = pa.y;
             //UnityEngine.Debug.Log(string.Format("Post assist: {0}", velocity));
             //UnityEngine.Debug.Log(angularVelocity);
         }
