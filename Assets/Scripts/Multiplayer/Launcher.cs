@@ -2,6 +2,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Diagnostics;
+using WebSocketSharp;
 
 namespace Com.Aaru.Sassin
 {
@@ -100,11 +101,12 @@ namespace Com.Aaru.Sassin
         /// - If already connected, we attempt joining a random room
         /// - if not yet connected, Connect this application instance to Photon Cloud Network
         /// </summary>
-        public void Connect(string toConnectTo)
+        public void Connect(string toConnectTo = "")
         {
             progressLabel.SetActive(true);
             controlPanel.SetActive(false);
-            sceneConnectTo = toConnectTo;
+            if (!toConnectTo.IsNullOrEmpty())
+                sceneConnectTo = toConnectTo;
             PhotonNetwork.OfflineMode = useOfflineMode;
             if (PhotonNetwork.OfflineMode)
                 return;

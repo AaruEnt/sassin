@@ -27,7 +27,7 @@ public class LoadingScene : MonoBehaviour
             if (PlayerPrefs.HasKey("BeatTutorial") && PlayerPrefs.GetInt("BeatTutorial") == 1)
                 LoadingData.sceneToLoad = 1;
             else
-                LoadingData.sceneToLoad = 2;
+                LoadingData.sceneToLoad = 5;
 
             if (sceneLoadOverride != -1)
             {

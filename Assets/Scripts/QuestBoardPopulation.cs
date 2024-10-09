@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
 using System.Linq;
+using UnityEngine.Events;
 
 public class QuestBoardPopulation : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class QuestBoardPopulation : MonoBehaviour
     public List<PaperWeightSelection> papers;
     public List<QuestBoardInfo> quests;
     public List<Transform> targets;
+    public PaperBurnEvent OnPaperBurned;
 
     private Dictionary<GameObject, int> convertedWeights;
 
@@ -76,6 +78,14 @@ public class QuestBoardPopulation : MonoBehaviour
         QuestStarter qs = g.GetComponentInChildren<QuestStarter>();
         qs.launcher = launcher;
         qs.sceneToLoad = quest.sceneToLoad;
+
+        Burnable br = g.GetComponentInChildren<Burnable>();
+        br.BurnStarted += PaperBurnedHandler;
+    }
+
+    public void PaperBurnedHandler(Paper p)
+    {
+        OnPaperBurned.Invoke(p);
     }
 }
 
@@ -100,3 +110,7 @@ public class PaperWeightSelection
     public GameObject paperPrefab;
     public int weight;
 }
+
+[System.Serializable]
+public class PaperBurnEvent : UnityEvent<Paper>
+{ }

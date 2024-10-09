@@ -9,6 +9,9 @@ public class Burnable : MonoBehaviour
     public Shader burnShader;
     public float burnTime = 5f;
     public float burnShaderPercentCap = 1.2f;
+
+    public delegate void BurnStartedEvent(Paper paper);
+    public event BurnStartedEvent BurnStarted;
     MeshRenderer _m;
     Grabbable _g;
     bool isBurning = false;
@@ -49,6 +52,7 @@ public class Burnable : MonoBehaviour
         if (isBurning || !other.gameObject.CompareTag("Fire")) { return; }
 
         isBurning = true;
+        BurnStarted.Invoke(GetComponent<Paper>());
     }
 
     private void OnCollisionEnter(Collision collision)
