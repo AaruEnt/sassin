@@ -77,7 +77,19 @@ public class QuestBoardPopulation : MonoBehaviour
 
         QuestStarter qs = g.GetComponentInChildren<QuestStarter>();
         qs.launcher = launcher;
-        qs.sceneToLoad = quest.sceneToLoad;
+        if (quest.manualSceneSelection)
+            qs.sceneToLoad = quest.sceneToLoad;
+        else
+            qs.sceneToLoad = GamemodeHelper.GetSceneFromMode(quest.gameMode);
+
+        qs.startOffline = quest.offlineOnly;
+        qs.createNewRoom = quest.newRoomOnly;
+        string mode = "";
+        if (quest.manualSceneSelection)
+            mode = "None";
+        else if (quest.gameMode == "Gather" || quest.gameMode == "Invasion")
+            mode = "Gather/Invasion";
+        qs.mode = mode;
 
         Burnable br = g.GetComponentInChildren<Burnable>();
         br.BurnStarted += PaperBurnedHandler;
@@ -92,16 +104,26 @@ public class QuestBoardPopulation : MonoBehaviour
 [System.Serializable]
 public class QuestBoardInfo
 {
-    [Scene]
+    public bool manualSceneSelection = false;
+    [Scene, ShowIf("manualSceneSelection")]
     public string sceneToLoad;
+    [AllowNesting]
+    [HideIf("manualSceneSelection")]
+    [Tooltip("GameModeOptions: \"Invasion\", \"Arena\", \"Gather\", \"Scout\"")]
+    public string gameMode;
     [TextArea(3, 20)]
     public string paperText;
     public string assignedBy;
     public bool showOptionalVars = false;
     [AllowNesting, ShowIf("showOptionalVars"), Tooltip("Optional variable, allows for this quest to always use a specific paper prefab, i.e. quests from the tavern wench always having a dagger.")]
     public GameObject? requiredPaper = null;
-    [AllowNesting, ShowIf("showOptionalVars"), Tooltip("Optional variable, allows for this quest to always use a specific paper prefab, i.e. quests from the tavern wench always having a dagger.")]
+    [AllowNesting, ShowIf("showOptionalVars"), Tooltip("Optional variable, allows for this quest to always use a specific spawn location, i.e. scouting quests always spawning in specific hard to reach locations")]
     public Transform? requiredSpawnLoc = null;
+    [AllowNesting, ShowIf("showOptionalVars"), Tooltip("Optional variable, allows for this quest to always be offline only")]
+    public bool offlineOnly = false;
+    [AllowNesting, ShowIf("showOptionalVars"), Tooltip("Optional variable, this quest will always create a room that is open to other players, but will never join another room and will instead make your own room")]
+    public bool newRoomOnly = false;
+
 }
 
 [System.Serializable]

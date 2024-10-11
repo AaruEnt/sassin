@@ -15,7 +15,7 @@ namespace Com.Aaru.Sassin
         /// </summary>
         [Tooltip("The maximum number of players per room. When a room is full, it can't be joined by new players, and so new room will be created")]
         [SerializeField]
-        private byte maxPlayersPerRoom = 4;
+        private byte maxPlayersPerRoom = 3;
 
         [Tooltip("The Ui Panel to let the user enter name, connect and play")]
         [SerializeField]
@@ -42,6 +42,7 @@ namespace Com.Aaru.Sassin
         }
 
         public static string sceneConnectTo = "Multiplayer Arena";
+        internal string gameMode = "None";
 
         #endregion
 
@@ -50,7 +51,7 @@ namespace Com.Aaru.Sassin
         /// <summary>
         /// This client's version number. Users are separated from each other by gameVersion (which allows you to make breaking changes).
         /// </summary>
-        string gameVersion = "1.1";
+        string gameVersion = "1.2";
 
         /// <summary>
         /// Keep track of the current process. Since connection is asynchronous and is based on several callbacks from Photon,
@@ -156,8 +157,8 @@ namespace Com.Aaru.Sassin
                         return;
                     }
                     ExitGames.Client.Photon.Hashtable RoomCustomProps = new ExitGames.Client.Photon.Hashtable();
-                    RoomCustomProps.Add(MAP_PROP_KEY, sceneConnectTo);
-                    RoomCustomProps.Add(MODE_PROP_KEY, "tmp");
+                    //RoomCustomProps.Add(MAP_PROP_KEY, sceneConnectTo);
+                    RoomCustomProps.Add(MODE_PROP_KEY, gameMode);
                     PhotonNetwork.JoinRandomRoom(RoomCustomProps, 0);
                     isConnecting = false;
                 }
@@ -211,8 +212,8 @@ namespace Com.Aaru.Sassin
                 };
 
             ExitGames.Client.Photon.Hashtable RoomCustomProps = new ExitGames.Client.Photon.Hashtable();
-            RoomCustomProps.Add(MAP_PROP_KEY, sceneConnectTo);
-            RoomCustomProps.Add(MODE_PROP_KEY, "tmp");
+            //RoomCustomProps.Add(MAP_PROP_KEY, sceneConnectTo);
+            RoomCustomProps.Add(MODE_PROP_KEY, gameMode);
             roomOptions.CustomRoomProperties = RoomCustomProps;
 
             string[] customLobbyProperties = { MAP_PROP_KEY, MODE_PROP_KEY };

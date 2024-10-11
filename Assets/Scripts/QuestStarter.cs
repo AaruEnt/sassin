@@ -10,11 +10,17 @@ public class QuestStarter : MonoBehaviour
     public string sceneToLoad = "TutorialDemo"; //Default val, set in QuestBoardPopulation
     internal Launcher launcher;
     public bool ignoreStart = false;
+    public bool createNewRoom = false;
+    public bool startOffline = false;
+    internal string mode = "None";
 
     private void OnTriggerEnter(Collider other)
     {
         if (!ignoreStart && other.gameObject.CompareTag("QuestStart"))
         {
+            launcher.gameMode = mode;
+            launcher.CreateNewRoom(createNewRoom);
+            launcher.UseOfflineMode(launcher.useOfflineMode | startOffline);
             launcher.Connect(sceneToLoad);
             this.enabled = false;
         }
