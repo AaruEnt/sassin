@@ -27,6 +27,7 @@ namespace Com.Aaru.Sassin
 
         #endregion
 
+        private string MODE_PROP_KEY = "mod";
         #region Photon Callbacks
 
         /// <summary>
@@ -127,6 +128,34 @@ namespace Com.Aaru.Sassin
                 UnityEngine.Debug.LogFormat("OnPlayerLeftRoom IsMasterClient {0}", PhotonNetwork.IsMasterClient); // called before OnPlayerLeftRoom
 
                 LoadArena();
+            }
+        }
+
+        public override void OnMasterClientSwitched(Player player)
+        {
+
+            var gmm = GetComponent<GamemodeManager>();
+            switch (PhotonNetwork.CurrentRoom.CustomProperties[MODE_PROP_KEY])
+            {
+                case "":
+                    if (gmm)
+                        gmm.SetGamemode();
+                    break;
+                case "None":
+                    if (gmm)
+                        gmm.SetGamemode();
+                    break;
+                case "Arena":
+                    if (gmm)
+                        gmm.SetGamemode();
+                    break;
+                case "Scout":
+                    PhotonNetwork.LeaveRoom(); break;
+                case "Gather/Invasion":
+                    PhotonNetwork.LeaveRoom();
+                    break;
+                default:
+                    PhotonNetwork.LeaveRoom(); break;
             }
         }
 

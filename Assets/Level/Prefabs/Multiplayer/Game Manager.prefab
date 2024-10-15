@@ -58,6 +58,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7911587065150562557}
   - component: {fileID: 5725249705336398681}
+  - component: {fileID: 5988527683768869265}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -95,3 +96,20 @@ MonoBehaviour:
   playerPrefab: {fileID: 4235139737230343873, guid: 9096d284a97bc9040847637da6ed83df, type: 3}
   daggerPrefab: {fileID: 7143965114107474830, guid: a426f7f14d6402e42975f5a5c35878ff, type: 3}
   PlayerUiPrefab: {fileID: 877606584389811673, guid: 3290d709c02e8804987f3e8b7ad1fe5d, type: 3}
+  OnPlayerJoinRoom:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &5988527683768869265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3979350071861260571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17d163a195348ae449a28a437653f5eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultGameMode: {fileID: 0}
+  scoutMode: {fileID: 0}
