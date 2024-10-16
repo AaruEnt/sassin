@@ -6,6 +6,7 @@ using System;
 using NaughtyAttributes;
 using UnityEngine.Serialization;
 using System.Linq;
+using Omnifinity.Omnideck;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -46,6 +47,13 @@ namespace Autohand {
 
         [AutoToggleHeader("Movement")]
         public bool useMovement = true;
+        public bool useOmniMovement = false;
+        [SerializeField]
+        [ShowIf("useOmniMovement")]
+        private OmnideckInterface m_omnideckInterface;
+        [SerializeField]
+        [ShowIf("useOmniMovement")]
+        private Transform omniForwardRef;
         [EnableIf("useMovement"), FormerlySerializedAs("moveSpeed")]
         [Tooltip("Movement speed when isGrounded")]
         public float maxMoveSpeed = 1.5f;
@@ -363,10 +371,35 @@ namespace Autohand {
 
         /// <summary>Sets move direction for this fixedupdate</summary>
         public virtual void Move(Vector2 axis, bool useDeadzone = true, bool useRelativeDirection = false) {
+            if (useOmniMovement)
+            {
+                axis = OmniReadInput();
+                //UnityEngine.Debug.Log(axis);
+            }
             moveDirection.x = (!useDeadzone || Mathf.Abs(axis.x) > movementDeadzone) ? axis.x : 0;
             moveDirection.z = (!useDeadzone || Mathf.Abs(axis.y) > movementDeadzone) ? axis.y : 0;
             if(useRelativeDirection)
                 moveDirection = transform.rotation * moveDirection;
+            UnityEngine.Debug.LogFormat("MoveDir: {0}", moveDirection);
+        }
+
+        private Vector2 OmniReadInput()
+        {
+            if (m_omnideckInterface == null)
+                return Vector2.zero;
+
+            Vector3 movementVector = m_omnideckInterface.GetCurrentOmnideckCharacterMovementVector();
+            //movementVector = AlterDirection(movementVector);
+            //movementVector = new Vector3(movementVector.x, movementVector.y, -movementVector.z);
+            movementVector = OmniDirOffset(movementVector);
+
+            return new Vector2(movementVector.x, movementVector.z);
+        }
+
+        private Vector3 OmniDirOffset(Vector3 dir)
+        {
+            var offset = omniForwardRef.rotation * Quaternion.Inverse(forwardFollow.rotation);
+            return -((omniForwardRef.rotation * offset) * new Vector3(dir.x, dir.y, dir.z));
         }
 
         public virtual void Turn(float turnAxis) {
