@@ -85,10 +85,10 @@ public class QuestBoardPopulation : MonoBehaviour
         qs.startOffline = quest.offlineOnly;
         qs.createNewRoom = quest.newRoomOnly;
         string mode = "";
-        if (quest.manualSceneSelection)
-            mode = "None";
-        else if (quest.gameMode == "Gather" || quest.gameMode == "Invasion")
+        if (quest.gameMode == "Gather" || quest.gameMode == "Invasion")
             mode = "Gather/Invasion";
+        else
+            mode = quest.gameMode;
         qs.mode = mode;
 
         Burnable br = g.GetComponentInChildren<Burnable>();
@@ -108,7 +108,6 @@ public class QuestBoardInfo
     [Scene, ShowIf("manualSceneSelection")]
     public string sceneToLoad;
     [AllowNesting]
-    [HideIf("manualSceneSelection")]
     [Tooltip("GameModeOptions: \"Invasion\", \"Arena\", \"Gather\", \"Scout\"")]
     public string gameMode;
     [TextArea(3, 20)]

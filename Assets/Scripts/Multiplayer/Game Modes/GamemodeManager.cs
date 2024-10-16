@@ -8,7 +8,7 @@ public class GamemodeManager : MonoBehaviourPunCallbacks
     private string MODE_PROP_KEY = "mod";
     public SpawnManager defaultGameMode;
     public ScoutMode scoutMode;
-
+    public Gather_Invasion gatherInvasionMode;
 
     // Start is called before the first frame update
     void Awake()
@@ -25,6 +25,8 @@ public class GamemodeManager : MonoBehaviourPunCallbacks
                     defaultGameMode.enabled = true;
                 if (scoutMode)
                     scoutMode.enabled = false;
+                if (gatherInvasionMode)
+                    gatherInvasionMode.enabled = false;
                 break;
 
             case "None":
@@ -32,6 +34,8 @@ public class GamemodeManager : MonoBehaviourPunCallbacks
                     defaultGameMode.enabled = true;
                 if (scoutMode)
                     scoutMode.enabled = false;
+                if (gatherInvasionMode)
+                    gatherInvasionMode.enabled = false;
                 break;
 
             case "Arena":
@@ -39,6 +43,8 @@ public class GamemodeManager : MonoBehaviourPunCallbacks
                     defaultGameMode.enabled = true;
                 if (scoutMode)
                     scoutMode.enabled = false;
+                if (gatherInvasionMode)
+                    gatherInvasionMode.enabled = false;
                 break;
 
             case "Scout":
@@ -46,6 +52,8 @@ public class GamemodeManager : MonoBehaviourPunCallbacks
                     defaultGameMode.enabled = false;
                 if (scoutMode)
                     scoutMode.enabled = true;
+                if (gatherInvasionMode)
+                    gatherInvasionMode.enabled = false;
                 break;
 
             case "Gather/Invasion":
@@ -53,6 +61,8 @@ public class GamemodeManager : MonoBehaviourPunCallbacks
                     defaultGameMode.enabled = false;
                 if (scoutMode)
                     scoutMode.enabled = false;
+                if (gatherInvasionMode)
+                    gatherInvasionMode.enabled = true;
                 break;
 
             default:
@@ -60,6 +70,8 @@ public class GamemodeManager : MonoBehaviourPunCallbacks
                     defaultGameMode.enabled = true;
                 if (scoutMode)
                     scoutMode.enabled = false;
+                if (gatherInvasionMode)
+                    gatherInvasionMode.enabled = false;
                 break;
         }
     }

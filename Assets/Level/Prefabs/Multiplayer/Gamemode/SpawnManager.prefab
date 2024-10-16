@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6710242526702551338
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6710242526702551337}
+  - component: {fileID: 6710242526702551336}
+  m_Layer: 0
+  m_Name: SpawnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6710242526702551337
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6710242526702551338}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6710242526702551336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6710242526702551338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 281288b2c8a2f8b4b9f7747476a3527c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allowedSpawnables:
+  - {fileID: 7267975116963132945, guid: 05eed03a7b0fe2645b23b63564c4d1d1, type: 3}
+  - {fileID: 3559555476589989031, guid: 8bb02ac8c95000740bb6f3faddaf61e1, type: 3}
+  - {fileID: 208462923483074336, guid: 3035c293606c09e499b56aa7c131312b, type: 3}
+  - {fileID: 3342264787018716817, guid: 9f39e77b4c6510740bc96c6f9635f6b7, type: 3}
+  - {fileID: 8553405504319549680, guid: bf6a7a0c8f52d424fb16032b0b1ad062, type: 3}
+  - {fileID: 2509690712957397789, guid: 4661435a2ac68974d98cdd620388c1ad, type: 3}
+  spawnables: []
+  maxResourceTypesAllowed: 3
+  goardPrefab: {fileID: 2802919972838552756, guid: 7d690208a122fa14591ed155d0ed129a, type: 3}
+  goardLordPrefab: {fileID: 349895175853929983, guid: 95b83f1c41751644d9d8bcee532d6240, type: 3}
+  spawnLocations:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  sd: {fileID: 0}
+  goardSpawnOdds: 15
+  spawnTimer: 10
+  maxCrystals: 15
+  minCrystals: 1
