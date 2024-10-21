@@ -14,7 +14,10 @@ public class ResourceTracker : MonoBehaviourPun
     public int food = 0;
     public int leather = 0;
 
+    public int skulls = 0;
+
     public SpawnManager? sm;
+    public Gather_Invasion? g_i;
 
 
     // Start is called before the first frame update
@@ -34,5 +37,24 @@ public class ResourceTracker : MonoBehaviourPun
             food = sm.localResourcesGathered.food;
             leather = sm.localResourcesGathered.leather;
         }
+        if (g_i)
+        {
+            if (g_i.usingSandCrystal)
+                sandCrystal = g_i.points;
+            else
+                oceanCrystal = g_i.points;
+            skulls = g_i.skulls;
+        }
+    }
+
+    public void EarlyLeaverPenalty()
+    {
+        sandCrystal /= 2;
+        oceanCrystal /= 2;
+        wood /= 2;
+        stone /= 2;
+        food /= 2;
+        leather /= 2;
+        skulls /= 2;
     }
 }
