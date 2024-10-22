@@ -17,6 +17,8 @@ public class Gather_Invasion : MonoBehaviourPunCallbacks
     public Transform invasionSpawnPoint;
     public List<Transform> consecutiveCrystalSpawns = new List<Transform>();
     public Boat boat;
+    public AudioSource audioS;
+    public AudioClip clip;
     private Dictionary<GameObject, Transform> crystalRefs = new Dictionary<GameObject, Transform>();
 
     [Header("Prefabs")]
@@ -39,6 +41,7 @@ public class Gather_Invasion : MonoBehaviourPunCallbacks
     int i = 0;
     internal int points = 0;
     internal int skulls = 0;
+    private bool clipPlayed = false;
 
     // Start is called before the first frame update
     void Start()
@@ -76,6 +79,10 @@ public class Gather_Invasion : MonoBehaviourPunCallbacks
             mv.useMovement = false;
             player.transform.position = invasionSpawnPoint.position;
             mv.useMovement = tmp;
+            audioS.Stop();
+            audioS.clip = clip;
+            audioS.Play();
+            clipPlayed = true;
         }
     }
 
@@ -137,6 +144,13 @@ public class Gather_Invasion : MonoBehaviourPunCallbacks
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         crystalsAheadAllowed = PhotonNetwork.CurrentRoom.PlayerCount + 3;
+        if (!clipPlayed && PhotonNetwork.CurrentRoom.PlayerCount > 1)
+        {
+            clipPlayed = true;
+            audioS.Stop();
+            audioS.clip = clip;
+            audioS.Play();
+        }
     }
 
     public override void OnPlayerLeftRoom(Player newPlayer)
