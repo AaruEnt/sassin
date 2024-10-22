@@ -161,7 +161,7 @@ public class Gather_Invasion : MonoBehaviourPunCallbacks
 
     internal bool SkullProbability(bool lowerProb = false)
     {
-        float prob = 1f;
+        float prob = 100f;
         switch (PhotonNetwork.CurrentRoom.PlayerCount)
         {
             case 1: prob = 0f; break;
@@ -175,6 +175,7 @@ public class Gather_Invasion : MonoBehaviourPunCallbacks
         prob -= skulls;
         if (prob <= 5f)
             prob = 5f;
+        UnityEngine.Debug.LogFormat("About to try for skull. Prob: {0}, lowered prob: {1}", prob, lowerProb);
         if (Randomizer.Prob(prob))
         {
             skulls++;
