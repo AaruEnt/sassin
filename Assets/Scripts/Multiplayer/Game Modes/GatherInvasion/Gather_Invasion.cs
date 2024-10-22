@@ -165,8 +165,8 @@ public class Gather_Invasion : MonoBehaviourPunCallbacks
         switch (PhotonNetwork.CurrentRoom.PlayerCount)
         {
             case 1: prob = 0f; break;
-            case 2: prob = 1f; break;
-            case 3: prob = 0.5f; break;
+            case 2: prob = 100f; break;
+            case 3: prob = 50f; break;
         }
         if (lowerProb)
         {
