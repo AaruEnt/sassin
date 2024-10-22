@@ -50,6 +50,9 @@ namespace Autohand {
         public bool useOmniMovement = false;
         [SerializeField]
         [ShowIf("useOmniMovement")]
+        private bool invertDir = false;
+        [SerializeField]
+        [ShowIf("useOmniMovement")]
         private OmnideckInterface m_omnideckInterface;
         [SerializeField]
         [ShowIf("useOmniMovement")]
@@ -373,14 +376,14 @@ namespace Autohand {
         public virtual void Move(Vector2 axis, bool useDeadzone = true, bool useRelativeDirection = false) {
             if (useOmniMovement)
             {
-                axis = OmniReadInput();
+                axis += OmniReadInput();
                 //UnityEngine.Debug.Log(axis);
             }
             moveDirection.x = (!useDeadzone || Mathf.Abs(axis.x) > movementDeadzone) ? axis.x : 0;
             moveDirection.z = (!useDeadzone || Mathf.Abs(axis.y) > movementDeadzone) ? axis.y : 0;
             if(useRelativeDirection)
                 moveDirection = transform.rotation * moveDirection;
-            UnityEngine.Debug.LogFormat("MoveDir: {0}", moveDirection);
+            //UnityEngine.Debug.LogFormat("MoveDir: {0}", moveDirection);
         }
 
         private Vector2 OmniReadInput()
@@ -399,7 +402,7 @@ namespace Autohand {
         private Vector3 OmniDirOffset(Vector3 dir)
         {
             var offset = omniForwardRef.rotation * Quaternion.Inverse(forwardFollow.rotation);
-            return -((omniForwardRef.rotation * offset) * new Vector3(dir.x, dir.y, dir.z));
+            return invertDir ? -((omniForwardRef.rotation * offset) * new Vector3(dir.x, dir.y, dir.z)) : ((omniForwardRef.rotation * offset) * new Vector3(dir.x, dir.y, dir.z));
         }
 
         public virtual void Turn(float turnAxis) {
