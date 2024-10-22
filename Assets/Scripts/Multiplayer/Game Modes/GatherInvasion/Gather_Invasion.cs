@@ -120,8 +120,9 @@ public class Gather_Invasion : MonoBehaviourPunCallbacks
 
     public void CrystalGrabbed(Hand h, Grabbable g)
     {
+        UnityEngine.Debug.LogFormat("Crystal Grabbed at pos: {0}. Ref count: {1}.", crystalRefs[g.transform.parent.gameObject], crystalRefs.Count);
         points++;
-        crystalRefs.Remove(g.gameObject);
+        crystalRefs.Remove(g.transform.parent.gameObject);
         if (crystalRefs.Count < crystalsAheadAllowed)
             SpawnCrystal();
         g.OnGrabEvent -= CrystalGrabbed;
