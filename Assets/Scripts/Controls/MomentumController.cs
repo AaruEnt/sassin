@@ -86,6 +86,9 @@ namespace Autohand {
             startSpeed = player.maxMoveSpeed;
             startMomentum = player.moveAcceleration;
             maxSpeedScale = maxSpeedBonus;
+
+            if (player.useOmniMovement)
+                LowerMagnitudeThreshhold();
         }
 
         // Update is called once per frame
