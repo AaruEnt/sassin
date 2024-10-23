@@ -9,6 +9,9 @@ public class SaveGame : MonoBehaviour
 {
     private static SaveInfo _saveInfo;
     public static SaveInfo GetSaveInfo() { return _saveInfo; }
+
+    internal AvailableResources lastGameData = new AvailableResources();
+
     private string _saveData;
     private SaveInfo _lastLoadedSave = new SaveInfo();
     // Precursor save system, will eventually be ideally moved to a server side save
@@ -36,13 +39,10 @@ public class SaveGame : MonoBehaviour
             _saveInfo = _lastLoadedSave;
         } else
         {
-            _saveInfo.resources.sandCrystal = r.sandCrystal + _lastLoadedSave.resources.sandCrystal;
-            _saveInfo.resources.oceanCrystal = r.oceanCrystal + _lastLoadedSave.resources.oceanCrystal;
-            _saveInfo.resources.stone = r.stone + _lastLoadedSave.resources.stone;
-            _saveInfo.resources.wood = r.wood + _lastLoadedSave.resources.wood;
-            _saveInfo.resources.food = r.food + _lastLoadedSave.resources.food;
-            _saveInfo.resources.leather = r.leather + _lastLoadedSave.resources.leather;
-            _saveInfo.resources.skulls = r.skulls + _lastLoadedSave.resources.skulls;
+            lastGameData.Clear();
+            lastGameData.CopyOverResources(r);
+            _saveInfo.resources.CopyOverResources(r);
+            _saveInfo.resources.CopyOverResources(_lastLoadedSave.resources);
         }
 
         _saveData = JsonUtility.ToJson(_saveInfo);
@@ -115,4 +115,50 @@ public class AvailableResources
     public int food = 0;
     public int leather = 0;
     public int skulls = 0;
+
+    public void CopyOverResources(ResourceTracker rt)
+    {
+        sandCrystal += rt.sandCrystal;
+        oceanCrystal += rt.oceanCrystal;
+        wood += rt.wood;
+        stone += rt.stone;
+        food += rt.food;
+        leather += rt.leather;
+        skulls += rt.skulls;
+    }
+
+    public void CopyOverResources(AvailableResources rt)
+    {
+        sandCrystal += rt.sandCrystal;
+        oceanCrystal += rt.oceanCrystal;
+        wood += rt.wood;
+        stone += rt.stone;
+        food += rt.food;
+        leather += rt.leather;
+        skulls += rt.skulls;
+    }
+
+    public void Clear()
+    {
+        sandCrystal = 0;
+        oceanCrystal = 0;
+        wood = 0;
+        stone = 0;
+        food = 0;
+        leather = 0;
+        skulls = 0;
+    }
+
+    public int TotalResources()
+    {
+        int res = 0;
+        res += sandCrystal;
+        res += oceanCrystal;
+        res += wood;
+        res += stone;
+        res += food;
+        res += leather;
+        res += skulls;
+        return res;
+    }
 }

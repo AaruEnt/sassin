@@ -13,16 +13,23 @@ public class QuestStarter : MonoBehaviour
     public bool createNewRoom = false;
     public bool startOffline = false;
     internal string mode = "None";
+    [Button]
+    public void ManualStartGame() { StartGame(); }
 
     private void OnTriggerEnter(Collider other)
     {
         if (!ignoreStart && other.gameObject.CompareTag("QuestStart"))
         {
-            launcher.gameMode = mode;
-            launcher.CreateNewRoom(createNewRoom);
-            launcher.UseOfflineMode(launcher.useOfflineMode | startOffline);
-            launcher.Connect(sceneToLoad);
-            this.enabled = false;
+            StartGame();
         }
+    }
+
+    private void StartGame()
+    {
+        launcher.gameMode = mode;
+        launcher.CreateNewRoom(createNewRoom);
+        launcher.UseOfflineMode(launcher.useOfflineMode | startOffline);
+        launcher.Connect(sceneToLoad);
+        this.enabled = false;
     }
 }

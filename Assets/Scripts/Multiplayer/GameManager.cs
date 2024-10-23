@@ -9,6 +9,8 @@ using Photon.Realtime;
 using Valve.VR;
 using UnityEngine.Events;
 
+using NaughtyAttributes;
+
 namespace Com.Aaru.Sassin
 {
     public class GameManager : MonoBehaviourPunCallbacks
@@ -24,6 +26,9 @@ namespace Com.Aaru.Sassin
 
         public static GameManager Instance;
         public UnityEvent OnPlayerJoinRoom;
+
+        [Button]
+        public void ManualLeaveRoom() { LeaveRoom(); }
 
         #endregion
 
