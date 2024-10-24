@@ -14,6 +14,13 @@ public class NetworkPlayerKill : MonoBehaviourPun
         this.photonView.RPC("PlayerStabbed", RpcTarget.All);
     }
 
+    public void CallPlayerStabbed()
+    {
+        bool b = PhotonNetwork.IsMasterClient | !photonView.Owner.IsMasterClient;
+        Gather_Invasion.instance.SkullProbability(b);
+        this.photonView.RPC("PlayerStabbed", RpcTarget.All);
+    }
+
     [PunRPC]
     public void PlayerStabbed()
     {

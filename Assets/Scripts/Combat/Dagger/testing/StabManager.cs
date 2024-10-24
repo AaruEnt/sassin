@@ -32,6 +32,9 @@ namespace JointVR
 
         private DaggerHelper dh;
 
+        public bool isStabbing = false;
+        public GameObject enableWhileStabbing;
+
         
         // Start is called before the first frame update
         void Start()
@@ -65,6 +68,16 @@ namespace JointVR
         {
             if (maintainParent)
                 transform.parent = maintainParent;
+            isStabbing = false;
+            foreach (Stabber stab in stabbers)
+            {
+                if (stab.isStabbing && stab.kinematicStab)
+                    isStabbing = true;
+            }
+            if (enableWhileStabbing)
+            {
+                enableWhileStabbing.SetActive(isStabbing);
+            }
         }
 
         bool AttemptStab(Stabber stabber, Collider hitCollider, Vector3 relativeVelocity)

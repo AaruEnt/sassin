@@ -2047,6 +2047,7 @@ GameObject:
   - component: {fileID: 8704623335058136124}
   - component: {fileID: 5721701946351326851}
   - component: {fileID: -9036483375372105893}
+  - component: {fileID: -187703804808999270}
   m_Layer: 28
   m_Name: Network Player
   m_TagString: Player
@@ -2234,6 +2235,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddc00e553ab9e4b428ce0dcaaf43c51f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-187703804808999270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4235139737230343873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec29f7c9046538f4ab8f6b9d1e3fd58f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  obj: {fileID: 0}
+  tag: CaltropDagger
+  t:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8454055794166877934}
+        m_TargetAssemblyTypeName: CreateObject, Assembly-CSharp
+        m_MethodName: CreateNewObject
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: -9036483375372105893}
+        m_TargetAssemblyTypeName: NetworkPlayerKill, Assembly-CSharp
+        m_MethodName: CallPlayerStabbed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  te:
+    m_PersistentCalls:
+      m_Calls: []
+  requireMasterConnection: 0
 --- !u!1 &4344490591510606292
 GameObject:
   m_ObjectHideFlags: 0
