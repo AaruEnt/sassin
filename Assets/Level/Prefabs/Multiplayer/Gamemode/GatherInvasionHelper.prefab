@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2058715041197741131}
   - component: {fileID: 2058715041197741130}
+  - component: {fileID: 2058715042236227400}
   m_Layer: 0
   m_Name: GatherInvasionHelper
   m_TagString: Untagged
@@ -62,8 +63,32 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   boat: {fileID: 0}
+  audioS: {fileID: 0}
+  clip: {fileID: 8300000, guid: 738f056b8f471394c83d98c4b561eb6c, type: 3}
   sandCrystal: {fileID: 1447845039533835337, guid: 22ee7104a5dd13d40ad74a6fbf314028, type: 3}
   oceanCrystal: {fileID: 8927268113353764461, guid: b3c48c783403d9c4ba589869ecf26461, type: 3}
-  boatSpawnTime: 600
+  boatSpawnTime: 480
   boatWaitTime: 30
   crystalsAheadAllowed: 3
+--- !u!114 &2058715042236227400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2058715041197741128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
