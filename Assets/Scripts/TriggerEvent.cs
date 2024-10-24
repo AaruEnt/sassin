@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
 using UnityEngine.Events;
-using System.Diagnostics;
+using Photon.Pun;
 
 public class TriggerEvent : MonoBehaviour
 {
@@ -12,6 +10,18 @@ public class TriggerEvent : MonoBehaviour
     public string tag;
     public UnityEvent<Collider> t;
     public UnityEvent<Collider> te;
+    public bool requireMasterConnection = false;
+
+    private void Start()
+    {
+        if (requireMasterConnection)
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                Destroy(this); return;
+            }
+        }
+    }
 
     void OnTriggerEnter(Collider col)
     {

@@ -4,11 +4,15 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Text;
+using NaughtyAttributes;
 
 public class SaveGame : MonoBehaviour
 {
     private static SaveInfo _saveInfo;
     public static SaveInfo GetSaveInfo() { return _saveInfo; }
+
+    [Button]
+    public void DisplayLastSave() { UnityEngine.Debug.LogFormat("Save: {0}, role: {1}", GetSaveInfo().ToString(), GetSaveInfo().resources.role); }
 
     internal AvailableResources lastGameData = new AvailableResources();
 
@@ -41,6 +45,7 @@ public class SaveGame : MonoBehaviour
         {
             lastGameData.Clear();
             lastGameData.CopyOverResources(r);
+            lastGameData.role = r.role;
             _saveInfo.resources.CopyOverResources(r);
             _saveInfo.resources.CopyOverResources(_lastLoadedSave.resources);
         }
@@ -103,6 +108,11 @@ public class SaveGame : MonoBehaviour
 public class SaveInfo
 {
     public AvailableResources resources = new AvailableResources();
+
+    public override string ToString()
+    {
+        return JsonUtility.ToJson(this);
+    }
 }
 
 [System.Serializable]
@@ -115,6 +125,8 @@ public class AvailableResources
     public int food = 0;
     public int leather = 0;
     public int skulls = 0;
+
+    internal string role = "";
 
     public void CopyOverResources(ResourceTracker rt)
     {
@@ -147,6 +159,7 @@ public class AvailableResources
         food = 0;
         leather = 0;
         skulls = 0;
+        role = "";
     }
 
     public int TotalResources()

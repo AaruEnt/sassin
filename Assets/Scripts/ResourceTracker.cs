@@ -16,14 +16,37 @@ public class ResourceTracker : MonoBehaviourPun
 
     public int skulls = 0;
 
+    public string role = "";
+
     public SpawnManager? sm;
     public Gather_Invasion? g_i;
 
+    private string MODE_PROP_KEY = "mod";
 
     // Start is called before the first frame update
     void Start()
     {
         DontDestroyOnLoad(this.gameObject);
+        if (string.IsNullOrEmpty(role))
+        {
+            if ((string)PhotonNetwork.CurrentRoom.CustomProperties[MODE_PROP_KEY] == "Gather/Invasion")
+            {
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    role = "Gatherer";
+                }
+                else
+                    role = "Invader";
+            }
+            else if ((string)PhotonNetwork.CurrentRoom.CustomProperties[MODE_PROP_KEY] == "Scout")
+            {
+                role = "Scout";
+            }
+            else if ((string)PhotonNetwork.CurrentRoom.CustomProperties[MODE_PROP_KEY] == "Arena")
+            {
+                role = "Competitor";
+            }
+        }
     }
 
     private void Update()
@@ -56,5 +79,10 @@ public class ResourceTracker : MonoBehaviourPun
         food /= 2;
         leather /= 2;
         skulls /= 2;
+    }
+
+    public void SetRole(string rle)
+    {
+        role = rle;
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using WebSocketSharp;
 
 [RequireComponent(typeof(SaveGame))]
 public class PostMissionReport : MonoBehaviour
@@ -36,6 +37,11 @@ public class PostMissionReport : MonoBehaviour
     private string GenerateReport()
     {
         string sb = "";
+        if (!m_LastMissionResources.role.IsNullOrEmpty())
+        {
+            sb += m_LastMissionResources.role;
+            sb += "\n";
+        }
         if (m_LastMissionResources.oceanCrystal > 0)
         {
             sb += "Oceancrystal:";

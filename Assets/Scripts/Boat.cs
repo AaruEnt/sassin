@@ -19,6 +19,7 @@ public class Boat : MonoBehaviour
     public UnityEvent InvaderOnBoatLeave;
 
     private bool leaving = false;
+    private bool left = false;
 
     // Start is called before the first frame update
     void Start()
@@ -36,14 +37,16 @@ public class Boat : MonoBehaviour
                 if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
                 {
                     // Done
-                    if (leaving == true)
+                    if (leaving == true && !left)
                     {
                         if (PhotonNetwork.IsMasterClient)
                         {
+                            left = true;
                             MasterOnBoatLeave.Invoke();
                         }
                         else
                         {
+                            left = true;
                             InvaderOnBoatLeave.Invoke();
                         }
                     }
