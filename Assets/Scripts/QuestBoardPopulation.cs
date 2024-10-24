@@ -5,6 +5,7 @@ using UnityEngine;
 using NaughtyAttributes;
 using System.Linq;
 using UnityEngine.Events;
+using Autohand;
 
 public class QuestBoardPopulation : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class QuestBoardPopulation : MonoBehaviour
     public List<QuestBoardInfo> quests;
     public List<Transform> targets;
     public PaperBurnEvent OnPaperBurned;
+    public UnityHandGrabEvent OnPaperGrabbed;
 
     private Dictionary<GameObject, int> convertedWeights;
 
@@ -84,6 +86,7 @@ public class QuestBoardPopulation : MonoBehaviour
 
         qs.startOffline = quest.offlineOnly;
         qs.createNewRoom = quest.newRoomOnly;
+        qs.delayTime = quest.delayStartTime;
         string mode = "";
         if (quest.gameMode == "Gather" || quest.gameMode == "Invasion")
             mode = "Gather/Invasion";
@@ -91,8 +94,16 @@ public class QuestBoardPopulation : MonoBehaviour
             mode = quest.gameMode;
         qs.mode = mode;
 
+        Grabbable gl = g.GetComponentInChildren<Grabbable>();
+        gl.onGrab.AddListener(CallGrabEvent);
+
         Burnable br = g.GetComponentInChildren<Burnable>();
         br.BurnStarted += PaperBurnedHandler;
+    }
+
+    public void CallGrabEvent(Autohand.Hand hand, Grabbable g)
+    {
+        OnPaperGrabbed.Invoke(hand, g);
     }
 
     public void PaperBurnedHandler(Paper p)
@@ -122,6 +133,8 @@ public class QuestBoardInfo
     public bool offlineOnly = false;
     [AllowNesting, ShowIf("showOptionalVars"), Tooltip("Optional variable, this quest will always create a room that is open to other players, but will never join another room and will instead make your own room")]
     public bool newRoomOnly = false;
+    [AllowNesting, ShowIf("showOptionalVars"), Tooltip("Optional variable, this quest will always create a room that is open to other players, but will never join another room and will instead make your own room")]
+    public float delayStartTime = 0f;
 
 }
 

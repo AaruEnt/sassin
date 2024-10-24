@@ -12,6 +12,7 @@ public class QuestStarter : MonoBehaviour
     public bool ignoreStart = false;
     public bool createNewRoom = false;
     public bool startOffline = false;
+    public float delayTime = 0f;
     internal string mode = "None";
     [Button]
     public void ManualStartGame() { StartGame(); }
@@ -21,6 +22,7 @@ public class QuestStarter : MonoBehaviour
         if (!ignoreStart && other.gameObject.CompareTag("QuestStart"))
         {
             StartGame();
+            ignoreStart = true;
         }
     }
 
@@ -29,7 +31,19 @@ public class QuestStarter : MonoBehaviour
         launcher.gameMode = mode;
         launcher.CreateNewRoom(createNewRoom);
         launcher.UseOfflineMode(launcher.useOfflineMode | startOffline);
+        if (delayTime > 0f)
+        {
+            StartCoroutine(DelayStart());
+            return;
+        }
         launcher.Connect(sceneToLoad);
+        this.enabled = false;
+    }
+
+    private IEnumerator DelayStart()
+    {
+        yield return new WaitForSeconds(delayTime);
+        launcher.Connect();
         this.enabled = false;
     }
 }

@@ -144,7 +144,7 @@ namespace AaruThrowVR
             float dist = 0f;
             if (best)
                 dist = Vector3.Distance(cam.transform.position, best.transform.position);
-            UnityEngine.Debug.LogFormat("Distance: {0}", dist);
+            //UnityEngine.Debug.LogFormat("Distance: {0}", dist);
             if (dist >= minDist && dist <= maxDist)
                 return best;
             return null;

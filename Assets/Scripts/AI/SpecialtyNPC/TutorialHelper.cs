@@ -19,6 +19,12 @@ public class TutorialHelper : MonoBehaviour
     public GameObject paper;
     public Transform paperParent;
     public MomentumController momentumController;
+    public AudioSource voice;
+    public AudioSource specialVoice;
+    // 0: wakeup 1: walking 2: bar entry 3: page selected
+    public List<AudioClip> voicelines = new List<AudioClip>();
+    // 0: running 1: running sassy 2: page prompt a 3: page prompt b 4: page prompt c 5: bring prompt a 6: bring prompt b 7: bring prompt c 8: whenever 9: burn prompt a 10: burn prompt b
+    public List<AudioClip> specialVoiceLines = new List<AudioClip>();
     [Scene]
     public string tavernScene;
 
@@ -28,6 +34,21 @@ public class TutorialHelper : MonoBehaviour
     private bool funniWalk = false;
 
     private float highestMomentumSeen = 0f;
+    private bool voicePauseState = false;
+    private bool playedVoice1 = false;
+    private bool playedVoice2 = false;
+
+    private bool playedRunningVoice = false;
+    private bool playedRunningVoiceSassy = false;
+
+    private int pagePrompt = 0;
+    private int bringPrompt = 0;
+
+    private bool paperGrabbed = false;
+
+    public float promptTimer = 0f;
+
+    private List<Grabbable> grabbablesLogged = new List<Grabbable>();
 
     [Button]
     public void CallSetDestination() { SetDestination(); }
@@ -35,6 +56,8 @@ public class TutorialHelper : MonoBehaviour
     void Start()
     {
         animator.SetBool("tutorial", true);
+        voice.clip = voicelines[0];
+        voice.Play();
     }
 
     // Update is called once per frame
@@ -57,6 +80,24 @@ public class TutorialHelper : MonoBehaviour
                     }
                 }
             }
+            if (!voice.isPlaying && !specialVoice.isPlaying && !playedVoice1 && !voicePauseState)
+            {
+                playedVoice1 = true;
+                voice.clip = voicelines[1];
+                voice.Play();
+            }
+        }
+        if (voicePauseState && !specialVoice.isPlaying)
+        {
+            voicePauseState = false;
+            voice.time = 0f;
+            StartCoroutine(DelayStartVoice());
+        }
+        if (!voice.isPlaying && !specialVoice.isPlaying && playedVoice1 && !playedVoice2 && finished && !voicePauseState)
+        {
+            playedVoice2 = true;
+            voice.clip = voicelines[2];
+            voice.Play();
         }
         var currM = momentumController.GetMomentum();
         highestMomentumSeen = currM > highestMomentumSeen ? currM : highestMomentumSeen;
@@ -66,16 +107,80 @@ public class TutorialHelper : MonoBehaviour
             funniWalk = false;
             StartCoroutine(DisableFunniWalk());
         }
-        if (highestMomentumSeen >= 850)
+        if (highestMomentumSeen >= 850 && !finished)
         {
             agent.speed = 0.5f;
             animator.SetBool("slowWalk", true);
             funniWalk = true;
+            if (!playedRunningVoiceSassy)
+            {
+                playedRunningVoiceSassy = true;
+                if (voice.isPlaying)
+                {
+                    voice.Pause();
+                    voicePauseState = true;
+                }
+                if (specialVoice.isPlaying)
+                    specialVoice.Stop();
+                specialVoice.clip = specialVoiceLines[1];
+                specialVoice.Play();
+            }
         }
-        else if (highestMomentumSeen >= 450f)
+        else if (highestMomentumSeen >= 450f && !finished)
         {
+            if (!playedRunningVoice)
+            {
+                playedRunningVoice = true;
+                if (voice.isPlaying)
+                {
+                    voice.Pause();
+                    voicePauseState = true;
+                }
+                if (specialVoice.isPlaying)
+                    specialVoice.Stop();
+                specialVoice.clip = specialVoiceLines[0];
+                specialVoice.Play();
+            }
             agent.speed = 3.5f;
         }
+        if (playedVoice2 && !voice.isPlaying)
+        {
+            promptTimer += Time.deltaTime;
+        }
+        if (!paperGrabbed)
+        {
+            if (promptTimer >= (15f - (pagePrompt * 2)) && pagePrompt < 4)
+            {
+                if (voice.isPlaying)
+                    voice.Pause();
+                if (specialVoice.isPlaying)
+                    specialVoice.Stop();
+                specialVoice.clip = specialVoiceLines[pagePrompt + 2];
+                specialVoice.Play();
+                promptTimer = 0f;
+                pagePrompt++;
+            }
+        } else if (paperGrabbed && !paperBurned)
+        {
+            if (promptTimer >= (15f - (pagePrompt + bringPrompt)) && bringPrompt < 4)
+            {
+                if (voice.isPlaying)
+                    voice.Pause();
+                if (specialVoice.isPlaying)
+                    specialVoice.Stop();
+                specialVoice.clip = specialVoiceLines[bringPrompt + 6];
+                specialVoice.Play();
+                promptTimer = 0f;
+                bringPrompt++;
+            }
+        }
+    }
+
+    private IEnumerator DelayStartVoice()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        voice.Play();
     }
 
     public void SetDestination()
@@ -94,9 +199,21 @@ public class TutorialHelper : MonoBehaviour
         if (paperBurned)
         {
             PlayerPrefs.SetInt("BeatTutorial", 1);
+            if (voice.isPlaying)
+                voice.Stop();
+            if (specialVoice.isPlaying)
+                specialVoice.Stop();
+            specialVoice.clip = specialVoiceLines[11];
+            specialVoice.Play();
             StartCoroutine(DelayedLeaveScene());
             return;
         }
+        if (voice.isPlaying)
+            voice.Pause();
+        if (specialVoice.isPlaying)
+            specialVoice.Stop();
+        specialVoice.clip = specialVoiceLines[10];
+        specialVoice.Play();
         paperBurned = true;
         StartCoroutine(CreateNewPaper());
         animator.SetBool("handoff", true);
@@ -114,6 +231,7 @@ public class TutorialHelper : MonoBehaviour
         qs.launcher = launcher;
         qs.sceneToLoad = quest.sceneToLoad;
         qs.ignoreStart = true;
+        qs.delayTime = 4f;
 
         Burnable br = g.GetComponentInChildren<Burnable>();
         br.BurnStarted += CreateNewPaper;
@@ -122,6 +240,7 @@ public class TutorialHelper : MonoBehaviour
         gr.parentOnGrab = true;
         gr.OnGrabEvent += ResetAnimToIdle;
         gr.OnGrabEvent += EnableQuestPaperDelayed;
+        gr.OnGrabEvent += PaperGrabbedHelper;
 
         Paper p = g.GetComponentInChildren<Paper>();
         p.startStabbed = true;
@@ -136,6 +255,17 @@ public class TutorialHelper : MonoBehaviour
     {
         animator.SetBool("handoff", false);
         g.OnGrabEvent -= ResetAnimToIdle;
+    }
+
+    public void PaperGrabbedHelper(Hand h, Grabbable g)
+    {
+        if (grabbablesLogged.Contains(g)) return;
+        grabbablesLogged.Add(g);
+        paperGrabbed = true;
+        if (pagePrompt >= 2)
+            promptTimer = 15f;
+        else
+            promptTimer = 0f;
     }
 
     public void EnableQuestPaperDelayed(Hand h, Grabbable g)
@@ -157,7 +287,7 @@ public class TutorialHelper : MonoBehaviour
 
     private IEnumerator DelayedLeaveScene()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(4);
         var ls = GetComponent<MoveToLoadingScene>();
         ls.LoadLoadingScene(1);
     }
