@@ -28,6 +28,9 @@ namespace AaruThrowVR
         public bool assistEnabled;
         public bool addDelay = false;
 
+        public float minDist = 0f;
+        public float maxDist = 30f;
+
         internal VelocityTracker velocityTracker = new VelocityTracker(30);
 
         private Grabbable _grabbable;
@@ -103,7 +106,7 @@ namespace AaruThrowVR
         {
             velocityTracker.GetEstimatedPeakVelocities(out velocity, out angularVelocity);
             
-            float scaleFactor = 1.0f;
+            float scaleFactor = 2.0f;
             if (scaleReleaseVelocityThreshold > 0)
             {
                 scaleFactor = Mathf.Clamp01(scaleReleaseVelocityCurve.Evaluate(velocity.magnitude / scaleReleaseVelocityThreshold));
@@ -117,7 +120,7 @@ namespace AaruThrowVR
             if (currentTarget)
             {
                 velocity = ApplyAssist(velocity, transform.position, currentTarget.GetTargetPosition());
-                angularVelocity = ApplyAssist(angularVelocity, transform.position, currentTarget.GetTargetPosition());
+                //angularVelocity = ApplyAssist(angularVelocity, transform.position, currentTarget.GetTargetPosition());
             }
             velocity.y = pa.y;
             //UnityEngine.Debug.Log(string.Format("Post assist: {0}", velocity));
@@ -138,7 +141,11 @@ namespace AaruThrowVR
                     best = targets[i];
                 }
             }
-            return best;
+            var dist = Vector3.Distance(cam.transform.position, best.transform.position);
+            UnityEngine.Debug.LogFormat("Distance: {0}", dist);
+            if (dist >= minDist && dist <= maxDist)
+                return best;
+            return null;
         }
 
         private Vector3 ApplyAssist(Vector3 rawVelocity, Vector3 origin, Vector3 targetPosition)
