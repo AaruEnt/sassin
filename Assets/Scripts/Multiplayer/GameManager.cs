@@ -49,7 +49,7 @@ namespace Com.Aaru.Sassin
 
         public void LeaveRoom()
         {
-            SteamVR_Fade.View(Color.black, 0.1f);
+            Camera.main.GetComponent<FadeTest>()?.FadeOut();
             PhotonNetwork.LeaveRoom();
         }
 

@@ -27,6 +27,7 @@ public class QuestStarter : MonoBehaviour
         {
             OnBeforeScan.Invoke(this);
             scanned = true;
+            Camera.main.GetComponent<FadeTest>()?.FadeOut();
             StartGame();
         }
     }
