@@ -41,6 +41,11 @@ namespace Com.Aaru.Sassin
             createNewRoom = mode;
         }
 
+        public void SetMaxPlayers(int maxPlayers)
+        {
+            maxPlayersPerRoom = (byte)maxPlayers;
+        }
+
         public static string sceneConnectTo = "Multiplayer Arena";
         internal string gameMode = "None";
 

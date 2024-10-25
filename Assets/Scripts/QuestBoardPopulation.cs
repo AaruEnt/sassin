@@ -96,6 +96,7 @@ public class QuestBoardPopulation : MonoBehaviour
 
         qs.startOffline = quest.offlineOnly;
         qs.createNewRoom = quest.newRoomOnly;
+        qs.maxPlayers = quest.maxPlayers;
         qs.delayTime = quest.delayStartTime;
         qs.OnBeforeScan.AddListener(CallOnScan);
         string mode = "";
@@ -162,6 +163,8 @@ public class QuestBoardInfo
     public float delayStartTime = 0f;
     [AllowNesting, ShowIf("showOptionalVars"), Tooltip("")]
     public string requiredFlag = "";
+    [AllowNesting, ShowIf("showOptionalVars"), Tooltip("")]
+    public int maxPlayers = 3;
 
 }
 

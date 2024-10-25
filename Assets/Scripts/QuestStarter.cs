@@ -13,6 +13,7 @@ public class QuestStarter : MonoBehaviour
     public bool ignoreStart = false;
     public bool createNewRoom = false;
     public bool startOffline = false;
+    public int maxPlayers = 3;
     public float delayTime = 0f;
     public UnityEvent<QuestStarter> OnBeforeScan;
     internal string mode = "None";
@@ -36,6 +37,7 @@ public class QuestStarter : MonoBehaviour
         launcher.gameMode = mode;
         launcher.CreateNewRoom(createNewRoom);
         launcher.UseOfflineMode(launcher.useOfflineMode | startOffline);
+        launcher.SetMaxPlayers(maxPlayers);
         if (delayTime > 0f)
         {
             StartCoroutine(DelayStart());
