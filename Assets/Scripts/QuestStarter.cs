@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
 using Com.Aaru.Sassin;
+using UnityEngine.Events;
 
 public class QuestStarter : MonoBehaviour
 {
@@ -13,21 +14,25 @@ public class QuestStarter : MonoBehaviour
     public bool createNewRoom = false;
     public bool startOffline = false;
     public float delayTime = 0f;
+    public UnityEvent<QuestStarter> OnBeforeScan;
     internal string mode = "None";
+    private bool scanned = false;
     [Button]
     public void ManualStartGame() { StartGame(); }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!ignoreStart && other.gameObject.CompareTag("QuestStart"))
+        if (!ignoreStart && other.gameObject.CompareTag("QuestStart") && !scanned)
         {
+            OnBeforeScan.Invoke(this);
+            scanned = true;
             StartGame();
-            ignoreStart = true;
         }
     }
 
     private void StartGame()
     {
+        UnityEngine.Debug.LogFormat("Mode: {0}, Scene: {1}", mode, sceneToLoad);
         launcher.gameMode = mode;
         launcher.CreateNewRoom(createNewRoom);
         launcher.UseOfflineMode(launcher.useOfflineMode | startOffline);
@@ -36,14 +41,17 @@ public class QuestStarter : MonoBehaviour
             StartCoroutine(DelayStart());
             return;
         }
-        launcher.Connect(sceneToLoad);
-        this.enabled = false;
+        else
+        {
+            launcher.Connect(sceneToLoad);
+            this.enabled = false;
+        }
     }
 
     private IEnumerator DelayStart()
     {
         yield return new WaitForSeconds(delayTime);
-        launcher.Connect();
+        launcher.Connect(sceneToLoad);
         this.enabled = false;
     }
 }

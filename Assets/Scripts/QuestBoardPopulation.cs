@@ -15,6 +15,8 @@ public class QuestBoardPopulation : MonoBehaviour
     public List<Transform> targets;
     public PaperBurnEvent OnPaperBurned;
     public UnityHandGrabEvent OnPaperGrabbed;
+    public UnityHandGrabEvent OnPaperDropped;
+    public UnityEvent<QuestStarter> OnPaperScanned;
 
     private Dictionary<GameObject, int> convertedWeights;
 
@@ -87,6 +89,7 @@ public class QuestBoardPopulation : MonoBehaviour
         qs.startOffline = quest.offlineOnly;
         qs.createNewRoom = quest.newRoomOnly;
         qs.delayTime = quest.delayStartTime;
+        qs.OnBeforeScan.AddListener(CallOnScan);
         string mode = "";
         if (quest.gameMode == "Gather" || quest.gameMode == "Invasion")
             mode = "Gather/Invasion";
@@ -96,6 +99,7 @@ public class QuestBoardPopulation : MonoBehaviour
 
         Grabbable gl = g.GetComponentInChildren<Grabbable>();
         gl.onGrab.AddListener(CallGrabEvent);
+        gl.onRelease.AddListener(CallDropEvent);
 
         Burnable br = g.GetComponentInChildren<Burnable>();
         br.BurnStarted += PaperBurnedHandler;
@@ -103,7 +107,20 @@ public class QuestBoardPopulation : MonoBehaviour
 
     public void CallGrabEvent(Autohand.Hand hand, Grabbable g)
     {
+        g.onGrab.RemoveListener(CallGrabEvent);
         OnPaperGrabbed.Invoke(hand, g);
+    }
+
+    public void CallDropEvent(Hand hand, Grabbable g)
+    {
+        g.onRelease.RemoveListener(CallDropEvent);
+        OnPaperDropped.Invoke(hand, g);
+    }
+
+    public void CallOnScan(QuestStarter qs)
+    {
+        qs.OnBeforeScan.RemoveListener(CallOnScan);
+        OnPaperScanned.Invoke(qs);
     }
 
     public void PaperBurnedHandler(Paper p)

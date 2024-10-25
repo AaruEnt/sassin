@@ -232,6 +232,7 @@ public class TutorialHelper : MonoBehaviour
         qs.sceneToLoad = quest.sceneToLoad;
         qs.ignoreStart = true;
         qs.delayTime = 4f;
+        qs.OnBeforeScan.AddListener(PaperScanned);
 
         Burnable br = g.GetComponentInChildren<Burnable>();
         br.BurnStarted += CreateNewPaper;
@@ -300,5 +301,16 @@ public class TutorialHelper : MonoBehaviour
             animator.SetBool("slowWalk", false);
             agent.speed = 1.5f;
         }
+    }
+
+    public void PaperScanned(QuestStarter qs)
+    {
+        qs.OnBeforeScan.RemoveListener(PaperScanned);
+        if (specialVoice.isPlaying)
+            specialVoice.Stop();
+        if (voice.isPlaying) 
+            voice.Stop();
+        voice.clip = voicelines[3];
+        voice.Play();
     }
 }
