@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 5146390356156991110}
   - component: {fileID: 5146390356156991108}
   - component: {fileID: 8707166941627937402}
+  - component: {fileID: 279161647292806424}
+  - component: {fileID: 4972931351188032002}
   m_Layer: 30
   m_Name: SmashVase Networked Sm
   m_TagString: Untagged
@@ -140,19 +142,7 @@ MonoBehaviour:
   smashVolume: 2
   OnSmash:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8707166941627937402}
-        m_TargetAssemblyTypeName: NetworkSmash, Assembly-CSharp
-        m_MethodName: CallInvokeEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &5146390356156991110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,7 +184,19 @@ MonoBehaviour:
   showEvents: 1
   onGrab:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 279161647292806424}
+        m_TargetAssemblyTypeName: Photon.Pun.PhotonView, PhotonUnityNetworking
+        m_MethodName: RequestOwnership
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onRelease:
     m_PersistentCalls:
       m_Calls: []
@@ -238,9 +240,9 @@ MonoBehaviour:
   OnBreak:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5146390356156991128}
-        m_TargetAssemblyTypeName: Autohand.Demo.Smash, Assembly-CSharp
-        m_MethodName: DoSmash
+      - m_Target: {fileID: 8707166941627937402}
+        m_TargetAssemblyTypeName: NetworkSmash, Assembly-CSharp
+        m_MethodName: CallInvokeEvent
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -265,6 +267,45 @@ MonoBehaviour:
   s: {fileID: 5146390356156991128}
   spawnOnDeath: {fileID: 0}
   crystalSpawnOdds: 0
+--- !u!114 &279161647292806424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5170153060779617170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 1
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 4972931351188032002}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &4972931351188032002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5170153060779617170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 0
 --- !u!1 &6881042289843981113
 GameObject:
   m_ObjectHideFlags: 0
