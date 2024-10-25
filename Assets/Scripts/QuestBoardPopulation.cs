@@ -6,6 +6,7 @@ using NaughtyAttributes;
 using System.Linq;
 using UnityEngine.Events;
 using Autohand;
+using System.Runtime.Remoting.Messaging;
 
 public class QuestBoardPopulation : MonoBehaviour
 {
@@ -74,6 +75,13 @@ public class QuestBoardPopulation : MonoBehaviour
 
     private IEnumerator CreateNewPaper(QuestBoardInfo quest, GameObject prefab, Transform loc)
     {
+        if (!string.IsNullOrEmpty(quest.requiredFlag))
+        {
+            if (!PlayerPrefs.HasKey(quest.requiredFlag) || PlayerPrefs.GetInt(quest.requiredFlag) < 1)
+            {
+                yield break;
+            }
+        }
         GameObject g = Instantiate(prefab, loc.position, loc.rotation);
         yield return null;
         PaperConstructor pc = g.GetComponentInChildren<PaperConstructor>();
@@ -150,8 +158,10 @@ public class QuestBoardInfo
     public bool offlineOnly = false;
     [AllowNesting, ShowIf("showOptionalVars"), Tooltip("Optional variable, this quest will always create a room that is open to other players, but will never join another room and will instead make your own room")]
     public bool newRoomOnly = false;
-    [AllowNesting, ShowIf("showOptionalVars"), Tooltip("Optional variable, this quest will always create a room that is open to other players, but will never join another room and will instead make your own room")]
+    [AllowNesting, ShowIf("showOptionalVars"), Tooltip("")]
     public float delayStartTime = 0f;
+    [AllowNesting, ShowIf("showOptionalVars"), Tooltip("")]
+    public string requiredFlag = "";
 
 }
 

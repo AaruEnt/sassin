@@ -94,6 +94,11 @@ public class SaveGame : MonoBehaviour
         catch (Exception e) {
             UnityEngine.Debug.Log("Error loading save: File may be corrupt or have been tampered with");
         }
+
+        if (_lastLoadedSave.resources.TotalResources() >= 100 && !PlayerPrefs.HasKey("ArenaUnlock") || PlayerPrefs.GetInt("ArenaUnlock") == 0)
+        {
+            PlayerPrefs.SetInt("ArenaUnlock", 1);
+        } 
     }
 
     public SaveInfo CreateSaveInfo()
