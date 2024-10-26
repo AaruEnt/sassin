@@ -476,7 +476,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         if (respawnBarrier)
             respawnBarrier.SetActive(false);
         health = maxHealth;
-        player.handLeft.GetComponent<SteamVRHandPlayerLink>().enabled = true;
-        player.handRight.GetComponent<SteamVRHandPlayerLink>().enabled = true;
+        player.handLeft.GetComponent<SteamVRHandControllerLink>().enabled = true;
+        player.handRight.GetComponent<SteamVRHandControllerLink>().enabled = true;
     }
 }
