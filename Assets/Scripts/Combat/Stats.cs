@@ -194,8 +194,8 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
             }
             if (helper == 1)
             {
-                player.handLeft.GetComponent<SteamVRHandPlayerLink>().enabled = false;
-                player.handRight.GetComponent<SteamVRHandPlayerLink>().enabled = false;
+                player.handLeft.GetComponent<SteamVRHandControllerLink>().enabled = false;
+                player.handRight.GetComponent<SteamVRHandControllerLink>().enabled = false;
                 player.handRight.ForceReleaseGrab();
                 player.handLeft.ForceReleaseGrab();
             }
