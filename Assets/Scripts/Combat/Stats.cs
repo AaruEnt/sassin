@@ -10,6 +10,7 @@ using NaughtyAttributes;
 using Autohand;
 using Photon.Pun;
 using Photon.Realtime;
+using Autohand.Demo;
 
 public class Stats : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -140,7 +141,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     // When damage is received
-    internal void OnDamageReceived(float damage)
+    internal void OnDamageReceived(float damage, int helper = 0)
     {
         if (iFrames)
             return;
@@ -148,7 +149,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         if (damage > 0)
             health -= damage;
         if (health <= 0)
-            OnKill();
+            OnKill(helper);
         iFrames = true;
         iFrameTimer = 6f;
     }
@@ -170,7 +171,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     // When health reaches 0 or less
-    void OnKill()
+    void OnKill(int helper = 0)
     {
         // Invoke the OnDeath event before anything is destroyed
         OnDeath.Invoke();
@@ -186,17 +187,30 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         else if (moveToCheckpointOnDeath)
         {
-            transform.position = lastCheckpoint;
-            trackedObjects.transform.position = lastCheckpoint;
+            if (helper == 0)
+            {
+                transform.position = lastCheckpoint;
+                trackedObjects.transform.position = lastCheckpoint;
+            }
+            if (helper == 1)
+            {
+                player.handLeft.GetComponent<SteamVRHandPlayerLink>().enabled = false;
+                player.handRight.GetComponent<SteamVRHandPlayerLink>().enabled = false;
+                player.handRight.ForceReleaseGrab();
+                player.handLeft.ForceReleaseGrab();
+            }
             var profile = volume?.profile;
             if (!profile)
-                throw new System.NullReferenceException(nameof(UnityEngine.Rendering.VolumeProfile));
-            ColorAdjustments CA;
-            if (profile.TryGet<ColorAdjustments>(out CA))
+                UnityEngine.Debug.LogWarning("Volume not found on object " + this.gameObject.name);
+            else
             {
-                VolumeParameter<float> sat = new VolumeParameter<float>();
-                sat.value = -100f;
-                CA.saturation.SetValue(sat);
+                ColorAdjustments CA;
+                if (profile.TryGet<ColorAdjustments>(out CA))
+                {
+                    VolumeParameter<float> sat = new VolumeParameter<float>();
+                    sat.value = -100f;
+                    CA.saturation.SetValue(sat);
+                }
             }
             player.useMovement = false;
             timer = 0f;
@@ -204,19 +218,32 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         }
         else if (moveToSpawnOnDeath)
         {
-            transform.position = _startPos;
-            trackedObjects.transform.position = _trackedObjectsStartPos;
+            if (helper == 0)
+            {
+                transform.position = _startPos;
+                trackedObjects.transform.position = _trackedObjectsStartPos;
+            }
+            if (helper == 1)
+            {
+                player.handLeft.GetComponent<SteamVRHandPlayerLink>().enabled = false;
+                player.handRight.GetComponent<SteamVRHandPlayerLink>().enabled = false;
+                player.handRight.ForceReleaseGrab();
+                player.handLeft.ForceReleaseGrab();
+            }
             if ((photonView && photonView.IsMine) || !PhotonNetwork.IsConnected)
             {
                 var profile = volume?.profile;
                 if (!profile)
-                    throw new System.NullReferenceException(nameof(UnityEngine.Rendering.VolumeProfile));
-                ColorAdjustments CA;
-                if (profile.TryGet<ColorAdjustments>(out CA))
+                    UnityEngine.Debug.LogWarning("Volume not found on object " + this.gameObject.name);
+                else
                 {
-                    VolumeParameter<float> sat = new VolumeParameter<float>();
-                    sat.value = -100f;
-                    CA.saturation.SetValue(sat);
+                    ColorAdjustments CA;
+                    if (profile.TryGet<ColorAdjustments>(out CA))
+                    {
+                        VolumeParameter<float> sat = new VolumeParameter<float>();
+                        sat.value = -100f;
+                        CA.saturation.SetValue(sat);
+                    }
                 }
             }
             player.useMovement = false;
@@ -394,6 +421,11 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         OnDamageReceived(health);
     }
 
+    public void DebugKill(int delayTeleport = 0)
+    {
+        OnDamageReceived(health, delayTeleport);
+    }
+
     public IEnumerator Respawn()
     {
         var profile = volume?.profile;
@@ -444,5 +476,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         if (respawnBarrier)
             respawnBarrier.SetActive(false);
         health = maxHealth;
+        player.handLeft.GetComponent<SteamVRHandPlayerLink>().enabled = true;
+        player.handRight.GetComponent<SteamVRHandPlayerLink>().enabled = true;
     }
 }

@@ -26,7 +26,7 @@ public class NetworkPlayerKill : MonoBehaviourPun
     {
         if (photonView.IsMine && Stats.LocalStatsInstance)
         {
-            Stats.LocalStatsInstance.DebugKill();
+            Stats.LocalStatsInstance.DebugKill(1);
         }
         return;
     }
