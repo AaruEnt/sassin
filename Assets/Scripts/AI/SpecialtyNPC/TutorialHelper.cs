@@ -232,7 +232,7 @@ public class TutorialHelper : MonoBehaviour
         qs.sceneToLoad = quest.sceneToLoad;
         qs.ignoreStart = true;
         qs.delayTime = 4f;
-        qs.OnBeforeScan.AddListener(PaperScanned);
+        qs.OnBeforeScan?.AddListener(PaperScanned);
 
         Burnable br = g.GetComponentInChildren<Burnable>();
         br.BurnStarted += CreateNewPaper;
