@@ -126,6 +126,7 @@ public class PrimaryButton : MonoBehaviourPunCallbacks
             return;
         if (jumpCD > 0)
             return;
+        //player.DisableGrounding(1f);
         float blendJumpHeight = jumpHeight + (((maxJumpHeight - jumpHeight) / 14) * ((momentum.counter >= 900 ? 630 : momentum.counter - 270) / 45));
         if (hasJumped == false && jumpTime < coyoteTime) {
             rb.AddForce(new Vector3(0, blendJumpHeight, 0), ForceMode.Impulse);
