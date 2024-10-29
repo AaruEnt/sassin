@@ -22,7 +22,7 @@ public class CosmeticDisplay : MonoBehaviourPun
     // Start is called before the first frame update
     void Start()
     {
-        if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
+        if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom && photonView.IsMine)
         {
             this.photonView.RPC("SetNetworkAppearance", RpcTarget.All, PlayerPrefs.GetString("OutfitItem"), PlayerPrefs.GetString("HeadSlotItem"), PlayerPrefs.GetString("NeckSlotItem"), PlayerPrefs.GetString("MaskSlotItem"));
         }
