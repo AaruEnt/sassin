@@ -23,7 +23,7 @@ public class SaveGame : MonoBehaviour
     void Start()
     {
         LoadGame();
-        StartCoroutine(DelayedGatherSaveInfo());
+        //StartCoroutine(DelayedGatherSaveInfo());
     }
 
     private IEnumerator DelayedGatherSaveInfo()
@@ -101,6 +101,7 @@ public class SaveGame : MonoBehaviour
         }
         if (_lastLoadedSave.resources.skulls >= 50 || _lastLoadedSave.resources.TotalResources() >= 200 && (!PlayerPrefs.HasKey("ScoutMissionMaster") || PlayerPrefs.GetInt("ScoutMissionMaster") == 0))
             PlayerPrefs.SetInt("ScoutMissionMaster", 1);
+        GetSaveData();
     }
 
     public SaveInfo CreateSaveInfo()

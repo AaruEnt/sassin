@@ -16,7 +16,7 @@ public class ResourceDisplay : MonoBehaviour
         var save = SaveGame.GetSaveInfo();
         if (save != null)
         {
-            string sb = string.Format("Resources available:\nWood: {0}\nStone: {1}\nFood: {2}\nLeather: {3}\nSalvaged sandsteel chunks: {4}\nOcean Crystal: {5}", save.resources.wood, save.resources.stone, save.resources.food, save.resources.leather, save.resources.sandCrystal, save.resources.oceanCrystal);
+            string sb = string.Format("Resources available:\nSalvaged sandsteel chunks: {4}\nOcean Crystal: {5}\nWood: {0}\nStone: {1}\nFood: {2}\nLeather: {3}\nSkulls: {6}", save.resources.wood, save.resources.stone, save.resources.food, save.resources.leather, save.resources.sandCrystal, save.resources.oceanCrystal, save.resources.skulls);
             text.text = sb;
         }
     }

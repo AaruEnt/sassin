@@ -23,6 +23,15 @@ public class PostMissionReport : MonoBehaviour
         m_LastMissionResources = m_SaveGame.lastGameData;
         if (m_LastMissionResources != null && m_LastMissionResources.TotalResources() > 0)
             CreateReport();
+        var currSave = SaveGame.GetSaveInfo();
+        if (!PlayerPrefs.HasKey("foodTotalSmall") && currSave.resources.food >= 50)
+            PlayerPrefs.SetInt("foodTotalSmall", 1);
+        if (!PlayerPrefs.HasKey("foodTotalBig") && currSave.resources.food >= 100)
+            PlayerPrefs.SetInt("foodTotalBig", 1);
+        if (!PlayerPrefs.HasKey("skullTotalSmall") && currSave.resources.skulls >= 50)
+            PlayerPrefs.SetInt("skullTotalSmall", 1);
+        if (!PlayerPrefs.HasKey("skullTotalBig") && currSave.resources.skulls >= 100)
+            PlayerPrefs.SetInt("skullTotalBig", 1);
     }
 
     private void CreateReport()
