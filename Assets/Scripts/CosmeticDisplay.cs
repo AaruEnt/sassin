@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Photon.Pun;
+using Photon.Realtime;
 
 public class CosmeticDisplay : MonoBehaviourPunCallbacks
 {
@@ -268,7 +269,7 @@ public class CosmeticDisplay : MonoBehaviourPunCallbacks
         return true;
     }
 
-    private void OnPlayerConnected()
+    public override void OnPlayerEnteredRoom(Player other)
     {
         this.photonView.RPC("SetNetworkAppearance", RpcTarget.All, PlayerPrefs.GetString("OutfitItem"), PlayerPrefs.GetString("HeadSlotItem"), PlayerPrefs.GetString("NeckSlotItem"), PlayerPrefs.GetString("MaskSlotItem"));
     }
