@@ -5,7 +5,7 @@ using UnityEngine;
 using TMPro;
 using Photon.Pun;
 
-public class CosmeticDisplay : MonoBehaviourPun
+public class CosmeticDisplay : MonoBehaviourPunCallbacks
 {
     public List<Cosmetic> headSlot = new List<Cosmetic>();
     public List<Cosmetic> neckSlot = new List<Cosmetic>();
@@ -266,6 +266,11 @@ public class CosmeticDisplay : MonoBehaviourPun
                 return false;
         }
         return true;
+    }
+
+    private void OnPlayerConnected()
+    {
+        this.photonView.RPC("SetNetworkAppearance", RpcTarget.All, PlayerPrefs.GetString("OutfitItem"), PlayerPrefs.GetString("HeadSlotItem"), PlayerPrefs.GetString("NeckSlotItem"), PlayerPrefs.GetString("MaskSlotItem"));
     }
 }
 
