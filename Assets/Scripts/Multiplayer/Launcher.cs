@@ -113,6 +113,8 @@ namespace Com.Aaru.Sassin
             controlPanel.SetActive(false);
             if (!toConnectTo.IsNullOrEmpty())
                 sceneConnectTo = toConnectTo;
+            if (SlurDetection.Instance.SlurDetected(PhotonNetwork.NickName))
+                PhotonNetwork.NickName = Randomizer.GenerateRandomUsername();
             PhotonNetwork.OfflineMode = useOfflineMode;
             if (PhotonNetwork.OfflineMode)
                 return;

@@ -111,4 +111,17 @@ public class Randomizer : MonoBehaviour
     {
         return random.Next(min, max);
     }
+
+    public static string GenerateRandomUsername()
+    {
+        string res = "";
+        string[] adjectives = { "aggressive", "agreeable", "ambitious", "brave", "calm", "delightful", "eager", "faithful", "gentle", "happy", "jolly", "kind", "lively", "nice", "nerdy", "polite", "proud", "silly", "thankful", "victorious", "witty", "wonderful", "zealous" };
+        string[] nouns = { "pronghorn", "wombat", "prairie", "dog", "mule", "snake", "lizard", "porpoise", "giraffe", "salamander", "axolotl", "bear", "panda", "beetle", "skunk", "lemur", "cat", "ocelot", "steer", "parrot", "hippopotamus", "muskrat", "ape", "rat", "hyena", "opossum" };
+        string a = PickRandomObject(adjectives.ToList<string>());
+        res += char.ToUpper(a.First()) + a.Substring(1);
+        string n = PickRandomObject(nouns.ToList<string>());
+        res += char.ToUpper(n.First()) + n.Substring(1);
+        res += RandomString(5, true);
+        return res;
+    }
 }
