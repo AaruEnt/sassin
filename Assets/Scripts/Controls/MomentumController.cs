@@ -54,6 +54,10 @@ namespace Autohand {
         [Range(0, 4)]
         public float sprintSpeedBonus = 1f;
 
+        public bool sprintAsToggle = false;
+
+        private bool sprintState = false;
+
 
         private float startSpeed;
         private float startMomentum;
@@ -88,13 +92,32 @@ namespace Autohand {
             maxSpeedScale = maxSpeedBonus;
 
             if (player.useOmniMovement)
+            {
                 LowerMagnitudeThreshhold();
+                sprintAsToggle = true;
+            }
+        }
+
+        private void OnEnable()
+        {
+            moveClick.onStateDown += ToggleSprintState;
+        }
+
+        private void OnDisable()
+        {
+            moveClick.onStateDown -= ToggleSprintState;
+        }
+
+        public void ToggleSprintState(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
+        {
+            sprintState = !sprintState;
+            UnityEngine.Debug.Log("Sprinting: " + sprintState);
         }
 
         // Update is called once per frame
         void FixedUpdate()
         {
-            if (moveClick.state)
+            if (moveClick.state || (sprintAsToggle && sprintState))
             {
                 if (counter >= 600)
                     maxSpeedScale = maxSpeedBonus + sprintSpeedBonus;

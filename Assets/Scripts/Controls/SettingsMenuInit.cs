@@ -17,6 +17,7 @@ public class SettingsMenuInit : MonoBehaviour
     public Toggle snapSmooth;
     public Toggle forwardFollow;
     public Toggle swapHand;
+    public Toggle omniMove;
 
     public GameObject snapParent;
     public GameObject smoothParent;
@@ -69,6 +70,10 @@ public class SettingsMenuInit : MonoBehaviour
                 if (!isOn)
                     swapHand.isOn = handIsOn;
             }
+        }
+        if (PlayerPrefs.HasKey("UseOmniMovement"))
+        {
+            omniMove.isOn = PlayerPrefs.GetInt("UseOmniMovement") == 1;
         }
     }
 

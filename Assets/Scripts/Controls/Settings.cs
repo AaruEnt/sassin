@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
-using Autohand;
 
 public class Settings : MonoBehaviour
 {
@@ -52,6 +51,10 @@ public class Settings : MonoBehaviour
         if (PlayerPrefs.HasKey("HandFollowUsed"))
         {
             SwapForwardHand(PlayerPrefs.GetInt("HandFollowUsed") == 1);
+        }
+        if (PlayerPrefs.HasKey("UseOmniMovement"))
+        {
+            SetOmniMove(PlayerPrefs.GetInt("UseOmniMovement") == 1);
         }
     }
 
@@ -117,5 +120,11 @@ public class Settings : MonoBehaviour
         if (PlayerPrefs.GetInt("ForwardFollow") == 0)
             player.forwardFollow = swap == true ? offControllerForward : controllerForward;
         PlayerPrefs.SetInt("HandFollowUsed", swap == true ? 1 : 0);
+    }
+
+    public void SetOmniMove(bool move)
+    {
+        player.useOmniMovement = move;
+        PlayerPrefs.SetInt("UseOmniMovement", move == true ? 1 : 0);
     }
 }
