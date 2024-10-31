@@ -113,11 +113,11 @@ namespace Com.Aaru.Sassin
             controlPanel.SetActive(false);
             if (!toConnectTo.IsNullOrEmpty())
                 sceneConnectTo = toConnectTo;
-            if (SlurDetection.Instance.SlurDetected(PhotonNetwork.NickName))
-                PhotonNetwork.NickName = Randomizer.GenerateRandomUsername();
             PhotonNetwork.OfflineMode = useOfflineMode;
             if (PhotonNetwork.OfflineMode)
                 return;
+            if (SlurDetection.Instance.SlurDetected(PhotonNetwork.NickName))
+                PhotonNetwork.NickName = Randomizer.GenerateRandomUsername();
             // we check if we are connected or not, we join if we are , else we initiate the connection to the server.
             else if (PhotonNetwork.IsConnected)
             {
