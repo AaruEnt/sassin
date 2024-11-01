@@ -18,6 +18,7 @@ public class GamemodeManager : MonoBehaviourPunCallbacks
 
     public void SetGamemode()
     {
+        UnityEngine.Debug.Log(PhotonNetwork.CurrentRoom?.CustomProperties[MODE_PROP_KEY]);
         switch (PhotonNetwork.CurrentRoom?.CustomProperties[MODE_PROP_KEY])
         {
             case "":
@@ -67,7 +68,7 @@ public class GamemodeManager : MonoBehaviourPunCallbacks
 
             default:
                 if (defaultGameMode)
-                    defaultGameMode.enabled = true;
+                    defaultGameMode.enabled = false;
                 if (scoutMode)
                     scoutMode.enabled = false;
                 if (gatherInvasionMode)

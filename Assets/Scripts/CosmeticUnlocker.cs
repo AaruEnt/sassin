@@ -124,9 +124,10 @@ public class CosmeticUnlocker : MonoBehaviour
 
     public void UnlockCosmeticWithName(string name)
     {
+        UnityEngine.Debug.Log(name);
         if (string.IsNullOrEmpty(name))
         { return; }
-        PlayerPrefs.SetInt(manualUnlockName, 1);
+        PlayerPrefs.SetInt(name, 1);
     }
 
     // Update is called once per frame
