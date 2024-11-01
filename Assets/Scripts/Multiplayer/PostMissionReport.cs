@@ -32,6 +32,10 @@ public class PostMissionReport : MonoBehaviour
             PlayerPrefs.SetInt("skullTotalSmall", 1);
         if (!PlayerPrefs.HasKey("skullTotalBig") && currSave.resources.skulls >= 100)
             PlayerPrefs.SetInt("skullTotalBig", 1);
+        if (!PlayerPrefs.HasKey("stoneTotalSmall") && currSave.resources.stone >= 50)
+            PlayerPrefs.SetInt("stoneTotalSmall", 1);
+        if (!PlayerPrefs.HasKey("stoneTotalBig") && currSave.resources.stone >= 100)
+            PlayerPrefs.SetInt("stoneTotalBig", 1);
     }
 
     private void CreateReport()

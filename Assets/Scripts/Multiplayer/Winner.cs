@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Photon.Pun;
+using UnityEngine.Events;
 
 public class Winner : MonoBehaviourPun
 {
@@ -11,6 +12,7 @@ public class Winner : MonoBehaviourPun
     public AutoHandPlayer player;
     public Transform endPoint;
     public GameObject endCol;
+    public UnityEvent winnerOnWin;
     public bool cheated = false;
     public int deaths = 0;
     private float t = 0f;
@@ -20,6 +22,7 @@ public class Winner : MonoBehaviourPun
     {
         string winnerName = PhotonNetwork.LocalPlayer.NickName;
         this.photonView.RPC("CallOnWin", RpcTarget.All, winnerName, (int)t, cheated, deaths);
+        winnerOnWin.Invoke();
     }
 
     [PunRPC]
