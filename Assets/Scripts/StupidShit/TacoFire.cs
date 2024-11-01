@@ -13,7 +13,9 @@ public class TacoFire : MonoBehaviour
     private float cd = 0f;
     private int toSummon = 0;
     private float tacoCD = 0f;
-    
+
+    internal int tacosEaten;
+    private bool oneCheckHelper = false;
 
     // Update is called once per frame
     void Update()
@@ -44,6 +46,15 @@ public class TacoFire : MonoBehaviour
             Instantiate(summonTaco, summonPoint.position, Quaternion.identity, null);
             tacoCD = 0.25f;
             toSummon -= 1;
+        }
+
+        if (PlayerPrefs.HasKey("tacoSpam") && PlayerPrefs.GetInt("tacoSpam") == 1)
+            oneCheckHelper = true;
+
+        if (!oneCheckHelper && tacosEaten >= 10 && (!PlayerPrefs.HasKey("tacoSpam") || PlayerPrefs.GetInt("tacoSpam") != 1))
+        {
+            oneCheckHelper = true;
+            PlayerPrefs.SetInt("tacoSpam", 1);
         }
     }
 
@@ -76,5 +87,10 @@ public class TacoFire : MonoBehaviour
     internal void QueueTaco(int toQueue)
     {
         toSummon = toQueue > 0 ? toQueue : 0;
+    }
+
+    public void EatenTaco()
+    {
+        tacosEaten++;
     }
 }

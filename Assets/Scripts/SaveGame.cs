@@ -182,4 +182,23 @@ public class AvailableResources
         res += skulls;
         return res;
     }
+
+    // 0 - all resources
+    // 1 - exclude crystals
+    // 2 - exclude crystals and skulls
+    public int TotalResources(int inclusions)
+    {
+        int res = 0;
+        if (inclusions == 0)
+            res += sandCrystal;
+        if (inclusions == 0)
+            res += oceanCrystal;
+        res += wood;
+        res += stone;
+        res += food;
+        res += leather;
+        if (inclusions <= 1)
+            res += skulls;
+        return res;
+    }
 }

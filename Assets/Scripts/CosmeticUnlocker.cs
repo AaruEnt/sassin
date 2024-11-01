@@ -122,6 +122,13 @@ public class CosmeticUnlocker : MonoBehaviour
         UnityEngine.Debug.Log("valentines" + dt.ToString("yyyy"));
     }
 
+    public void UnlockCosmeticWithName(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+        { return; }
+        PlayerPrefs.SetInt(manualUnlockName, 1);
+    }
+
     // Update is called once per frame
     void Update()
     {
