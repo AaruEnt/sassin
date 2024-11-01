@@ -56,7 +56,7 @@ namespace Com.Aaru.Sassin
         /// <summary>
         /// This client's version number. Users are separated from each other by gameVersion (which allows you to make breaking changes).
         /// </summary>
-        string gameVersion = "1.3a";
+        string gameVersion = "1.31a";
 
         /// <summary>
         /// Keep track of the current process. Since connection is asynchronous and is based on several callbacks from Photon,
