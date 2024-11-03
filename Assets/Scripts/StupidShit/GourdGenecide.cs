@@ -18,6 +18,7 @@ public class GourdGenecide : MonoBehaviour
     private bool evilEffectsActive = false;
     private bool goodEffectsForbidden = false;
     private bool gourdLordKilled = false;
+    private bool weddingKills = false;
 
     void Start()
     {
@@ -101,5 +102,13 @@ public class GourdGenecide : MonoBehaviour
             PlayerPrefs.SetInt("genocideGourds", 1);
         if (killedGourds == 0 && goodEffectsActive)
             PlayerPrefs.SetInt("pacifistGourds", 1);
+    }
+
+    public void WeddingKiller()
+    {
+        if (weddingKills)
+            PlayerPrefs.SetInt("weddingRingKills", 1);
+        else
+            weddingKills = true;
     }
 }

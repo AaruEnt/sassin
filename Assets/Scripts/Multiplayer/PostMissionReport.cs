@@ -36,6 +36,10 @@ public class PostMissionReport : MonoBehaviour
             PlayerPrefs.SetInt("stoneTotalSmall", 1);
         if (!PlayerPrefs.HasKey("stoneTotalBig") && currSave.resources.stone >= 100)
             PlayerPrefs.SetInt("stoneTotalBig", 1);
+        if (!PlayerPrefs.HasKey("sandCrystalTotalSmall") && currSave.resources.sandCrystal >= 50)
+            PlayerPrefs.SetInt("sandCrystalTotalSmall", 1);
+        if (!PlayerPrefs.HasKey("oceanCrystalTotalSmall") && currSave.resources.oceanCrystal >= 50)
+            PlayerPrefs.SetInt("oceanCrystalTotalSmall", 1);
     }
 
     private void CreateReport()
