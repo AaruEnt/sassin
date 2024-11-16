@@ -2,11 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Autohand;
-using Valve.VR.InteractionSystem;
-using UnityEngine.XR;
-using System;
-using Valve.VR;
-using System.Diagnostics;
 
 namespace AaruThrowVR
 {

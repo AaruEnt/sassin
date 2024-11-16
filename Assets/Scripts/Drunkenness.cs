@@ -5,7 +5,11 @@ using NaughtyAttributes;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using Autohand;
+#if !UNITY_ANDROID
 using Valve.VR;
+#else
+using UnityEngine.XR.Interaction.Toolkit;
+#endif
 
 public class Drunkenness : MonoBehaviour
 {
@@ -118,7 +122,10 @@ public class Drunkenness : MonoBehaviour
 
     private void PassOut()
     {
+#if !UNITY_ANDROID
         SteamVR_Fade.View(Color.black, 1f);
+#else
+#endif
         StartCoroutine(RealPassOut());
     }
 
@@ -140,7 +147,11 @@ public class Drunkenness : MonoBehaviour
 
 
         // Fade in
+
+#if !UNITY_ANDROID
         SteamVR_Fade.View(Color.clear, 2f);
+#else
+#endif
         yield return new WaitForSeconds(0.5f);
         player.useMovement = true;
         yield return new WaitForSeconds(1f);

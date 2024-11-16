@@ -1,14 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Valve.VR;
+
 using Autohand;
 using JointVR;
 
 public class ChestTrigger : MonoBehaviour
 {
-    [SerializeField, Tooltip("The trigger button")]
-    private SteamVR_Action_Boolean triggerAction;
 
     [SerializeField, Tooltip("The dagger summon component on the dagger to be summoned")]
     private DaggerSummon ds;

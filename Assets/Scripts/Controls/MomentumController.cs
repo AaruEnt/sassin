@@ -1,13 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
-using Autohand;
-using Autohand.Demo;
 using UnityEngine.UI;
 using NaughtyAttributes;
+using UnityEngine.InputSystem;
+#if !UNITY_ANDROID
 using Valve.VR;
-using UnityEngine.UI;
-using System.Diagnostics;
+#else
+using UnityEngine.XR.Interaction.Toolkit;
+#endif
 
 namespace Autohand {
     public class MomentumController : MonoBehaviour
@@ -40,11 +40,19 @@ namespace Autohand {
         [ShowIf("displayParticleAtSpeed")]
         public float maxParticlesPerSecond = 0.85f;
 
+#if !UNITY_ANDROID
         [SerializeField, Tooltip("Used to check movement axis")]
         private SteamVR_Action_Vector2 moveAction;
 
         [SerializeField, Tooltip("Used to check sprint")]
         private SteamVR_Action_Boolean moveClick;
+#else
+        [SerializeField, Tooltip("Used to check movement axis")]
+        private InputActionProperty moveAction;
+
+        [SerializeField, Tooltip("Used to check sprint")]
+        private InputActionProperty moveClick;
+#endif
 
         internal bool isSprinting = false;
 
@@ -100,23 +108,41 @@ namespace Autohand {
 
         private void OnEnable()
         {
+#if !UNITY_ANDROID
             moveClick.onStateDown += ToggleSprintState;
+#else
+            moveClick.reference.ToInputAction().started += ToggleSprintState;
+#endif
         }
 
         private void OnDisable()
         {
+#if !UNITY_ANDROID
             moveClick.onStateDown -= ToggleSprintState;
+#else
+
+            moveClick.reference.ToInputAction().started -= ToggleSprintState;
+#endif
         }
 
+#if !UNITY_ANDROID
         public void ToggleSprintState(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
         {
             sprintState = !sprintState;
             UnityEngine.Debug.Log("Sprinting: " + sprintState);
         }
-
+#else
+        public void ToggleSprintState(InputAction.CallbackContext context)
+        {
+            sprintState = !sprintState;
+            UnityEngine.Debug.Log("Sprinting: " + sprintState);
+        }
+#endif
         // Update is called once per frame
         void FixedUpdate()
         {
+
+#if !UNITY_ANDROID
             if (moveClick.state || (sprintAsToggle && sprintState))
             {
                 if (counter >= 600)
@@ -128,6 +154,19 @@ namespace Autohand {
                 maxSpeedScale = maxSpeedBonus;
                 isSprinting = false;
             }
+#else
+            if (moveClick.reference.action.IsPressed() || (sprintAsToggle && sprintState))
+            {
+                if (counter >= 600)
+                    maxSpeedScale = maxSpeedBonus + sprintSpeedBonus;
+                isSprinting = true;
+            }
+            else
+            {
+                maxSpeedScale = maxSpeedBonus;
+                isSprinting = false;
+            }
+#endif
             string strBuilder = "";
             strBuilder += rb.velocity.magnitude.ToString() + '\n';
             if ((lastFrameClimbing && !player.IsClimbing()) || lostClimbCheck)
@@ -163,7 +202,12 @@ namespace Autohand {
             }
             if (!player.IsClimbing())
             {
+
+#if !UNITY_ANDROID
                 moveAxis = moveAction.axis;
+#else
+                moveAxis = moveAction.reference.action.ReadValue<Vector2>();
+#endif
                 // one or both axis are registering input
                 if ((Mathf.Abs(moveAxis.x) > deadzone) || (Mathf.Abs(moveAxis.y) > deadzone))
                 {
@@ -175,11 +219,20 @@ namespace Autohand {
                     if (Vector3.Dot(dir, move) > 0 && counter < 900)
                     {
                         counter += 1;
+
+#if !UNITY_ANDROID
                         if (moveClick.state && rb.velocity.magnitude >= player.maxMoveSpeed * magnitudePercentThreshhold)
                         {
                             counter += 4;
                             strBuilder += "Sprinting\n";
                         }
+#else
+                        if ((moveClick.reference.action.IsPressed() || (sprintAsToggle && sprintState)) && rb.velocity.magnitude >= player.maxMoveSpeed * magnitudePercentThreshhold)
+                        {
+                            counter += 4;
+                            strBuilder += "Sprinting\n";
+                        }
+#endif
                     }
                     else // If moving roughly backwards or at max momentum
                     {

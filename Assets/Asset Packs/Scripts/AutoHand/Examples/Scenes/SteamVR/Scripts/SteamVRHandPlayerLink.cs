@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 #if !UNITY_ANDROID
 using Valve.VR;
-using Photon.Pun;
 #endif
 
 namespace Autohand.Demo

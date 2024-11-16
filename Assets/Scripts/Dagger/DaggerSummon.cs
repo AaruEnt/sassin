@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Autohand;
-using Valve.VR;
 using NaughtyAttributes;
 
 public class DaggerSummon : MonoBehaviour
