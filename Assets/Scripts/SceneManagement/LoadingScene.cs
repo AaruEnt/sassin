@@ -5,7 +5,9 @@ using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using NaughtyAttributes;
+#if !UNITY_ANDROID
 using Valve.VR;
+#endif
 
 public class LoadingScene : MonoBehaviour
 {
@@ -50,7 +52,9 @@ public class LoadingScene : MonoBehaviour
             if (operation.progress >= 0.9f && t >= minTime - 1.5f && !faded)
             {
                 faded = true;
+#if !UNITY_ANDROID
                 SteamVR_Fade.View(Color.black, 1f);
+#endif
             }
             if (operation.progress >= 0.9f && t >= minTime)
             {

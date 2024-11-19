@@ -6,9 +6,12 @@ using UnityEngine.SceneManagement;
 
 using Photon.Pun;
 using Photon.Realtime;
+#if !UNITY_ANDROID
 using Valve.VR;
+#else
+using UnityEngine.XR.Interaction.Toolkit;
+#endif
 using UnityEngine.Events;
-
 using NaughtyAttributes;
 
 namespace Com.Aaru.Sassin
@@ -80,12 +83,14 @@ namespace Com.Aaru.Sassin
                     }
                 }
             }
+#if !UNITY_ANDROID
             SteamVR_Fade.Start(Color.black, 0f);
             SteamVR_Fade.Start(Color.clear, 1f);
-            #if UNITY_5_4_OR_NEWER
+#endif
+#if UNITY_5_4_OR_NEWER
             // Unity 5.4 has a new scene management. register a method to call CalledOnLevelWasLoaded.
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
-            #endif
+#endif
         }
 
         void LoadArena()
@@ -101,14 +106,14 @@ namespace Com.Aaru.Sassin
             //PhotonNetwork.LoadLevel(Launcher.sceneConnectTo);
         }
 
-        #if UNITY_5_4_OR_NEWER
+#if UNITY_5_4_OR_NEWER
         void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadingMode)
         {
             this.CalledOnLevelWasLoaded(scene.buildIndex);
         }
-        #endif
+#endif
 
-        #endregion
+#endregion
 
         #region Photon Callbacks
 
@@ -186,14 +191,14 @@ namespace Com.Aaru.Sassin
             }
         }
 
-        #if UNITY_5_4_OR_NEWER
+#if UNITY_5_4_OR_NEWER
         public override void OnDisable()
         {
             // Always call the base to remove callbacks
             base.OnDisable ();
             UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
         }
-        #endif
+#endif
 
         #endregion
     }

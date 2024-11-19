@@ -9,7 +9,6 @@ using UnityEngine.Rendering.Universal;
 using NaughtyAttributes;
 using Autohand;
 using Photon.Pun;
-using Photon.Realtime;
 using Autohand.Demo;
 
 public class Stats : MonoBehaviourPunCallbacks, IPunObservable
@@ -194,8 +193,10 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
             }
             if (helper == 1)
             {
+#if !UNITY_ANDROID
                 player.handLeft.GetComponent<SteamVRHandControllerLink>().enabled = false;
                 player.handRight.GetComponent<SteamVRHandControllerLink>().enabled = false;
+#endif
                 player.handRight.ForceReleaseGrab();
                 player.handLeft.ForceReleaseGrab();
             }
@@ -225,8 +226,10 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
             }
             if (helper == 1)
             {
+#if !UNITY_ANDROID
                 player.handLeft.GetComponent<SteamVRHandPlayerLink>().enabled = false;
                 player.handRight.GetComponent<SteamVRHandPlayerLink>().enabled = false;
+#endif
                 player.handRight.ForceReleaseGrab();
                 player.handLeft.ForceReleaseGrab();
             }
@@ -476,7 +479,9 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         if (respawnBarrier)
             respawnBarrier.SetActive(false);
         health = maxHealth;
+#if !UNITY_ANDROID
         player.handLeft.GetComponent<SteamVRHandControllerLink>().enabled = true;
         player.handRight.GetComponent<SteamVRHandControllerLink>().enabled = true;
+#endif
     }
 }

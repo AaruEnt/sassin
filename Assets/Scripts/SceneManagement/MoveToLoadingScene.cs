@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+#if !UNITY_ANDROID
 using Valve.VR;
+#endif
 
 public class MoveToLoadingScene : MonoBehaviour
 {
@@ -10,7 +12,9 @@ public class MoveToLoadingScene : MonoBehaviour
 
     public void LoadLoadingScene(int nextScene)
     {
+#if !UNITY_ANDROID
         SteamVR_Fade.View(Color.black, 1f);
+#endif
         StartCoroutine(RealLoadScene(nextScene));
     }
 
