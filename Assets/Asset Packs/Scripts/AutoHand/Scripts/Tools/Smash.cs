@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 namespace Autohand.Demo{
+    [HelpURL("https://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/extras/smashing")]
     public class Smash : MonoBehaviour{
         [Header("Smash Options")]
         [Tooltip("Required velocity magnitude from Smasher to smash")]

@@ -3,10 +3,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if !UNITY_ANDROID
 using Valve.VR;
+#endif
 
 namespace Autohand.Demo{
-    public class SteamVRAutoHandFingerBender : MonoBehaviour{
+    public class SteamVRAutoHandFingerBender : MonoBehaviour
+    {
+#if !UNITY_ANDROID
         public SteamVRHandControllerLink controller;
         public SteamVR_Action_Boolean button;
         
@@ -36,6 +40,7 @@ namespace Autohand.Demo{
                 bendOffsets = new float[controller.hand.fingers.Length];
             }
         }
+#endif
     }
 }
 #endif

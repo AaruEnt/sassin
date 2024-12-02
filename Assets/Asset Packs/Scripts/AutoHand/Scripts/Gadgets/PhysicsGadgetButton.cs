@@ -17,26 +17,21 @@ namespace Autohand{
         Vector3 pressedPos;
         float pressedValue;
 
+        Rigidbody body;
+
         new protected void Start(){
             base.Start();
             startPos = transform.localPosition;
+            body = joint.GetComponent<Rigidbody>();
         }
 
 
         protected void FixedUpdate(){
             var value = GetValue();
-            if(!pressed && value+threshold >= 1) {
+            if(!pressed && value+threshold >= 1) 
                 Pressed();
-            }
-            else if(!lockOnPressed && pressed && value-threshold <= 0){
+            else if(!lockOnPressed && pressed && value-threshold <= 0)
                 Unpressed();
-            }
-
-            if (value < 0)
-                transform.localPosition = startPos;
-
-            if (pressed && lockOnPressed && value + threshold < pressedValue)
-                transform.localPosition = pressedPos;
         }
 
 
@@ -45,6 +40,8 @@ namespace Autohand{
             pressedValue = GetValue();
             pressedPos = transform.localPosition;
             OnPressed?.Invoke();
+            if(lockOnPressed)
+                body.isKinematic = true;
         }
 
         public void Unpressed(){
@@ -54,7 +51,8 @@ namespace Autohand{
 
         public void Unlock() {
             lockOnPressed = false;
-            GetComponent<Rigidbody>().WakeUp();
+            body.isKinematic = false;
+            body.WakeUp();
         }
     }
 }

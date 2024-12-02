@@ -7,6 +7,7 @@ namespace Valve.VR.Extras
     [RequireComponent(typeof(SteamVR_TrackedObject))]
     public class SteamVR_TestThrow : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public GameObject prefab;
         public Rigidbody attachPoint;
 
@@ -58,5 +59,6 @@ namespace Valve.VR.Extras
                 rigidbody.maxAngularVelocity = rigidbody.angularVelocity.magnitude;
             }
         }
+#endif
     }
 }

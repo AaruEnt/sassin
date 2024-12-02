@@ -7,7 +7,9 @@
 using UnityEngine;
 using System.Collections;
 using System.Reflection;
+#if !UNITY_ANDROID
 using Valve.VR;
+#endif
 
 #if UNITY_2017_2_OR_NEWER
     using UnityEngine.XR;
@@ -21,6 +23,7 @@ namespace Valve.VR
     [RequireComponent(typeof(Camera))]
     public class SteamVR_Camera : MonoBehaviour
     {
+#if !UNITY_ANDROID
         [SerializeField]
         private Transform _head;
         public Transform head { get { return _head; } }
@@ -290,5 +293,6 @@ namespace Valve.VR
         }
 
         #endregion
+#endif
     }
 }

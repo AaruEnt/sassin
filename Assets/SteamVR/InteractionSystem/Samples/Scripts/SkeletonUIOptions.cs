@@ -8,6 +8,7 @@ namespace Valve.VR.InteractionSystem.Sample
 {
     public class SkeletonUIOptions : MonoBehaviour
     {
+#if !UNITY_ANDROID
 
         public void AnimateHandWithController()
         {
@@ -71,5 +72,6 @@ namespace Valve.VR.InteractionSystem.Sample
                 }
             }
         }
+#endif
     }
 }

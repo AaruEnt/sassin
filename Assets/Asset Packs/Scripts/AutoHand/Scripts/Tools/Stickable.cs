@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Autohand{
+namespace Autohand {
+    [HelpURL("https://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/extras/stickies")]
     public class Stickable : MonoBehaviour{
         [Header("Sticky Settings")]
         public Rigidbody body;
@@ -29,13 +30,6 @@ namespace Autohand{
         public void Stick(Sticky source) {
             stickSource = source;
             OnStick?.Invoke();
-        }
-
-
-        public void Unstick(Sticky source) {
-            stickSource = null;
-            EndStick?.Invoke();
-
         }
 
         public void ForceReleaseStick() {

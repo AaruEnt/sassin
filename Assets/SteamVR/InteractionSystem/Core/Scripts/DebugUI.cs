@@ -12,7 +12,8 @@ namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
 	public class DebugUI : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		private Player player;
 
 		//-------------------------------------------------
@@ -36,8 +37,8 @@ namespace Valve.VR.InteractionSystem
 			player = Player.instance;
 		}
 
-
-#if !HIDE_DEBUG_UI
+#endif
+#if !HIDE_DEBUG_UI && !UNITY_ANDROID
         //-------------------------------------------------
         private void OnGUI()
 		{

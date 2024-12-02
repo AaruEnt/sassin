@@ -13,7 +13,8 @@ namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
 	public class ArrowHand : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		private Hand hand;
 		private Longbow bow;
 
@@ -299,5 +300,6 @@ namespace Valve.VR.InteractionSystem
 		{
 			bow = hand.otherHand.GetComponentInChildren<Longbow>();
 		}
+#endif
 	}
 }

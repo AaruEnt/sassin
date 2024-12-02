@@ -11,7 +11,8 @@ namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
 	public class SpawnAndAttachToHand : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		public Hand hand;
 		public GameObject prefab;
 
@@ -33,5 +34,6 @@ namespace Valve.VR.InteractionSystem
 			GameObject prefabObject = Instantiate( prefab ) as GameObject;
 			handToUse.AttachObject( prefabObject, GrabTypes.Scripted );
 		}
+#endif
 	}
 }

@@ -31,11 +31,13 @@ public class Settings : MonoBehaviour
         {
             mixer.SetFloat(sfxVolumeName, GetConvertedVolume(PlayerPrefs.GetFloat(sfxVolumeName)));
         }
+#if !UNITY_ANDROID
         if (PlayerPrefs.HasKey("Snap"))
         {
             bool s = PlayerPrefs.GetInt("Snap") == 1 ? true : false;
             player.snapTurning = s;
         }
+#endif
         if (PlayerPrefs.HasKey("SnapAngle"))
         {
             player.snapTurnAngle = PlayerPrefs.GetInt("SnapAngle");
@@ -52,10 +54,10 @@ public class Settings : MonoBehaviour
         {
             SwapForwardHand(PlayerPrefs.GetInt("HandFollowUsed") == 1);
         }
-        if (PlayerPrefs.HasKey("UseOmniMovement"))
-        {
-            SetOmniMove(PlayerPrefs.GetInt("UseOmniMovement") == 1);
-        }
+        //if (PlayerPrefs.HasKey("UseOmniMovement"))
+        //{
+         //   SetOmniMove(PlayerPrefs.GetInt("UseOmniMovement") == 1);
+        //}
     }
 
     public void SetMasterVolume(float volume)
@@ -86,12 +88,13 @@ public class Settings : MonoBehaviour
         // range is -80 to 0, but input is 0-1
         return p2;
     }
-
+    #if !UNITY_ANDROID
     public void SetSnapSmooth(bool snap)
     {
         player.snapTurning = snap;
         PlayerPrefs.SetInt("Snap", snap == true ? 1 : 0);
     }
+#endif
 
     public void SetSnapAngle(float angle)
     {
@@ -122,9 +125,10 @@ public class Settings : MonoBehaviour
         PlayerPrefs.SetInt("HandFollowUsed", swap == true ? 1 : 0);
     }
 
-    public void SetOmniMove(bool move)
-    {
-        player.useOmniMovement = move;
-        PlayerPrefs.SetInt("UseOmniMovement", move == true ? 1 : 0);
-    }
+
+    //public void SetOmniMove(bool move)
+    //{
+    //    player.useOmniMovement = move;
+    //    PlayerPrefs.SetInt("UseOmniMovement", move == true ? 1 : 0);
+    //}
 }

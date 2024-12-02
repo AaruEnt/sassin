@@ -1,0 +1,42 @@
+{
+  "name": "com.unity.xr.hands",
+  "displayName": "XR Hands",
+  "version": "1.1.0",
+  "unity": "2020.3",
+  "description": "Surfaces the cross-platform subsystem API for hand-tracking. Implementations of providers will be found in the package for that platform.",
+  "keywords": [
+    "xr",
+    "vr",
+    "virtual",
+    "reality",
+    "hand",
+    "tracking",
+    "hands",
+    "subsystem"
+  ],
+  "dependencies": {
+    "com.unity.inputsystem": "1.4.3",
+    "com.unity.modules.xr": "1.0.0",
+    "com.unity.xr.core-utils": "2.0.0",
+    "com.unity.xr.management": "4.0.1"
+  },
+  "samples": [
+    {
+      "displayName": "HandVisualizer",
+      "description": "Basic sample showing how visualize hands.",
+      "path": "Samples~/HandVisualizer"
+    }
+  ],
+  "_upm": {
+    "changelog": "### Added\n\n- Added `isTracked` to `XRHand`.\n- Added `trackingAcquired` and `trackingLost` to `XRHandSubsystem`.\n- Added `XRHandDevice` and automatic managing of it if the Input System is enabled and hand-tracking is enabled in the target platform's build settings.\n- The `HandVisualizer` sample now opts into using optimized controls in the Input System if you enable the **Use Optimized Controls** option. You must be on at least version 1.5.0 of the Input System package for this to have an effect.\n- Added `handedness` getter property to `XRHandJoint`.\n- Added `updateSuccessFlags` property to `XRHandSubsystem` to allow the most recent `UpdateSuccessFlags` to be polled. This value matches the argument to the `updatedHands` callback.\n\nThe OpenXR package must be installed and enabled for these to work:\n- Added OpenXR support through `HandTracking` and `OpenXRHandProvider` types.\n- Added support for Meta Hand Tracking Aim extension in OpenXR through `MetaHandTrackingAim`.\n\n### Changed\n\n- `MetaAimHand` and `MetaAimFlags` have been moved outside of the `MetaHandTrackingAim` type and moved from the `UnityEngine.XR.Hands.OpenXR` namespace to `UnityEngine.XR.Hands`. The same input bindings will work the same as before.\n- The HandVisualizer sample meshes has been updated.\n- Changed Hand Visualizer component so it skips setting the shared material on the instantiated hand mesh prefabs when the Hand Mesh Material property is not set.\n- Providers must now create joints with a known `Handedness` during `TryUpdateHands` when calling `XRHandProviderUtility.CreateJoint`.\n- Changed Meta Aim Hand input devices that are added to the Input System to continue updating the `devicePosition` and `deviceRotation` controls even when the `MetaAimFlags.Valid` bit flag is not set. Instead it uses whether the hand root is valid. In practice, the `MetaAimFlags.Valid` flag currently does not necessarily indicate whether the pose is valid but instead is based on whether the user is in a natural orientation for distant UI panel selection.\n- Changed HandVisualizer sample by adding an Assembly Definition file (`.asmdef`).\n\n### Fixed\n\n- Fixed issue where OpenXR would incorrectly report joints as having updated when they weren't actually tracked that frame. `XRHandSubsystem`'s `trackingAcquired` and `trackingLost`, as well as `XRHand.isTracked`, will now work as expected.\n- Fixed issue where `<XRHandDevice>/isTracked` and `<XRHandDevice>/trackingState` controls would never clear.\n- Fixed `XRHandDevice` and `MetaAimHand` to also include `InputDeviceCharacteristics.TrackedDevice` in the `XRDeviceDescriptor`.\n- Fixed lifetime of GameObjects in `HandVisualizer` sample.\n- Fixed `HandVisualizer` so it uses the `XROrigin.Origin` property instead of the Transform of the `XROrigin` itself when transforming joints.\n- Reinstated the validation rule that the Meta Touch Interaction Profile is required in the OpenXR Interaction Profiles list.\n- OpenXR hand root poses now match the wrist, not the palm."
+  },
+  "upmCi": {
+    "footprint": "608e5f74a4eee9aa2e993e9696cc7f542ac2bb1a"
+  },
+  "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.xr.hands@1.1/manual/index.html",
+  "repository": {
+    "url": "https://github.cds.internal.unity3d.com/unity/com.unity.xr.hands.git",
+    "type": "git",
+    "revision": "4cabf8b9828ca84256a180af37950cd5c5a0e5dd"
+  }
+}

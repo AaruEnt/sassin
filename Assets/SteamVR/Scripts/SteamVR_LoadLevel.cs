@@ -6,13 +6,16 @@
 
 using UnityEngine;
 using System.Collections;
+#if !UNITY_ANDROID
 using Valve.VR;
+#endif
 using System.IO;
 
 namespace Valve.VR
 {
     public class SteamVR_LoadLevel : MonoBehaviour
     {
+#if !UNITY_ANDROID
         private static SteamVR_LoadLevel _active = null;
         public static bool loading { get { return _active != null; } }
         public static float progress
@@ -498,5 +501,6 @@ namespace Valve.VR
 
             return handle;
         }
+#endif
     }
 }

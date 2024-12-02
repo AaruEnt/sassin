@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 namespace Autohand{
+    [HelpURL("https://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/teleportation"), DefaultExecutionOrder(10000)]
     public class Teleporter : MonoBehaviour{
         [Header("Teleport")]
         [Tooltip("The object to teleport")]
@@ -14,6 +15,7 @@ namespace Autohand{
         [Header("Aim Settings")]
         [Tooltip("The Object to Shoot the Beam From")]
         public Transform aimer;
+        public float aimerSmoothingSpeed = 5f;
         [Tooltip("Layers You Can Teleport On")]
         public LayerMask layer;
         [Tooltip("The Maximum Slope You Can Teleport On")]
@@ -46,22 +48,39 @@ namespace Autohand{
         HandTeleportGuard[] teleportGuards;
         AutoHandPlayer playerBody;
 
+        Vector3 currentTeleportSmoothForward;
+
+        Vector3 currentTeleportForward;
+        Vector3 currentTeleportPosition;
+
+        private void Awake() {
+            line.enabled = false;
+        }
+
         private void Start() {
-            playerBody = FindObjectOfType<AutoHandPlayer>();
+            playerBody = AutoHandExtensions.CanFindObjectOfType<AutoHandPlayer>();
             if (playerBody != null && playerBody.transform.gameObject == teleportObject)
                 teleportObject = null;
 
             lineArr = new Vector3[lineSegments];
-            teleportGuards = FindObjectsOfType<HandTeleportGuard>();
+            teleportGuards = AutoHandExtensions.CanFindObjectsOfType<HandTeleportGuard>();
         }
 
-        void Update(){
+        void LateUpdate(){
+            SmoothTargetValues();
+
             if(aiming)
                 CalculateTeleport();
             else
                 line.positionCount = 0;
 
             DrawIndicator();
+        }
+
+        void SmoothTargetValues() {
+            currentTeleportForward = aimer.forward;
+            currentTeleportPosition = aimer.position;
+            currentTeleportSmoothForward = Vector3.Lerp(currentTeleportSmoothForward, currentTeleportForward, Time.deltaTime * aimerSmoothingSpeed);
         }
 
         void CalculateTeleport() {
@@ -71,8 +90,8 @@ namespace Autohand{
             hitting = false;
             for(i = 0; i < lineSegments; i++) {
                 var time = i/60f;
-                lineArr[i] = aimer.transform.position;
-                lineArr[i] += transform.forward*time*distanceMultiplyer*15;
+                lineArr[i] = currentTeleportPosition;
+                lineArr[i] += currentTeleportSmoothForward*time*distanceMultiplyer*15;
                 lineArr[i].y += curveStrength * (time - Mathf.Pow(9.8f*0.5f*time, 2));
                 lineList.Add(lineArr[i]);
                 if(i != 0) {
@@ -88,6 +107,7 @@ namespace Autohand{
                     }
                 }
             }
+            line.enabled = true;
             line.positionCount = i;
             line.SetPositions(lineArr);
             
@@ -112,6 +132,7 @@ namespace Autohand{
 
         public void CancelTeleport(){
             line.positionCount = 0;
+            line.enabled = false;
             hitting = false;
             aiming = false;
             OnStopTeleport?.Invoke();

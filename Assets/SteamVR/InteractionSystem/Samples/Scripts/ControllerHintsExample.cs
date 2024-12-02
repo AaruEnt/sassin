@@ -6,13 +6,16 @@
 
 using UnityEngine;
 using System.Collections;
+#if !UNITY_ANDROID
 using Valve.VR;
+#endif
 
 namespace Valve.VR.InteractionSystem.Sample
 {
 	//-------------------------------------------------------------------------
 	public class ControllerHintsExample : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		private Coroutine buttonHintCoroutine;
 		private Coroutine textHintCoroutine;
 
@@ -115,5 +118,6 @@ namespace Valve.VR.InteractionSystem.Sample
                 yield return new WaitForSeconds(3.0f);
 			}
 		}
+#endif
 	}
 }

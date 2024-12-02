@@ -1,7 +1,9 @@
+using Autohand;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[HelpURL("https://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/extras/collision-sounds")]
 public class CollisionSound : MonoBehaviour{
     [Tooltip("The layers that cause the sound to play")]
     public LayerMask collisionTriggers = ~0;
@@ -16,7 +18,7 @@ public class CollisionSound : MonoBehaviour{
     public float volumeAmp = 0.8f;
     public float velocityAmp = 0.5f;
     public float soundRepeatDelay = 0.2f;
-    
+
     Rigidbody body;
     bool canPlaySound = true;
     Coroutine playSoundRoutine;
@@ -34,7 +36,7 @@ public class CollisionSound : MonoBehaviour{
     }
 
     void OnCollisionEnter(Collision collision) {
-        if (body == null)
+        if (body == null && !gameObject.CanGetComponent(out body))
             return;
 
         if(canPlaySound && collisionTriggers == (collisionTriggers | (1 << collision.gameObject.layer))) {

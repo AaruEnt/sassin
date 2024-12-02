@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 namespace Autohand{
+    [HelpURL("https://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/extras/stabbing")]
     public class Stabbable : MonoBehaviour{
         public Rigidbody body;
         public Grabbable grabbable;
@@ -23,31 +24,63 @@ namespace Autohand{
         public StabEvent StartStabEvent;
         public StabEvent EndStabEvent;
 
-        int currentStabs;
-        List<Stabber> stabbing;
-        Transform stabParent;
+        public List<Stabber> currentStabbers { get; private set; }
+        public int currentStabs { get; private set; }
 
-        public void Start() {
-            stabbing = new List<Stabber>();
+        Transform prereleaseParent;
 
+        private void OnEnable() {
+            currentStabbers = new List<Stabber>();
+            if(!body && GetComponent<Rigidbody>())
+                body = GetComponent<Rigidbody>();
 
-            StartStabEvent += (stabber, stabbable) => { StartStab?.Invoke(); };
-            EndStabEvent += (stabber, stabbable) => { EndStab?.Invoke(); };
-
-            if(grabbable != null)
-                grabbable.OnReleaseEvent += (hand, grab) => { if (stabbing.Count > 0) body.transform.parent = stabParent; };
+            if(grabbable == null) {
+                body.gameObject.HasGrabbable(out grabbable);
+            }
         }
 
         public virtual void OnStab(Stabber stabber) {
             currentStabs++;
-            stabbing.Add(stabber);
+            currentStabbers.Add(stabber);
+
+            if(parentOnStab && grabbable != null && stabber.grabbable != null) {
+                grabbable.AddJointedBody(stabber.grabbable.body);
+                for(int i = 0; i < stabber.stabbed.Count; i++) {
+                    if(stabber.stabbed[i] != this) {
+                        var stabbable = stabber.stabbed[i];
+                        if(stabbable != this && stabbable.grabbable != null && stabbable.parentOnStab && stabbable.grabbable.parentOnGrab) {
+                            if(grabbable.parentOnGrab)
+                                grabbable.AddJointedBody(stabbable.grabbable.body);
+                            stabbable.grabbable.AddJointedBody(grabbable.body);
+                        }
+                    }
+                }
+            }
+
+
+
+            StartStab?.Invoke();
             StartStabEvent?.Invoke(stabber, this);
-            stabParent = body.transform.parent;
         }
 
         public virtual void OnEndStab(Stabber stabber) {
             currentStabs--;
-            stabbing.Remove(stabber);
+            currentStabbers.Remove(stabber);
+            if(parentOnStab && grabbable && stabber.grabbable) {
+                grabbable.RemoveJointedBody(stabber.grabbable.body);
+
+                for(int i = 0; i < stabber.stabbed.Count; i++) {
+                    if(stabber.stabbed[i] != this) {
+                        var stabbable = stabber.stabbed[i];
+                        if(stabbable != this && stabbable.grabbable != null && stabbable.parentOnStab && stabbable.grabbable.parentOnGrab) {
+                            grabbable.RemoveJointedBody(stabbable.grabbable.body);
+                            stabbable.grabbable.RemoveJointedBody(grabbable.body);
+                        }
+                    }
+                }
+            }
+
+            EndStab?.Invoke();
             EndStabEvent?.Invoke(stabber, this);
         }
 
@@ -56,12 +89,8 @@ namespace Autohand{
         }
 
         public int StabbedCount() {
-            return stabbing.Count;
+            return currentStabbers.Count;
         }
 
-        private void OnDrawGizmosSelected() {
-            if(!body && GetComponent<Rigidbody>())
-                body = GetComponent<Rigidbody>();
-        }
     }
 }

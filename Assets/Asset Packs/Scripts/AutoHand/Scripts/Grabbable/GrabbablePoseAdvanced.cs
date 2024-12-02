@@ -7,7 +7,7 @@ using UnityEditor;
 #endif
 
 namespace Autohand {
-    [HelpURL("https://earnestrobot.notion.site/Custom-Poses-868c1fa0590542a0b5b7937b5feb6b0d")]
+    [HelpURL("https://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/custom-poses#advanced-grabbable-pose")]
     public class GrabbablePoseAdvanced : GrabbablePose{
         [Tooltip("Usually this can be left empty, used to create a different center point if the objects transform isn't ceneterd for the prefered rotation/movement axis")]
         public Transform centerObject;
@@ -59,11 +59,11 @@ namespace Autohand {
             }
         }
 
-        public override HandPoseData GetHandPoseData(Hand hand) {
+        public override ref HandPoseData GetHandPoseData(Hand hand) {
             pregrabPos = hand.transform.position;
             pregrabRot = hand.transform.rotation;
 
-            var preGrabPose = GetNewPoseData(hand);
+            var preGrabPose = new HandPoseData(hand, transform);
             base.GetHandPoseData(hand).SetPose(hand, transform);
 
             getTransform = GetTransform();
@@ -90,7 +90,8 @@ namespace Autohand {
             hand.transform.position = handMatch.position;
             hand.transform.rotation = handMatch.rotation;
 
-            var pose = GetNewPoseData(hand);
+            //var pose = new HandPoseData(hand, transform);
+            poseDataNonAlloc.SavePose(hand, transform);
             preGrabPose.SetPose(hand);
 
 #if UNITY_EDITOR
@@ -98,7 +99,7 @@ namespace Autohand {
                 DestroyImmediate(tempContainer.gameObject);
 #endif
 
-            return pose;
+            return ref poseDataNonAlloc;
         }
 
         public Quaternion GetClosestRotation(Hand hand, Vector3 up, bool addInverse) {
@@ -241,7 +242,7 @@ namespace Autohand {
         }
 
         public HandPoseData GetHandPoseData(Hand hand, int angle, float range) {
-            base.GetHandPoseData(hand).SetPose(hand, transform);
+            base.GetHandPoseData(hand).SetPosition(hand, transform);
 
             var getTransform = GetTransform();
 
@@ -269,7 +270,7 @@ namespace Autohand {
                 DestroyImmediate(tempContainer.gameObject);
 #endif
 
-            return base.GetNewPoseData(hand);
+            return base.GetHandPoseData(hand);
         }
 
         Transform GetTransform() {
@@ -277,9 +278,11 @@ namespace Autohand {
         }
 
 #if UNITY_EDITOR
-        private void OnDrawGizmosSelected() {
+        protected override void OnDrawGizmosSelected() {
             if(Application.isPlaying)
                 return;
+
+            base.OnDrawGizmosSelected();
 
             var usingTransform = GetTransform();
             var radius = 0.1f;
@@ -294,26 +297,34 @@ namespace Autohand {
             Gizmos.DrawLine(usingTransform.position, minRangeVec);
             Gizmos.DrawLine(usingTransform.position, maxRangeVec);
 
-            if (editorHand != null && (testAngle != lastAngle || testRange != lastRange)) {
+            EditorTestValues(editorHand);
+        }
+
+        public void EditorTestValues(Hand editorHand) {
+
+            if(grabbable == null)
+                grabbable = GetComponentInParent<Grabbable>();
+
+            if(editorHand != null && (testAngle != lastAngle || testRange != lastRange) && (lastAngle != 0 || lastRange != 0)) {
                 testAngle = Mathf.Clamp(testAngle, minAngle, maxAngle);
                 testRange = Mathf.Clamp(testRange, minRange, maxRange);
 
-                if (minAngle > maxAngle) {
+                if(minAngle > maxAngle) {
                     var temp = minAngle;
                     minAngle = maxAngle;
                     maxAngle = temp;
                 }
-                if (minRange > maxRange) {
+                if(minRange > maxRange) {
                     var temp = minRange;
                     minRange = maxRange;
                     maxRange = temp;
                 }
-                
-                lastAngle = testAngle;
-                lastRange = testRange;
-                if(CanSetPose(editorHand))
-                    GetHandPoseData(editorHand, testAngle, testRange).SetPose(editorHand, GetTransform());
+
+                GetHandPoseData(editorHand, testAngle, testRange);
             }
+
+            lastAngle = testAngle;
+            lastRange = testRange;
         }
 #endif
     }

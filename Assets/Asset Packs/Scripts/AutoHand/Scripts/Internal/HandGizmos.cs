@@ -14,7 +14,6 @@ namespace Autohand
         private float lastReachDistance;
 
         Hand hand;
-        Vector3[] handRays;
 
         private void OnDrawGizmos() {
             if (hand == null)
@@ -22,16 +21,6 @@ namespace Autohand
 
             if(hand.palmTransform == null)
                 return;
-
-
-            if(handRays == null || handRays.Length == 0)
-                handRays = hand.GetPalmRays();
-
-            foreach(var ray in handRays) {
-                Gizmos.DrawRay(hand.palmTransform.position, hand.palmTransform.rotation * ray * hand.reachDistance);
-                Gizmos.DrawWireSphere(hand.palmTransform.position + hand.palmTransform.rotation * ray * hand.reachDistance, hand.sphereCastRadius);
-            }
-
         }
 
 

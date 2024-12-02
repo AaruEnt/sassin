@@ -39,7 +39,7 @@ namespace Autohand{
 
             if(alwaysRun) {
                 var distance = Vector3.Distance(hand.palmTransform.position, deltaHandPos);
-                if(ignoreMaxHandDistance || (!ignoreMaxHandDistance && distance < hand.maxFollowDistance)) {
+                if(ignoreMaxHandDistance || (!ignoreMaxHandDistance && distance < hand.handFollow.maxFollowDistance)) {
                     if(distance > buffer)
                         TeleportProtection(deltaHandPos, hand.palmTransform.position);
                 }
@@ -53,7 +53,7 @@ namespace Autohand{
 
             if(alwaysRun) {
                 var distance = Vector3.Distance(hand.palmTransform.position, deltaHandFixedPos);
-                if(ignoreMaxHandDistance || (!ignoreMaxHandDistance && distance < hand.maxFollowDistance)) {
+                if(ignoreMaxHandDistance || (!ignoreMaxHandDistance && distance < hand.handFollow.maxFollowDistance)) {
                     if(distance > buffer)
                         TeleportProtection(deltaHandFixedPos, hand.palmTransform.position);
                 }
@@ -75,7 +75,7 @@ namespace Autohand{
                 }
             }
             if(handPos != Vector3.zero)
-                hand.SetHandLocation(handPos, hand.transform.rotation);
+                hand.handFollow.SetHandLocation(handPos, hand.transform.rotation);
         }
     }
 }

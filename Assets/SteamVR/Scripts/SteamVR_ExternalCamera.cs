@@ -12,6 +12,7 @@ namespace Valve.VR
 {
     public class SteamVR_ExternalCamera : MonoBehaviour
     {
+#if !UNITY_ANDROID
         private SteamVR_Action_Pose cameraPose = null;
         private SteamVR_Input_Sources cameraInputSource = SteamVR_Input_Sources.Camera;
 
@@ -429,5 +430,6 @@ namespace Valve.VR
                 SteamVR_Camera.sceneResolutionScale = sceneResolutionScale;
             }
         }
+#endif
     }
 }

@@ -5,8 +5,7 @@ using UnityEngine;
 namespace Autohand {
     public class EditorHand : MonoBehaviour {
         public bool useEditorGUI = true;
-        public GrabbablePose grabbablePose;
-        public HandPoseArea grabbablePoseArea;
+        public HandPoseDataContainer handPoseDataContainer;
 
         Hand _hand = null;
         public Hand hand {

@@ -12,7 +12,8 @@ namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
 	public class SpawnAndAttachAfterControllerIsTracking : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		private Hand hand;
 		public GameObject itemPrefab;
 
@@ -43,5 +44,6 @@ namespace Valve.VR.InteractionSystem
                 }
 			}
 		}
+#endif
 	}
 }

@@ -6,6 +6,7 @@ namespace Valve.VR
 {
     public class SteamVR_TrackingReferenceManager : MonoBehaviour
     {
+#if !UNITY_ANDROID
         private Dictionary<uint, TrackingReferenceObject> trackingReferences = new Dictionary<uint, TrackingReferenceObject>();
 
         private void OnEnable()
@@ -59,5 +60,6 @@ namespace Valve.VR
             public SteamVR_RenderModel renderModel;
             public SteamVR_TrackedObject trackedObject;
         }
+#endif
     }
 }

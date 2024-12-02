@@ -6,6 +6,7 @@ namespace Valve.VR.InteractionSystem
 {
     public class HandCollider : MonoBehaviour
     {
+#if !UNITY_ANDROID
         private new Rigidbody rigidbody;
         [HideInInspector]
         public HandPhysics hand;
@@ -279,6 +280,6 @@ namespace Valve.VR.InteractionSystem
                 hand.hand.TriggerHapticPulse(length, 100, intensity);
             }
         }
-
+#endif
     }
 }

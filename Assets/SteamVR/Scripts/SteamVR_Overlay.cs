@@ -6,12 +6,15 @@
 
 using UnityEngine;
 using System.Collections;
+#if !UNITY_ANDROID
 using Valve.VR;
+#endif
 
 namespace Valve.VR
 {
     public class SteamVR_Overlay : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public Texture texture;
 
         [Tooltip("Size of overlay view.")]
@@ -168,5 +171,6 @@ namespace Valve.VR
             results.distance = output.fDistance;
             return true;
         }
+#endif
     }
 }

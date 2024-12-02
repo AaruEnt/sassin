@@ -4,9 +4,9 @@ using UnityEngine.Events;
 namespace Autohand.Demo{
     public delegate void SmashEvent(Smasher smasher, Smash smashable);
 
-    [RequireComponent(typeof(Rigidbody))]
+    [HelpURL("https://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/extras/smashing")]
     public class Smasher : MonoBehaviour{
-        Rigidbody rb;
+        public Rigidbody rb;
         [Header("Options")]
         public LayerMask smashableLayers;
         [Tooltip("How much to multiply the magnitude on smash")]
@@ -24,7 +24,8 @@ namespace Autohand.Demo{
         Vector3 lastPos;
     
         private void Start(){
-            rb = GetComponent<Rigidbody>();
+            if(rb == null)
+                rb = GetComponent<Rigidbody>();
             if(smashableLayers == 0)
                 smashableLayers = LayerMask.GetMask(Hand.grabbableLayerNameDefault);
 

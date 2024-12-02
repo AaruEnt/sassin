@@ -113711,20 +113711,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 0
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 100000000
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -113789,7 +113795,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 0
   lockHandOnGrab: 0
 --- !u!114 &165429841247422761
 MonoBehaviour:
@@ -292169,6 +292174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94010c3364a7d0a43a5e49e48d078a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
@@ -292229,20 +292235,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -292271,7 +292283,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!54 &165429841323850643
 Rigidbody:
@@ -292397,6 +292408,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94010c3364a7d0a43a5e49e48d078a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
@@ -292457,20 +292469,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -292499,7 +292517,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!54 &165429841080633958
 Rigidbody:
@@ -292654,20 +292671,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -292696,7 +292719,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!114 &165429841080633961
 MonoBehaviour:
@@ -292710,6 +292732,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94010c3364a7d0a43a5e49e48d078a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
@@ -292853,6 +292876,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94010c3364a7d0a43a5e49e48d078a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
@@ -292913,20 +292937,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -292955,7 +292985,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!54 &165429841347548429
 Rigidbody:
@@ -293081,6 +293110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94010c3364a7d0a43a5e49e48d078a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
@@ -293141,20 +293171,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -293183,7 +293219,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!54 &165429840371008492
 Rigidbody:
@@ -293309,6 +293344,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94010c3364a7d0a43a5e49e48d078a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
@@ -293369,20 +293405,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -293411,7 +293453,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!54 &165429839938811304
 Rigidbody:
@@ -293537,6 +293578,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94010c3364a7d0a43a5e49e48d078a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
@@ -293597,20 +293639,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -293639,7 +293687,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!54 &165429840138907206
 Rigidbody:
@@ -293765,6 +293812,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94010c3364a7d0a43a5e49e48d078a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
@@ -293825,20 +293873,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -293867,7 +293921,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!54 &165429840929374544
 Rigidbody:
@@ -293993,6 +294046,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94010c3364a7d0a43a5e49e48d078a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
@@ -294053,20 +294107,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -294095,7 +294155,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!54 &165429841210833065
 Rigidbody:
@@ -294221,6 +294280,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94010c3364a7d0a43a5e49e48d078a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
@@ -294281,20 +294341,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -294323,7 +294389,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!54 &165429840452589540
 Rigidbody:
@@ -294449,6 +294514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94010c3364a7d0a43a5e49e48d078a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
@@ -294509,20 +294575,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -294551,7 +294623,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!54 &165429839561795339
 Rigidbody:
@@ -294677,6 +294748,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94010c3364a7d0a43a5e49e48d078a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
@@ -294737,20 +294809,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -294779,7 +294857,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!54 &165429840501346220
 Rigidbody:
@@ -294905,6 +294982,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94010c3364a7d0a43a5e49e48d078a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
@@ -294965,20 +295043,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -295007,7 +295091,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!54 &165429839614326880
 Rigidbody:
@@ -295133,6 +295216,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94010c3364a7d0a43a5e49e48d078a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
@@ -295193,20 +295277,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -295235,7 +295325,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!54 &165429840989520203
 Rigidbody:
@@ -295361,6 +295450,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94010c3364a7d0a43a5e49e48d078a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   breakVelocity: 1
   collisionLayers:
     serializedVersion: 2
@@ -295421,20 +295511,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -295463,7 +295559,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!1001 &165429840415371590
 PrefabInstance:
@@ -298259,6 +298354,10 @@ PrefabInstance:
     - target: {fileID: 656884048722381611, guid: 124cef7462f88e14197ce10c1dfad364, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 91.781
+      objectReference: {fileID: 0}
+    - target: {fileID: 793692544021767737, guid: 124cef7462f88e14197ce10c1dfad364, type: 3}
+      propertyPath: m_RootOrder
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1183506268960292961, guid: 124cef7462f88e14197ce10c1dfad364, type: 3}
       propertyPath: body
@@ -343574,20 +343673,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -343616,7 +343721,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!114 &165429840517735137
 MonoBehaviour:
@@ -343630,6 +343734,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fad2f22fe18c2bf46b033941144afa2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   smashableLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -361469,20 +361574,26 @@ MonoBehaviour:
   isGrabbable: 1
   CopySettings: {fileID: 0}
   grabType: 0
+  grabPoseType: 0
   handType: 0
   singleHandOnly: 0
-  allowHeldSwapping: 1
   instantGrab: 0
   useGentleGrab: 0
   maintainGrabOffset: 0
-  ignoreWeight: 0
   parentOnGrab: 1
+  heldNoFriction: 1
+  ignoreWeight: 0
+  allowHeldSwapping: 1
   throwPower: 1
   jointBreakForce: 3500
   showAdvancedSettings: 1
   makeChildrenGrabbable: 1
   grabPriorityWeight: 1
   ignoreReleaseTime: 0.5
+  minHeldDrag: 1.5
+  minHeldAngleDrag: 3
+  minHeldMass: 0.1
+  maxHeldVelocity: 10
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 0, y: 0, z: 0}
   customGrabJoint: {fileID: 0}
@@ -361511,7 +361622,6 @@ MonoBehaviour:
   OnJointBreak:
     m_PersistentCalls:
       m_Calls: []
-  breakHoldWhenGrabActive: 1
   lockHandOnGrab: 0
 --- !u!114 &165429841537713831
 MonoBehaviour:
@@ -361525,6 +361635,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fad2f22fe18c2bf46b033941144afa2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 0}
   smashableLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -365073,6 +365184,10 @@ PrefabInstance:
     - target: {fileID: 418578209260564774, guid: 5b54e3b4cd11c654784f1496c9716a41, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 793692543614034368, guid: 5b54e3b4cd11c654784f1496c9716a41, type: 3}
+      propertyPath: m_RootOrder
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1074811368983328469, guid: 5b54e3b4cd11c654784f1496c9716a41, type: 3}
       propertyPath: m_StaticEditorFlags

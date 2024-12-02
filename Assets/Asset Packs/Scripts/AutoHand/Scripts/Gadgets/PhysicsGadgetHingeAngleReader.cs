@@ -21,12 +21,25 @@ namespace Autohand{
 
         /// <summary>Returns a -1 to 1 value representing the hinges angle from min-max</summary>
         public float GetValue() {
-            value = joint.angle/(joint.limits.max - joint.limits.min)*2;
+            float limitRange = joint.limits.max - joint.limits.min;
+            if(limitRange == 0f) {
+                value = 0f;
+            }
+            else {
+                value = joint.angle / limitRange * 2f;
+            }
+
             value = invertValue ? -value : value;
-            if (Mathf.Abs(value) < playRange)
-                value = 0;
-            return Mathf.Clamp(value, -1, 1);
+
+            if(float.IsNaN(value))
+                value = 0f;
+
+            if(Mathf.Abs(value) < playRange)
+                value = 0f;
+
+            return Mathf.Clamp(value, -1f, 1f);
         }
+
 
         public HingeJoint GetJoint() => joint;
     }

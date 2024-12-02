@@ -7,7 +7,7 @@ namespace Autohand{
     //This script is used to hide rigidbody physics instabilitites by
     //putting the hand where it visually should be on prerender
     //and putting it where it physically should be on post render
-    [DefaultExecutionOrder(-5)]
+    [DefaultExecutionOrder(int.MaxValue)]
     public class HandStabilizer : MonoBehaviour{
         public HandBase hand = null;
 
@@ -17,43 +17,56 @@ namespace Autohand{
         }
 
         void OnEnable(){
-            if(GraphicsSettings.renderPipelineAsset != null){
-                RenderPipelineManager.beginCameraRendering += OnPreRender;
-                RenderPipelineManager.endCameraRendering += OnPostRender;
+            if(GraphicsSettings.defaultRenderPipeline != null){
+                RenderPipelineManager.beginCameraRendering += OnPreRenderEvent;
+                RenderPipelineManager.endCameraRendering += OnPostRenderEvent;
             }
         }
 
         void OnDisable(){
-            if(GraphicsSettings.renderPipelineAsset != null){
-                RenderPipelineManager.beginCameraRendering -= OnPreRender;
-                RenderPipelineManager.endCameraRendering -= OnPostRender;
+            if(GraphicsSettings.defaultRenderPipeline != null){
+                RenderPipelineManager.beginCameraRendering -= OnPreRenderEvent;
+                RenderPipelineManager.endCameraRendering -= OnPostRenderEvent;
             }
         }
 
         private void Update() {
             if(hand == null)
-                enabled = false;
+                Destroy(this);
+        }
+
+        private void OnWillRenderObject() {
+            if(hand != null && hand.gameObject.activeInHierarchy)
+                hand.OnWillRenderObject();
         }
 
         private void OnPreRender() {
-            if (hand.gameObject.activeInHierarchy)
-                hand.OnPreRender();
+            if(hand != null && hand.gameObject.activeInHierarchy)
+                hand.OnWillRenderObject();
         }
 
         private void OnPostRender() {
-            if(hand.gameObject.activeInHierarchy)
+            if(hand != null && hand.gameObject.activeInHierarchy)
                 hand.OnPostRender();
         }
 
 
 
-        private void OnPreRender(ScriptableRenderContext src, Camera cam) {
-            if (hand.gameObject.activeInHierarchy)
-                hand.OnPreRender();
+        private void OnPreRenderEvent(ScriptableRenderContext context, List<Camera> cameras) {
+            if(hand != null && hand.gameObject.activeInHierarchy)
+                hand.OnWillRenderObject();
+        }
+        private void OnPreRenderEvent(ScriptableRenderContext context, Camera cam) {
+            if(hand != null && hand.gameObject.activeInHierarchy)
+                hand.OnWillRenderObject();
+        }
+        private void OnPostRenderEvent(ScriptableRenderContext context, Camera cam) {
+            if(hand != null && hand.gameObject.activeInHierarchy)
+                hand.OnPostRender();
         }
 
-        private void OnPostRender(ScriptableRenderContext src, Camera cam) {
-            if (hand.gameObject.activeInHierarchy)
+        private void OnPostRenderEvent(ScriptableRenderContext context, List<Camera> cameras) {
+            if(hand != null && hand.gameObject.activeInHierarchy)
                 hand.OnPostRender();
         }
         

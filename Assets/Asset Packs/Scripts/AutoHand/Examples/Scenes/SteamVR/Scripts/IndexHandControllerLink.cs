@@ -1,4 +1,4 @@
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR && !UNITY_ANDROID
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

@@ -13,7 +13,8 @@ namespace Valve.VR.InteractionSystem
 	//-------------------------------------------------------------------------
 	[RequireComponent( typeof( Interactable ) )]
 	public class ComplexThrowable : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		public enum AttachMode
 		{
 			FixedJoint,
@@ -188,5 +189,6 @@ namespace Valve.VR.InteractionSystem
 				}
 			}
 		}
+#endif
 	}
 }

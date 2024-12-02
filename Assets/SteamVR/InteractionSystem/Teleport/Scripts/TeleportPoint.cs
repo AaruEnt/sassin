@@ -13,8 +13,13 @@ using UnityEditor;
 namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
-	public class TeleportPoint : TeleportMarkerBase
+	public class TeleportPoint
+#if !UNITY_ANDROID
+		: TeleportMarkerBase
+#endif
 	{
+
+#if !UNITY_ANDROID
 		public enum TeleportPointType
 		{
 			MoveToLocation,
@@ -313,10 +318,10 @@ namespace Valve.VR.InteractionSystem
 
 			ReleaseRelevantComponents();
 		}
+#endif
 	}
 
-
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !UNITY_ANDROID
 	//-------------------------------------------------------------------------
 	[CustomEditor( typeof( TeleportPoint ) )]
 	public class TeleportPointEditor : Editor

@@ -10,6 +10,7 @@ namespace Valve.VR.InteractionSystem
     //-----------------------------------------------------------------------------
     public class SnapTurn : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public float snapAngle = 90.0f;
 
         public bool showTurnAnimation = true;
@@ -179,5 +180,6 @@ namespace Valve.VR.InteractionSystem
             this.transform.Translate(additionalOffset, Space.Self);
             this.transform.rotation = Quaternion.LookRotation(player.hmdTransform.position - this.transform.position, Vector3.up);
         }
+#endif
     }
 }

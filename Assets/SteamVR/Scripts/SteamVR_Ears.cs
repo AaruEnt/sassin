@@ -5,13 +5,16 @@
 //=============================================================================
 
 using UnityEngine;
+#if !UNITY_ANDROID
 using Valve.VR;
+#endif
 
 namespace Valve.VR
 {
     [RequireComponent(typeof(AudioListener))]
     public class SteamVR_Ears : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public SteamVR_Camera vrcam;
 
         bool usingSpeakers;
@@ -50,5 +53,6 @@ namespace Valve.VR
             if (usingSpeakers)
                 SteamVR_Events.NewPosesApplied.Remove(OnNewPosesApplied);
         }
+#endif
     }
 }

@@ -12,13 +12,14 @@ namespace Autohand{
         public Transform followBody;
 
         [Header("Follow Settings")]
-        public float followStrength = 100f;
+        public float followStrength = 50f;
         [Tooltip("The maximum allowed distance from the body for the headCamera to still move")]
-        //public float maxBodyDistance = 0.5f;
+        public float maxBodyDistance = 1f;
 
         internal SphereCollider headCollider;
         Vector3 startHeadPos;
         bool started;
+        float lastUpdateTime;
 
         Transform _moveTo = null;
         Transform moveTo {
@@ -39,29 +40,20 @@ namespace Autohand{
         internal Rigidbody body;
         CollisionTracker collisionTracker = null;
 
-        public void Start() {
-            if(collisionTracker == null) {
-                collisionTracker = gameObject.AddComponent<CollisionTracker>();
-                collisionTracker.disableTriggersTracking = true;
-            }
-            body = GetComponent<Rigidbody>();
-            gameObject.layer = LayerMask.NameToLayer(AutoHandPlayer.HandPlayerLayer);
-            transform.position = headCamera.transform.position;
-            transform.rotation = headCamera.transform.rotation;
-            headCollider = GetComponent<SphereCollider>();
-            startHeadPos = headCamera.transform.position;
-        }
-
 
         internal void Init() {
             if(collisionTracker == null) {
                 collisionTracker = gameObject.AddComponent<CollisionTracker>();
                 collisionTracker.disableTriggersTracking = true;
             }
+            body = GetComponent<Rigidbody>();
+            body.useGravity = false;
             gameObject.layer = LayerMask.NameToLayer(AutoHandPlayer.HandPlayerLayer);
+            
             transform.position = headCamera.transform.position;
             transform.rotation = headCamera.transform.rotation;
             headCollider = GetComponent<SphereCollider>();
+            //headCollider.isTrigger = true;
             startHeadPos = headCamera.transform.position;
         }
 
@@ -76,7 +68,6 @@ namespace Autohand{
             if(!started)
                 return;
             
-            
             MoveTo();
         }
 
@@ -85,26 +76,21 @@ namespace Autohand{
         }
         
         internal virtual void MoveTo() {
-            moveTo.position = headCamera.transform.position;
-            var movePos = moveTo.position;
-            var distance = Vector3.Distance(movePos, transform.position);
-            
-            //Sets velocity linearly based on distance from hand
-            var vel = (movePos - transform.position).normalized * followStrength * distance;
-            body.velocity = vel;
+            Vector3 currentPosition = transform.position;
+            Vector3 currentHeadPosition = headCamera.transform.position;
+            moveTo.position = Vector3.MoveTowards(currentPosition, currentHeadPosition, maxBodyDistance);
+            body.velocity = (moveTo.position - currentPosition) * followStrength;
             lastUpdateTime = Time.realtimeSinceStartup;
+
+            var deltaTime = (Time.realtimeSinceStartup - lastUpdateTime);
+            transform.position = Vector3.MoveTowards(transform.position, moveTo.position, body.velocity.magnitude * deltaTime);
+            body.velocity = Vector3.MoveTowards(body.velocity, Vector3.zero, body.velocity.magnitude * deltaTime);
+            body.position = transform.position;
         }
 
-        float lastUpdateTime;
         protected virtual void Update() {
-            if(CollisionCount() == 0 && moveTo != null && !body.isKinematic) {
-                var deltaTime = (Time.realtimeSinceStartup - lastUpdateTime);
-
+            if(moveTo != null && !body.isKinematic) 
                 MoveTo();
-                transform.position = Vector3.MoveTowards(transform.position, moveTo.position, body.velocity.magnitude * deltaTime);
-                body.velocity = Vector3.MoveTowards(body.velocity, Vector3.zero, body.velocity.magnitude * deltaTime);
-                body.position = transform.position;
-            }
 
             lastUpdateTime = Time.realtimeSinceStartup;
         }

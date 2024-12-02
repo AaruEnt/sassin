@@ -13,7 +13,8 @@ namespace Valve.VR.InteractionSystem
 	//-------------------------------------------------------------------------
 	[RequireComponent( typeof( Interactable ) )]
 	public class Longbow : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		public enum Handedness { Left, Right };
 
 		public Handedness currentHandGuess = Handedness.Left;
@@ -389,5 +390,6 @@ namespace Valve.VR.InteractionSystem
 		{
 			ShutDown();
 		}
+#endif
 	}
 }

@@ -8,13 +8,16 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+#if !UNITY_ANDROID
 using Valve.VR;
+#endif
 
 namespace Valve.VR
 {
     [ExecuteInEditMode]
     public class SteamVR_RenderModel : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public SteamVR_TrackedObject.EIndex index = SteamVR_TrackedObject.EIndex.None;
         protected SteamVR_Input_Sources inputSource;
 
@@ -871,5 +874,6 @@ namespace Valve.VR
                 return (RenderModel_TextureMap_t)Marshal.PtrToStructure(pRenderModel, typeof(RenderModel_TextureMap_t));
             }
         }
+#endif
     }
 }

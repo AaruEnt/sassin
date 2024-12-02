@@ -15,7 +15,7 @@ namespace Autohand.Demo{
             }
         }
         
-        void Update() {
+        void FixedUpdate() {
             if(AutoHandPlayer.Instance != null) {
                 if(AutoHandPlayer.Instance.transform.position.y < -10f) {
                     AutoHandPlayer.Instance.SetPosition(startPos);

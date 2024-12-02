@@ -13,6 +13,7 @@ namespace Valve.VR
 {
     public class SteamVR_Render : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public SteamVR_ExternalCamera externalCamera;
         public string externalCameraConfigPath = "externalcamera.cfg";
 
@@ -465,5 +466,6 @@ namespace Valve.VR
                 }
             }
         }
+#endif
     }
 }

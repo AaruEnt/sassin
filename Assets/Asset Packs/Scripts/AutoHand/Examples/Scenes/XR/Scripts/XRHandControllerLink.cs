@@ -33,15 +33,18 @@ namespace Autohand.Demo{
         none
     }
 
+    [HelpURL("https://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/controller-input")]
     public class XRHandControllerLink : HandControllerLink {
         public CommonButton grabButton = CommonButton.triggerButton;
         [Tooltip("This axis will bend all the fingers on the hand -> replaced with finger bender scripts")]
         public CommonAxis grabAxis = CommonAxis.trigger;
+        public CommonAxis squeezeAxis = CommonAxis.grip;
         public CommonButton squeezeButton = CommonButton.gripButton;
 
-        XRNode role;
         bool squeezing;
         bool grabbing;
+
+        XRNode role;
         InputDevice device;
         List<InputDevice> devices = new List<InputDevice>();
 
@@ -62,13 +65,14 @@ namespace Autohand.Demo{
         }
 
         void Update(){
+
             InputDevices.GetDevicesAtXRNode(role, devices);
             if(devices.Count > 0)
                 device = devices[0];
 
             if(device != null && device.isValid){
                 //Sets hand fingers wrap
-                hand.SetGrip(GetAxis(grabAxis));
+                hand.SetGrip(GetAxis(grabAxis), GetAxis(squeezeAxis));
 
                 //Grab input
                 if(device.TryGetFeatureValue(GetCommonButton(grabButton), out bool grip)) {

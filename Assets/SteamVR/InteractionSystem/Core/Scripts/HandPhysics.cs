@@ -12,6 +12,7 @@ namespace Valve.VR.InteractionSystem
 {
     public class HandPhysics : MonoBehaviour
     {
+#if !UNITY_ANDROID
         [Tooltip("Hand collider prefab to instantiate")]
         public HandCollider handColliderPrefab;
         [HideInInspector]
@@ -232,6 +233,6 @@ namespace Valve.VR.InteractionSystem
             return rot;
         }
 
-
+#endif
     }
 }

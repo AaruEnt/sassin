@@ -22,6 +22,7 @@ namespace Valve.VR.InteractionSystem
     public class Equippable : MonoBehaviour
     {
 
+#if !UNITY_ANDROID
         [Tooltip("Array of children you do not want to be mirrored. Text, logos, etc.")]
         public Transform[] antiFlip;
 
@@ -72,5 +73,6 @@ namespace Valve.VR.InteractionSystem
                 transform.localScale = flipScale;
             }
         }
+#endif
     }
 }

@@ -21,11 +21,11 @@ namespace Autohand.Demo{
         }
         
         void OnGrab(PlacePoint hand, Grabbable grab) {
-            changer.UpdateText(placeMessage);
+            changer?.UpdateText(placeMessage);
         }
 
         void OnHighlight(PlacePoint hand, Grabbable grab) {
-            changer.UpdateText(highlightMessage);
+            changer?.UpdateText(highlightMessage);
         }
         
 

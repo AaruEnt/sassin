@@ -12,7 +12,8 @@ namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
 	public class SeeThru : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		public Material seeThruMaterial;
 
 		private GameObject seeThru;
@@ -147,5 +148,6 @@ namespace Valve.VR.InteractionSystem
 				}
 			}
 		}
+#endif
 	}
 }

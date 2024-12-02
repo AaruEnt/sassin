@@ -11,7 +11,8 @@ namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
 	public class Balloon : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		public enum BalloonColor { Red, OrangeRed, Orange, YellowOrange, Yellow, GreenYellow, Green, BlueGreen, Blue, VioletBlue, Violet, RedViolet, LightGray, DarkGray, Random };
 
 		private Hand hand;
@@ -218,5 +219,6 @@ namespace Valve.VR.InteractionSystem
 
 			return defaultColor;
 		}
+#endif
 	}
 }

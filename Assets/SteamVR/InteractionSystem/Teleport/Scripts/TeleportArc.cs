@@ -11,6 +11,7 @@ namespace Valve.VR.InteractionSystem
     //-------------------------------------------------------------------------
     public class TeleportArc : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public int segmentCount = 60;
         public float thickness = 0.01f;
 
@@ -307,5 +308,6 @@ namespace Valve.VR.InteractionSystem
                 }
             }
         }
+#endif
     }
 }

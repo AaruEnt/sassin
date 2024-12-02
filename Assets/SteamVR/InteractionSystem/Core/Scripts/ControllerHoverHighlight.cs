@@ -12,6 +12,7 @@ namespace Valve.VR.InteractionSystem
     //-------------------------------------------------------------------------
     public class ControllerHoverHighlight : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public Material highLightMaterial;
         public bool fireHapticsOnHightlight = true;
 
@@ -128,5 +129,6 @@ namespace Valve.VR.InteractionSystem
 
             renderModel.Hide();
         }
+#endif
     }
 }

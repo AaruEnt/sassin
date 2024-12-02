@@ -14,7 +14,8 @@ namespace Valve.VR.InteractionSystem
 	//-------------------------------------------------------------------------
 	[RequireComponent( typeof( Interactable ) )]
 	public class UIElement : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		public CustomEvents.UnityEventHand onHandClick;
 
         protected Hand currentHand;
@@ -64,9 +65,9 @@ namespace Valve.VR.InteractionSystem
 		{
 			onHandClick.Invoke( currentHand );
 		}
+#endif
 	}
-
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !UNITY_ANDROID
 	//-------------------------------------------------------------------------
 	[UnityEditor.CustomEditor( typeof( UIElement ) )]
 	public class UIElementEditor : UnityEditor.Editor

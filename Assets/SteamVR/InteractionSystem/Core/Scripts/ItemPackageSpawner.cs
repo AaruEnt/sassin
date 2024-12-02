@@ -18,7 +18,8 @@ namespace Valve.VR.InteractionSystem
 	//-------------------------------------------------------------------------
 	[RequireComponent( typeof( Interactable ) )]
 	public class ItemPackageSpawner : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		public ItemPackage itemPackage
 		{
 			get
@@ -361,5 +362,6 @@ namespace Valve.VR.InteractionSystem
 				CreatePreviewObject();
 			}
 		}
+#endif
 	}
 }

@@ -11,7 +11,8 @@ namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
 	public class DistanceHaptics : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		public Transform firstTransform;
 		public Transform secondTransform;
 
@@ -40,5 +41,6 @@ namespace Valve.VR.InteractionSystem
 			}
 
 		}
+#endif
 	}
 }

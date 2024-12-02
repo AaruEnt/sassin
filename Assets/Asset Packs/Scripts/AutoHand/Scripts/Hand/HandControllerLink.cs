@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 
 namespace Autohand {
-    public class HandControllerLink : MonoBehaviourPunCallbacks {
+    public class HandControllerLink : MonoBehaviourPun {
         public static HandControllerLink handLeft, handRight;
 
         public Hand hand;

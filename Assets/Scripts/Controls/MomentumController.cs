@@ -99,11 +99,11 @@ namespace Autohand {
             startMomentum = player.moveAcceleration;
             maxSpeedScale = maxSpeedBonus;
 
-            if (player.useOmniMovement)
-            {
-                LowerMagnitudeThreshhold();
-                sprintAsToggle = true;
-            }
+            //if (player.useOmniMovement)
+            //{
+            //   LowerMagnitudeThreshhold();
+            //    sprintAsToggle = true;
+            //
         }
 
         private void OnEnable()

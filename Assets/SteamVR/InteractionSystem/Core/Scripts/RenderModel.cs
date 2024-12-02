@@ -8,6 +8,7 @@ namespace Valve.VR.InteractionSystem
 {
     public class RenderModel : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public GameObject handPrefab;
         protected GameObject handInstance;
         protected Renderer[] handRenderers;
@@ -424,6 +425,6 @@ namespace Valve.VR.InteractionSystem
             return handAnimatorStateId != -1 && handAnimator != null && handAnimator.isInitialized;
         }
 
-
+#endif
     }
 }

@@ -1,10 +1,213 @@
+V4.0.1
+Bug Fixes
+- Updated Auto Hand to work with Unity 6
+- Fixed bug with gentle grabbing and grab return speeds not working as expected
+- Fixed bug with grabtype setting changing unexpectedly based on last item grabbed
+- Fixed bug with held animations not working as expected
+- Fixed bug with maintain grab offset not working as expected
+- Fixed NaN error with joint reader scripts
+- Fixed big hand not working in some demo scenes
+- Fixed UI Pointer not indicator not showing in right location under some conditions
+- Fixed Demo physics button settings
+- Changed some default hand follow settings to reduce stiff rotation feeling when using small movements and using UI
+- Adjusted some smooth movement settings for UI pointer and Distance Grabber. Also added a toggle to remove smooth movement completely from UI pointer and Distance Grabber
+
+
+V4.0.0
+Improvements:
+- Changes to Hand Component 
+- Hand logic is now split into additional scripts. None of these scripts need to be manually added. All these scripts and their recommended values will be automatically applied to each hand component.
+- Hand Follow now manages the hand movement instead of Hand.cs. Includes public values and functions for previous movement settings, including exposing additional movement settings that were previously internal
+- Hand Follow now includes options for dynamic hand mass. This will increase the hand mass based on its distance from the target position/rotation. This allows the hands to more realistically touch things without knocking them around.
+- Hand Follow Some of the default settings have been changed for hand-hand movement. Hands should now feel more “snappy” and less “wobbly” when dealing with rotation/weight. Hands feel less “caveman-like” when touching dynamic objects, no longer as forceful until you push against the objects. Important for good feeling hand tracking. 
+- Hand Follow now manages two-handed grabbing forces better by limiting the range of the move target to be based on each other hands target positions. Things like a steering wheel and pulling objects apart in opposite directions should feel more realistic
+- Hand Grabbable Highlighter now manages the internal highlight functions. Hand.cs still manages the highlight settings except internal OnHighlight and OnStopHighlight event delegates will need to be changed to hand.highlighter.OnHighlight += MyEventFunc
+- Hand Grabbable Highlighter will now by default favor highlighting objects near the fingers/fingertips instead of the palm face. Use the highlighter palmForwardRightDirection value to choose which angle will have more priority when grabbing
+- Hand Animator now manages the hand posing instead of Hand.cs. Includes the public values and settings for hand-posing and hand sway. Hand.cs still includes auto posting function
+- Additional setting requirements for the Finger component. 
+- Changes to the way HandPoseData is managed internally. 
+- New Auto Pinch Settings
+- Improved Hand Tracking 
+- Simple Desktop Player
+- Added OpenXR Hand Tracking component
+- Added OpenXR Hand Tracking Grabber component
+- Allow for grabbing to be triggered through grasping gesture settings
+- Allows for finger-tip touching grabbing settings
+- Supports held object finger movement
+- Supports held gesture with finger movement
+- Added Hand Gesture Event component
+- Added Hand Finger Gesture Event component, which takes two fingers and triggers an event for when they start/stop touching
+- Added Finger Trigger Area Events component + simple example in the demo
+- Added No Hand Friction toggle to hand, enabled by default, will automatically apply a no friction material to the hands colliders
+- Added Finger Weight options to Grabbable Pose Animation 
+- Added direction smoothing settings for Teleporter, UI Pointer, and Distance Grabber
+
+Bug Fixes:
+- Fixed bug with full-body hands sometimes separating from the grab target
+- The Auto Hand Player uses a new method to move the body to match the head as closely as possible within tracking movement; the previous method was unstable and sometimes jittery. The new method also properly “lifts” the feet to prevent unwanted activation
+- Fixed bug where the grounding system would return false negative when walking on a static mesh collider like a staircase and standing against a step that is just too high to step up
+- Added assembly definitions to root scripts of each input package (Autohand, Autohand.OpenXR, Autohand.XR, Autohand.SteamVR, Autohand.OculusIntergation)
+- Head collision will now push the whole body back along the x-z axis instead of creating a sort of “movement debt” that was unrealistic and disorienting
+- Fixed possible phantom “flicker” that some people report when moving the player with thumbstick
+- Increased stability and snappiness of two-handed grabbing
+- Hand now properly transitions pose when releasing
+- Highlights when targeting multiple objects will favor grabbing objects more in the direction of fingertips than the direction of the palm including a setting on the HandGrabbableHighlighter for personal adjustments
+- Fixed bug with hand velocity not rotating properly when using smooth/snap rotation and moving your hands around
+- Added virtual tag to more values/functions in the Finger/Player/Grabbable components
+- Added fix for player head-body sync colliding with held colliders in some conditions
+- Added fix with Player SetPosition function not working as expected under some conditions
+- Added many new null checks across the project to prevent errors spamming when missing references or deleting certain objects
+- Found source of build bug “HideFlags.DontSave but is included in the build:” and fixed
+- You can now toggle “Grab Lock” by enabling/disabling the script
+- Fixed missing prefab in hand tracking scene
+- Added an automatic Rebinder() call in AutoHandVRIK to fix a bug for full body ik that breaks because of animator
+
+
+Auto Have V3.3.0
+Improvements:
+- Held Inventory Place Point Example
+- Added [Shape Type] value, which allows you to toggle the shape of a place point between a sphere and a box
+- Added [Resize on Place] option to place points, when enabled placed objects will automatically scale and center to fit the place point. (Only supports instant grabbing)
+- Added [Grabbable Point] toggle to place points, if enabled the place point will directly become a grabbable reference using its radius
+- Added [Match Position] and [Match Rotation] toggles to the place point, if disabled the place object will take whatever position/rotation it was in during placement instead of matching the place point position/rotation
+- Added Place Point Animation script which allows for a number of simple configurations for making simple smooth animations
+- Added Place Point Sound Effects script which takes an audio source and a clip for Highlight, Unhighlight, Place, Remove sounds
+- Better support for grabbables with place points attached
+- Grabbables will now check for childed place point on start and prevent themselves from being placed in their own points
+- Added support for recursive place point placement (Held inventories can be safely placed into other inventories and place points)
+- Added IGrabbableEvents interface, that can be added to components and allows for custom functionality with highlighting and grabbing events from the hands. Used by the place point to support the grabbable point option
+
+Bug fixes:
+- FIXED LINKS TO OLD DOCUMENTATION ON ASSET STORE - IF YOU ARE USING THE NOTION DOCUMENTATION PLEASE SWITCH TO LATEST GITBOOK https://earnest-robot.gitbook.io/auto-hand-docs/
+- Made some adjustments to the hand movement system to help improve the consistency of the physic interactions between different physics timesteps
+- Fixed bug with weightless grabbable option not working when the grabbable is a child of a rigidbody instead of on the same object
+- Fixed bug where the hand would jump when holding the hand on a surface and moving the player
+- Fixed bug with OVR Demo where a script is spamming an missing reference error
+- Fixed bug where hand tracking would disable controllers when only one hand is detected as tracking
+- Fixed bug where hand tracking won't work properly when loading in with hands before loading with controllers
+- Moved a logo that was causing inconsistent build errors for some people into an editor folder
+- Added LateUpdateHandPose toggle on AutoVRIK as a potential fix for animation controllers overriding the hand poses when trying to animate full body poses
+- Made some private values and functions in AutoHandPlayer + PlacePoints protected or public
+- Added support for grabbing grabbables using trigger colliders
+- Removed the requirecomponent rigidbody requirement on a few addon scripts (throw events, sticky, magnetic) to allow them to be compatible with held place points
+
+
+V3.2.5
+Bug Fixes
+- Fixed bug with demo scene not working properly
+- Removed deprecated code warnings for Unity 2023 versions
+- Disabled Automatic Controller Offsetter by default, new controller offsetter coming soon
+
+
+V3.2.4
+Improvements
+- Improvements to grab behavior smoothness
+- Added getters to the stabbables for list of current stabbers and count of current stabbers
+- Added getters to the stabber for list of current stabbers and current stab joints
+
+Bug Fixes
+- Removed Script causing errors in OpenXR subpackage
+- Fixed bug with placepoints not resetting parenting properly on Remove()
+- Fixed parenting bug with stabbables [Stabbables can now stab multiple objects while maintaining proper parent/child logic regardless of how stabbers/stabbables are grabbed/released while maintaining proper stab connection]
+- Fixed logic with JointedGrabbables in general
+- Grabbables can now safely be jointed to each other in both directions at the same time
+- When Removing joints in code grabbables will automatically reset parenting under correct conditions
+- Fixed issue with GrabbablePoseAnimation not showing custom value with enum setting
+- Fixed bug where the demoplayercatcher script makes the player slighter taller when activated
+
+
+
+V3.2.3
+Improvements
+- Exposed values for movement based grab speed function under Hands “Advanced” section 
+- Added values to grabbables for minHeldDrag and minHeldAngleDrag, this helps reduce the unrealistic wobble that occurs with some held objects
+- Created global toggle for controller XROffsetter
+
+Bug Fixes
+- Reduced place point passive cost by removing extra check unless placed object moves
+- Improved grabbable ignoreweight option functionality
+- Fixed bug with GrabbableHeldJoint not working properly under some setups
+- Fixed bug with minGrabTime not working properly and causing unintended instant grabs
+- Fixed bug with movement based grab speed not working as expected
+- Fixed bug with procedural pose grab animation not working properly when grabbing an object with an AnimatedPose 
+- Fixed bug with XROffsetter not working under specific setups
+- Fixed error warnings from kinematic objects that would sometimes occur when grabbing
+- Fixed order of operation error with IgnoreHandPlayerCollision script
+- Fixed UI pointers being set active at global zero on start
+
+
+
+V3.2.2
+New Feature
+- Added auto generated hand template for fullbody rigs that dont include local renderers when creating a hand copy for hand poses
+
+Bug Fixes
+- Fixed jitter with hands when walking through trigger areas with player movment
+- Fixed automatic physics layer setup will not working properly under edge case conditions
+- Fixed UI Pointer doesn't default to being disabled on start
+- Fixed conditional syntax error with AutoHandPlayer.IsHolding()
+- Fixed flickering that sometimes occurs with full-body when snap rotating
+- Fixed flickering that sometimes occurs with full-body when teleporting
+
+V3.2.1
+Bug Fixes
+- Fixed bug with player drifting while using zero-gravity
+- Fixed bug with force grab not working sometimes
+- Fixed bug with handoffsets not working as expected
+- Fixed bug with the players collider not following tracking space movement properly
+- Fixed bug with Place Point "Destroy On Place" not working as expected
+- Fixed bug with Force Grab not working with grab poses when called immediately after an instantiate
+- Fixed bug with grab collider list not being generated properly
+- Fixed bug causing hands to flicker when using grab poses under certain conditions
+
+
+V3.2
+New Features
+- Added Gun with Reloadable Magazine and Slide example
+- Added Grabbable Pose Animation
+- Added Grabbable Dispenser Point
+- Added "Held No Friction" toggle on grabbable
+- Added Grabbable Held Joint
+- Added Documentation for all new features on gitbook docs
+
+General Improvements
+- Hands no longer use cone of raycast now one raycast for each overlapping collider
+- Player no longer uses rayscasts but instead uses a single spherecast for grounding
+- Ignore collision after release now stays active until hand is removed from inside all grabbable colliders to strongly prevent clipping
+- Improved stability of two handed holding especially when pulling hands far apart while holding
+- Grabbables no longer have a local update function, instead they use a heldupdate function which is called through the hand while being held
+- Improved TryGrab function to remove failure edge cases. Also included alternatively named ForceGrab() function to make it easier to find
+- Lowered recommended Solver rates
+- Interpolation system replaced with dynamic timestep, which removes the need for a few sweep tests
+- Increased Stability of Joints
+
+Bug Fixes
+- Fixed "editorSelected" variable error warning
+- Fixed bug with (saved grab pose + grabbable to hand) not working cleanly
+- Fixed bug with placepoint tag setting not working properly
+- Fixed bug causing grenades to crash the demo scene
+- Fixed bug setting child layers to parent grabbable layers on grab
+- Fixed bug causing grab return to happen too quickly
+- Fixed bug causing parent on grab to not work properly when using nested grabbables
+- Fixed logic around multiple grabbables under one body with place points
+- Fixed bug with platforming failing on the edge of a large rotating object
+- Fixed bug with platform rotation not being perfectly smooth
+- Auto Hand no longer resets recommended setting on every start, only when the apply button is pressed
+- Fixed bug with hand sway not working smoothly under some settings
+- Other bug fixes
+
+
 V3.1.3
 Bug Fixes
-- Fixed bug with player sometimes flickering and getting thrown
-- Fixed bug with NaN error that only occurs on some builds
-- Fixed bug with hand projection/highlight not working in the demo scene
-- Fixed bug with place point not accounting for pivot properly
-- Fixed bug with hand sway not working on proper axis
+- Haptics now supported on OpenXR
+- Fixed player sometimes flickering and getting thrown
+- Fixed hand projection/highlight not working in the demo scene
+- Fixed place point not accounting for pivot properly
+- Fixed hand sway not working on proper axis
+- Fixed place points not allowing grab after place with rigidbody deactivation
+- Fixed objects held by two hands sometimes jitter while moving
+- Fixed player tilting over when stepping on dynamic objects
+- Fixed NaN error
 
 V3.1.2
 Bug Fixes

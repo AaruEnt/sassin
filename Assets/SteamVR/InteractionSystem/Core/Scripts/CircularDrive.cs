@@ -14,7 +14,8 @@ namespace Valve.VR.InteractionSystem
 	//-------------------------------------------------------------------------
 	[RequireComponent( typeof( Interactable ) )]
 	public class CircularDrive : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		public enum Axis_t
 		{
 			XAxis,
@@ -544,5 +545,6 @@ namespace Valve.VR.InteractionSystem
 				}
 			}
 		}
+#endif
 	}
 }

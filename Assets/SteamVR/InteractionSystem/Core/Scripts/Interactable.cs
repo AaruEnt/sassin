@@ -14,6 +14,7 @@ namespace Valve.VR.InteractionSystem
     //-------------------------------------------------------------------------
     public class Interactable : MonoBehaviour
     {
+#if !UNITY_ANDROID
         [Tooltip("Activates an action set on attach and deactivates on detach")]
         public SteamVR_ActionSet activateActionSetOnAttach;
 
@@ -367,5 +368,6 @@ namespace Valve.VR.InteractionSystem
             if (highlightHolder != null)
                 Destroy(highlightHolder);
         }
+#endif
     }
 }

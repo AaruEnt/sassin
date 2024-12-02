@@ -7,6 +7,7 @@ namespace Valve.VR.InteractionSystem.Sample
 {
     public class RenderModelChangerUI : UIElement
     {
+#if !UNITY_ANDROID
         public GameObject leftPrefab;
         public GameObject rightPrefab;
 
@@ -28,5 +29,6 @@ namespace Valve.VR.InteractionSystem.Sample
                 ui.SetRenderModel(this);
             }
         }
+#endif
     }
 }

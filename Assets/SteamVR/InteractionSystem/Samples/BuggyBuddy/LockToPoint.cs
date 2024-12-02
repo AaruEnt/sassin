@@ -7,6 +7,7 @@ namespace Valve.VR.InteractionSystem.Sample
 {
     public class LockToPoint : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public Transform snapTo;
         private Rigidbody body;
         public float snapTime = 2;
@@ -56,5 +57,6 @@ namespace Valve.VR.InteractionSystem.Sample
                 }
             }
         }
+#endif
     }
 }

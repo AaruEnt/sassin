@@ -6,6 +6,7 @@ namespace Valve.VR.Extras
 {
     public class SteamVR_LaserPointer : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public SteamVR_Behaviour_Pose pose;
 
         //public SteamVR_Action_Boolean interactWithUI = SteamVR_Input.__actions_default_in_InteractUI;
@@ -154,8 +155,10 @@ namespace Valve.VR.Extras
             }
             pointer.transform.localPosition = new Vector3(0f, 0f, dist / 2f);
         }
+#endif
     }
 
+#if !UNITY_ANDROID
     public struct PointerEventArgs
     {
         public SteamVR_Input_Sources fromInputSource;
@@ -165,4 +168,5 @@ namespace Valve.VR.Extras
     }
 
     public delegate void PointerEventHandler(object sender, PointerEventArgs e);
+#endif
 }

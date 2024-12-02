@@ -74,6 +74,8 @@ namespace Autohand.Demo{
         public void ClosedDoor() {
             transform.position = closedPosition;
             transform.rotation = closedRotation;
+            if(body.collisionDetectionMode == CollisionDetectionMode.ContinuousDynamic)
+                body.collisionDetectionMode = CollisionDetectionMode.Continuous;
             body.isKinematic = true;
         }
 

@@ -22,8 +22,8 @@ namespace Autohand {
             hand.OnReleased += OnReleaseEvent;
             hand.OnSqueezed += OnSqueezeEvent;
             hand.OnUnsqueezed += OnUnsqueezeEvent;
-            hand.OnHighlight += OnHighlightEvent;
-            hand.OnStopHighlight += OnStopHighlightEvent;
+            hand.highlighter.OnHighlight += OnHighlightEvent;
+            hand.highlighter.OnStopHighlight += OnStopHighlightEvent;
         }
 
         void OnDisable() {
@@ -32,8 +32,8 @@ namespace Autohand {
             hand.OnReleased -= OnReleaseEvent;
             hand.OnSqueezed -= OnSqueezeEvent;
             hand.OnUnsqueezed -= OnUnsqueezeEvent;
-            hand.OnHighlight -= OnHighlightEvent;
-            hand.OnStopHighlight -= OnStopHighlightEvent;
+            hand.highlighter.OnHighlight -= OnHighlightEvent;
+            hand.highlighter.OnStopHighlight -= OnStopHighlightEvent;
         }
 
         public void OnBeforeGrabEvent(Hand hand, Grabbable grab) {

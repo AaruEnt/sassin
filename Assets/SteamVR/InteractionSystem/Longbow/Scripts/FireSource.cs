@@ -11,7 +11,8 @@ namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
 	public class FireSource : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		public GameObject fireParticlePrefab;
 		public bool startActive;
 		private GameObject fireObject;
@@ -108,5 +109,6 @@ namespace Valve.VR.InteractionSystem
 				}
 			}
 		}
+#endif
 	}
 }

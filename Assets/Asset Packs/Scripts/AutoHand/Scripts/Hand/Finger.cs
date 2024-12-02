@@ -1,9 +1,58 @@
+
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace Autohand{
-    [HelpURL("https://earnestrobot.notion.site/Fingers-63ae83cda0b14a35b5ae15beeb51dc03")]
-    public class Finger : MonoBehaviour{
-        [Header("Tips")]
+namespace Autohand {
+
+    public enum FingerEnum {
+        none = -1,
+        index,
+        middle,
+        ring,
+        pinky,
+        thumb
+    }
+
+    public enum FingerJointEnum {
+        knuckle,
+        middle,
+        distal,
+        tip
+    }
+
+    //You can add more poses here and they will automatically be added to the hands save pose button list
+    //Dont change the order of the poses, only add new ones to the end
+    public enum FingerPoseEnum {
+        Open = 0,
+        Closed = 1,
+        PinchOpen = 2,
+        PinchClosed = 3,
+        TotalPoses
+    }
+
+    [System.Serializable]
+    public struct FingerMask {
+        public FingerEnum finger;
+        public float weight;
+    }
+
+
+
+    [HelpURL("https://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/hand/finger-component")]
+    public class Finger : MonoBehaviour {
+        [Header("Hand Reference")]
+        public Hand hand;
+        [Header("Finger Joints")]
+        public FingerEnum fingerType = FingerEnum.none;
+        [Tooltip("This is the first joint on the finger, the knuckle that rotates the whole finger, on the thumb this should be joint closer the wrist (The first joint on your actual thumb that moves)")]
+        public Transform knuckleJoint;
+        [Tooltip("The second joint that connect the primary finger bone to the middle finger bone")]
+        public Transform middleJoint;
+        [Tooltip("The third that attached the middle finger bone and the top bone")]
+        public Transform distalJoint;
+        [Space]
+        [Header("Finger Tip")]
         [Tooltip("This transfrom will represent the tip/stopper of the finger")]
         public Transform tip;
         [Tooltip("This determines the radius of the spherecast check when bending fingers")]
@@ -15,172 +64,255 @@ namespace Autohand{
 
         [HideInInspector]
         public float secondaryOffset = 0;
-        
-        float currBendOffset = 0;
+
+        public Transform[] FingerJoints {
+            get {
+                if(fingerJoints == null || fingerJoints.Length == 0)
+                    fingerJoints = new Transform[] { knuckleJoint, middleJoint, distalJoint, tip };
+
+                return fingerJoints;
+            }
+        }
+
+        [SerializeField, HideInInspector]
+        Transform[] fingerJoints;
+
+        [SerializeField, HideInInspector]
+        public FingerPoseData[] poseData;
+
+
+
+        FingerPoseData _poseDataNonAlloc;
+        public FingerPoseData poseDataNonAlloc {
+            get {
+                if(!_poseDataNonAlloc.isSet) {
+                    _poseDataNonAlloc = new FingerPoseData();
+                    _poseDataNonAlloc.poseRelativeMatrix = new Matrix4x4[4];
+                    _poseDataNonAlloc.localRotations = new Quaternion[4];
+                }
+                return _poseDataNonAlloc;
+            }
+        }
+
         float bend = 0;
 
+
+        //DEPRICATED FINGER POSE DATA
         [SerializeField]
         [HideInInspector]
-        Quaternion[] minGripRotPose;
+        internal Quaternion[] minGripRotPose;
 
         [SerializeField]
         [HideInInspector]
-        Vector3[] minGripPosPose;
+        internal Vector3[] minGripPosPose;
 
         [SerializeField]
         [HideInInspector]
-        Quaternion[] maxGripRotPose;
+        internal Quaternion[] maxGripRotPose;
 
         [SerializeField]
         [HideInInspector]
-        Vector3[] maxGripPosPose;
-    
-        [SerializeField]
-        [HideInInspector]
-        Transform[] fingerJoints;
-        
+        internal Vector3[] maxGripPosPose;
+
+        public bool isMissingReferences { get { return knuckleJoint == null || middleJoint == null || distalJoint == null || tip == null; } }
+
+        public bool isDataDepricated {
+            get {
+                return poseData == null || poseData.Length == 0 || (minGripPosPose.Length > 0 && poseData[(int)FingerPoseEnum.Open].isSet == false) || (maxGripPosPose.Length > 0 && poseData[(int)FingerPoseEnum.Closed].isSet == false);
+            }
+        }
+
         float lastHitBend;
-        Collider[] results = new Collider[2];
+        Collider[] results = new Collider[4];
+
+
+        protected virtual void Awake() {
+            if(hand == null)
+                hand = GetComponentInParent<Hand>();
+            if(hand == null)
+                Debug.LogError("AUTO HAND: Missing hand reference, please assign the hand reference to the finger component", this);
+
+            if(isDataDepricated)
+                UpdateDepricatedValues();
+
+            for(int i = 0; i < poseData.Length; i++)
+                if(poseData[i].isSet)
+                    poseData[i].CalculateAdditionalValues(hand.transform.lossyScale);
+
+
+            if((knuckleJoint == null || middleJoint == null || distalJoint == null || tip == null))
+                Debug.LogError("AUTO HAND: Missing finger connections, please connect all the joint values of the finger component (If your finger has less than the required joints add the same joint to two inputs)", this);
+            if(poseData == null || poseData.Length == 0)
+                Debug.LogError("AUTO HAND: Missing finger pose data, please set the open and closed finger pose data (If you have not set this up please do so in the inspector or use the context menu to set the open and closed finger pose data)", this);
+
+        }
 
 
 
-        void Update() {
-            SlowBend();
+
+        /// <summary>Forces the finger to a bend until it hits something on the given physics layer</summary>
+        /// <param name="steps">The number of steps and physics checks it will make lerping from 0 to 1</param>
+        public virtual bool BendFingerUntilNoHit(int steps, int layermask, FingerPoseEnum fromPose = FingerPoseEnum.Open, FingerPoseEnum toPose = FingerPoseEnum.Closed) {
+            return BendFingerUntilNoHit(steps, layermask, ref poseData[(int)fromPose], ref poseData[(int)toPose]);
         }
 
         /// <summary>Forces the finger to a bend until it hits something on the given physics layer</summary>
         /// <param name="steps">The number of steps and physics checks it will make lerping from 0 to 1</param>
-        public bool BendFingerUntilHit(int steps, int layermask) {
-            ResetBend();
+        public virtual bool BendFingerUntilNoHit(int steps, int layermask, ref FingerPoseData fromPose, ref FingerPoseData toPose) {
             lastHitBend = 0;
+            var fingerTipTransform = tip.transform;
+            var handTransform = hand.transform;
+            var handPosition = handTransform.position;
+            var handRotation = handTransform.rotation;
 
-            for (float i = 0; i <= steps/5f; i++) {
-                results[0] = null;
+            Vector3 lastFingerPos = Vector3.zero;
+            for(float i = 0; i <= steps / 5f; i++) {
                 lastHitBend = i / (steps / 5f);
-                for (int j = 0; j < fingerJoints.Length; j++){
-                    fingerJoints[j].localPosition = Vector3.Lerp(minGripPosPose[j], maxGripPosPose[j], lastHitBend);
-                    fingerJoints[j].localRotation = Quaternion.Lerp(minGripRotPose[j], maxGripRotPose[j], lastHitBend);
-                }
-                Physics.OverlapSphereNonAlloc(tip.transform.position, tipRadius, results, layermask, QueryTriggerInteraction.Ignore);
+                int overlapCount = CheckFingerBlendOverlap(layermask, handRotation, fingerTipTransform, ref fromPose, ref toPose, lastHitBend);
 
-                if (results[0] != null){
+                if(overlapCount == 0) {
                     lastHitBend = Mathf.Clamp01(lastHitBend);
-                    if (i == 0)
+                    if(i == 0) {
+                        poseDataNonAlloc.SetFingerPose(this, handRotation, knuckleJoint, middleJoint, distalJoint);
+                        bend = lastHitBend;
+                        //currBendOffset = lastHitBend;
                         return true;
+                    }
                     break;
                 }
 
             }
-            
 
-            lastHitBend -= (5f/steps);
-            for (int i = 0; i <= steps/10f; i++){
-                results[0] = null;
-                lastHitBend += (1f/steps);
-                for(int j = 0; j < fingerJoints.Length; j++){
-                    fingerJoints[j].localPosition = Vector3.Lerp(minGripPosPose[j], maxGripPosPose[j], lastHitBend);
-                    fingerJoints[j].localRotation = Quaternion.Lerp(minGripRotPose[j], maxGripRotPose[j], lastHitBend);
-                }
-                Physics.OverlapSphereNonAlloc(tip.transform.position, tipRadius, results, layermask, QueryTriggerInteraction.Ignore);
-                
+            lastHitBend -= (5f / steps);
+            for(int i = 0; i <= steps / 10f; i++) {
+                lastHitBend += (1f / steps);
+                lastHitBend = Mathf.Clamp01(lastHitBend);
+                int overlapCount = CheckFingerBlendOverlap(layermask, handRotation, fingerTipTransform, ref fromPose, ref toPose, lastHitBend);
 
-                if (results[0] != null){
+                if(overlapCount == 0 || lastHitBend >= 1) {
                     bend = lastHitBend;
-                    currBendOffset = lastHitBend;
-                    lastHitBend = Mathf.Clamp01(lastHitBend);
-                    return true;
-                }
-
-                if (lastHitBend >= 1) {
-                    lastHitBend = Mathf.Clamp01(lastHitBend);
+                    //currBendOffset = lastHitBend;
                     return true;
                 }
             }
 
-
-
+            lastHitBend = 1f;
+            toPose.SetFingerPose(this, handRotation, knuckleJoint, middleJoint, distalJoint);
             return false;
         }
 
 
-    
-        /// <summary>Bends the finger unless its hitting something</summary>
-        /// <param name="bend">0 is no bend / 1 is full bend</param>
-        public bool UpdateFingerBend(float bend, int layermask) {
-            var results = new Collider[]{ null };
-            Physics.OverlapSphereNonAlloc(tip.transform.position, tipRadius, results, layermask, QueryTriggerInteraction.Ignore);
-            if(this.bend > bend || results[0] == null){
-                this.bend = bend;
-                for(int i = 0; i < fingerJoints.Length; i++) {
-                    fingerJoints[i].localPosition = Vector3.Lerp(minGripPosPose[i], maxGripPosPose[i], currBendOffset+secondaryOffset);
-                    fingerJoints[i].localRotation = Quaternion.Lerp(minGripRotPose[i], maxGripRotPose[i], currBendOffset+secondaryOffset);
+
+        /// <summary>Forces the finger to a bend until it hits something on the given physics layer</summary>
+        /// <param name="steps">The number of steps and physics checks it will make lerping from 0 to 1</param>
+        public virtual bool BendFingerUntilHit(int steps, int layermask, FingerPoseEnum fromPose = FingerPoseEnum.Open, FingerPoseEnum toPose = FingerPoseEnum.Closed) {
+            return BendFingerUntilHit(steps, layermask, ref poseData[(int)fromPose], ref poseData[(int)toPose]);
+        }
+
+        /// <summary>Forces the finger to a bend until it hits something on the given physics layer</summary>
+        /// <param name="steps">The number of steps and physics checks it will make lerping from 0 to 1</param>
+        public virtual bool BendFingerUntilHit(int steps, int layermask, ref FingerPoseData fromPose, ref FingerPoseData toPose) {
+            lastHitBend = 0;
+            var fingerTipTransform = tip.transform;
+            var handRotation = hand.transform.rotation;
+            for(float i = 0; i <= steps / 5f; i++) {
+                lastHitBend = i / (steps / 5f);
+                int overlapCount = CheckFingerBlendOverlap(layermask, handRotation, fingerTipTransform, ref fromPose, ref toPose, lastHitBend);
+
+                if(overlapCount > 0) {
+                    lastHitBend = Mathf.Clamp01(lastHitBend);
+                    if(i == 0) {
+                        poseDataNonAlloc.SetFingerPose(this, handRotation, knuckleJoint, middleJoint, distalJoint);
+                        bend = lastHitBend;
+                        return true;
+                    }
+                    break;
                 }
-                return true;
+
             }
+
+            lastHitBend -= (5f / steps);
+            for(int i = 0; i <= steps / 10f; i++) {
+                lastHitBend += (1f / steps);
+                lastHitBend = Mathf.Clamp01(lastHitBend);
+                int overlapCount = CheckFingerBlendOverlap(layermask, handRotation, fingerTipTransform, ref fromPose, ref toPose, lastHitBend);
+
+                if(overlapCount > 0 || lastHitBend >= 1) {
+                    bend = lastHitBend;
+                    //currBendOffset = lastHitBend;
+                    return true;
+                }
+            }
+
+            lastHitBend = 1f;
+            toPose.SetFingerPose(this, handRotation, knuckleJoint, middleJoint, distalJoint); ;
             return false;
         }
 
-        public void UpdateFinger() {
-            for(int i = 0; i < fingerJoints.Length; i++) {
-                fingerJoints[i].localPosition = Vector3.Lerp(minGripPosPose[i], maxGripPosPose[i], currBendOffset+secondaryOffset);
-                fingerJoints[i].localRotation = Quaternion.Lerp(minGripRotPose[i], maxGripRotPose[i], currBendOffset+secondaryOffset);
-            }
+        public virtual int CheckFingerBlendOverlap(int layermask, Quaternion handRotation, Transform fingerTipTransform, ref FingerPoseData fromPose, ref FingerPoseData toPose, float point) {
+            poseDataNonAlloc.LerpData(ref fromPose, ref toPose, point, false);
+            poseDataNonAlloc.SetFingerPose(this, handRotation, knuckleJoint, middleJoint, distalJoint);
+            return Physics.OverlapSphereNonAlloc(fingerTipTransform.position, tipRadius, results, layermask, QueryTriggerInteraction.Ignore);
         }
 
-        public void UpdateFinger(float bend) {
+
+
+
+
+
+        public virtual void UpdateFingerPose(float bend, FingerPoseEnum fromPose = FingerPoseEnum.Open, FingerPoseEnum toPose = FingerPoseEnum.Closed) { 
+            UpdateFingerPose(bend, ref poseData[(int)fromPose], ref poseData[(int)toPose]);
+        }
+
+        public virtual void UpdateFingerPose(float bend, ref FingerPoseData fromPose, ref FingerPoseData toPose) {
             this.bend = bend;
-            for(int i = 0; i < fingerJoints.Length; i++) {
-                fingerJoints[i].localPosition = Vector3.Lerp(minGripPosPose[i], maxGripPosPose[i], currBendOffset+secondaryOffset);
-                fingerJoints[i].localRotation = Quaternion.Lerp(minGripRotPose[i], maxGripRotPose[i], currBendOffset+secondaryOffset);
-            }
+
+            poseDataNonAlloc.LerpData(ref fromPose, ref toPose, bend);
+            poseDataNonAlloc.SetFingerPose(this);
+        }
+
+
+
+        public virtual void SetFingerBend(float bend, ref FingerPoseData fromPose, ref FingerPoseData toPose) {
+            this.bend = bend;
+            poseDataNonAlloc.LerpData(ref fromPose, ref toPose, bend);
+            poseDataNonAlloc.SetFingerPose(this);
         }
 
         /// <summary>Forces the finger to a bend ignoring physics and offset</summary>
         /// <param name="bend">0 is no bend / 1 is full bend</param>
-        public void SetFingerBend(float bend) {
+        public virtual void SetFingerBend(float bend, FingerPoseEnum fromPose = FingerPoseEnum.Open, FingerPoseEnum toPose = FingerPoseEnum.Closed) {
             this.bend = bend;
-            for(int i = 0; i < fingerJoints.Length; i++) {
-                fingerJoints[i].localPosition = Vector3.Lerp(minGripPosPose[i], maxGripPosPose[i], bend);
-                fingerJoints[i].localRotation = Quaternion.Lerp(minGripRotPose[i], maxGripRotPose[i], bend);
-            }
+            SetFingerBend(bend, ref poseData[(int)fromPose], ref poseData[(int)toPose]);
         }
-        
+
+
+
+
         /// <summary>Sets the current finger to a bend without interfering with the target</summary>
-         /// <param name="bend">0 is no bend / 1 is full bend</param>
-        public void SetCurrentFingerBend(float bend) {
-            currBendOffset = bend;
-            for(int i = 0; i < fingerJoints.Length; i++) {
-                fingerJoints[i].localPosition = Vector3.Lerp(minGripPosPose[i], maxGripPosPose[i], bend);
-                fingerJoints[i].localRotation = Quaternion.Lerp(minGripRotPose[i], maxGripRotPose[i], bend);
-            }
+        /// <param name="bend">0 is no bend / 1 is full bend</param>
+        //public void SetCurrentFingerBend(float bend, FingerPoseEnum fromPose = FingerPoseEnum.Open, FingerPoseEnum toPose = FingerPoseEnum.Closed) {
+        //    currBendOffset = bend;
+
+        //    var openPose = poseData[(int)fromPose];
+        //    var closedPose = poseData[(int)toPose];
+
+        //    poseDataNonAlloc.LerpData(ref openPose, ref closedPose, bend);
+        //    poseDataNonAlloc.SetFingerPose(this);
+        //}
+
+
+
+        [ContextMenu("Open")]
+        public virtual void ResetBend() {
+            var openPose = poseData[(int)FingerPoseEnum.Open];
+            openPose.SetFingerPose(this);
         }
 
-
-        //This function smooths the finger bend so you can change the grip over a frame and wont be a jump
-        void SlowBend(){
-
-            var offsetValue = bendOffset + bend;
-            if(currBendOffset != offsetValue)
-                currBendOffset = Mathf.MoveTowards(currBendOffset, offsetValue, 6*fingerSmoothSpeed * Time.deltaTime);
-        }
-    
-
-
-
-        [ContextMenu("ResetBend")]
-        public void ResetBend() {
-            for(int i = 0; i < fingerJoints.Length; i++) {
-                fingerJoints[i].localPosition = minGripPosPose[i];
-                fingerJoints[i].localRotation = minGripRotPose[i];
-            }
-        }
-
-        [ContextMenu("Grip")]
-        public void Grip() {
-            for(int i = 0; i < fingerJoints.Length; i++) {
-                fingerJoints[i].localPosition = maxGripPosPose[i];
-                fingerJoints[i].localRotation = maxGripRotPose[i];
-            }
+        [ContextMenu("Close")]
+        public virtual void Grip() {
+            var closedPose = poseData[(int)FingerPoseEnum.Closed];
+            closedPose.SetFingerPose(this);
         }
 
 
@@ -188,116 +320,80 @@ namespace Autohand{
         public float GetLastHitBend() {
             return lastHitBend;
         }
-    
 
-        [ContextMenu("Set Open Finger Pose")]
-        public void SetMinPose(){
-            int GetKidsCount(Transform obj, ref int count) {
-                if(obj != tip){
-                    count++;
-                    for(int k = 0; k < obj.childCount; k++) {
-                        GetKidsCount(obj.GetChild(k), ref count);
-                    }
-                }
-                return count;
+        /// <summary>Saves the current pose the finger is taking to the given pose type</summary>
+        public virtual void SavePose(Hand hand, Finger finger, FingerPoseEnum poseType) {
+            if(poseData == null)
+                poseData = new FingerPoseData[(int)FingerPoseEnum.TotalPoses];
 
-            }
-
-            int points = 0;
-            GetKidsCount(transform, ref points);
-            minGripPosPose = new Vector3[points];
-            minGripRotPose = new Quaternion[points];
-            fingerJoints = new Transform[points];
-            
-            int i = 0;
-            AssignChildrenPose(transform, ref i);
-            void AssignChildrenPose(Transform obj, ref int index) {
-                if(obj != tip){
-                    AssignPoint(index, obj.localPosition, obj.localRotation, obj);
-                    index++;
-                    for(int j = 0; j < obj.childCount; j++) {
-                        AssignChildrenPose(obj.GetChild(j), ref index);
-                    }
+            if(poseData.Length != (int)FingerPoseEnum.TotalPoses) {
+                var oldData = poseData;
+                poseData = new FingerPoseData[(int)FingerPoseEnum.TotalPoses];
+                for(int i = 0; i < oldData.Length; i++) {
+                    poseData[i] = oldData[i];
                 }
             }
 
-            void AssignPoint(int point, Vector3 pos, Quaternion rot, Transform joint) {
-                minGripPosPose[point] = pos;
-                minGripRotPose[point] = rot;
-                fingerJoints[point] = joint;
+            Debug.Log("Pose Type: " + poseType + " - " + (int)poseType + " - Length: " + poseData.Length);
+
+            if(!poseData[(int)poseType].isSet)
+                poseData[(int)poseType] = new FingerPoseData(hand, finger);
+            else
+                poseData[(int)poseType].SetPoseData(hand, finger);
+        }
+
+        public virtual void SavePose(ref FingerPoseData fingerPoseData, FingerPoseEnum poseType) {
+            if(!poseData[(int)poseType].isSet)
+                poseData[(int)poseType] = new FingerPoseData(ref fingerPoseData);
+            else
+                poseData[(int)poseType].CopyFromData(ref fingerPoseData);
+        }
+
+        [ContextMenu("SAVE - Open Pose")]
+        public void SaveOpenPose() {
+            SavePose(hand, this, FingerPoseEnum.Open);
+        }
+
+        [ContextMenu("SAVE - Closed Pose")]
+        public void SaveClosedPose() {
+            SavePose(hand, this, FingerPoseEnum.Closed);
+        }
+
+        [ContextMenu("SAVE - Pinch Open Pose")]
+        public void SavePinchOpenPose() {
+            SavePose(hand, this, FingerPoseEnum.PinchOpen);
+        }
+
+        [ContextMenu("SAVE - Pinch Closed Pose")]
+        public void SavePinchClosedPose() {
+            SavePose(hand, this, FingerPoseEnum.PinchClosed);
+        }
+
+
+        /// <summary>Copies the pose data from the given finger to this finger</summary>
+        public virtual void CopyPoseData(Finger finger) {
+            for(int i = 0; i < finger.poseData.Length; i++) {
+                if(poseData[i].isSet)
+                    poseData[i].CopyFromData(finger.poseData[i]);
+                else
+                    poseData[i] = new FingerPoseData(ref finger.poseData[i]);
             }
-        }
-
-
-    
-        [ContextMenu("Set Closed Finger Pose")]
-        public void SetMaxPose(){
-            int GetKidsCount(Transform obj, ref int count) {
-                if(obj != tip){
-                    count++;
-                    for(int k = 0; k < obj.childCount; k++) {
-                        GetKidsCount(obj.GetChild(k), ref count);
-                    }
-                }
-                return count;
-            }
-
-            int points = 0;
-            GetKidsCount(transform, ref points);
-            maxGripPosPose = new Vector3[points];
-            maxGripRotPose = new Quaternion[points];
-            fingerJoints = new Transform[points];
-
-            int i = 0;
-            AssignChildrenPose(transform, ref i);
-            void AssignChildrenPose(Transform obj, ref int index){
-                if(obj != tip){
-                    AssignPoint(index, obj.localPosition, obj.localRotation, obj);
-                    index++;
-                    for(int j = 0; j < obj.childCount; j++) {
-                        AssignChildrenPose(obj.GetChild(j), ref index);
-                    }
-                }
-            }
-
-            void AssignPoint(int point, Vector3 pos, Quaternion rot, Transform joint) {
-                maxGripPosPose[point] = pos;
-                maxGripRotPose[point] = rot;
-                fingerJoints[point] = joint;
-            }
-        }
-
-
-        public void CopyPose(Finger finger)
-        {
-            maxGripPosPose = new Vector3[finger.maxGripPosPose.Length];
-            finger.maxGripPosPose.CopyTo(maxGripPosPose, 0);
-            maxGripRotPose = new Quaternion[finger.maxGripRotPose.Length];
-            finger.maxGripRotPose.CopyTo(maxGripRotPose, 0);
-
-            minGripPosPose = new Vector3[finger.minGripPosPose.Length];
-            finger.minGripPosPose.CopyTo(minGripPosPose, 0);
-            minGripRotPose = new Quaternion[finger.minGripRotPose.Length];
-            finger.minGripRotPose.CopyTo(minGripRotPose, 0);
-
-            fingerJoints = new Transform[finger.fingerJoints.Length];
-            finger.fingerJoints.CopyTo(fingerJoints, 0);
 
         }
-        
-        public bool IsMinPoseSaved()
-        {
-            return minGripPosPose.Length != 0;
-        }
-        public bool IsMaxPoseSaved()
-        {
-            return maxGripPosPose.Length != 0;
+
+        /// <summary>Checks if the given pose type has been saved</summary>
+        public virtual bool IsPoseSaved(FingerPoseEnum poseType) {
+            if((int)poseType >= poseData.Length)
+                return false;
+
+            return (poseData != null && poseData.Length != 0) && poseData[(int)poseType].poseRelativeMatrix != null && poseData[(int)poseType].poseRelativeMatrix.Length > 0;
         }
 
-        public float GetCurrentBend() {
-            return currBendOffset+secondaryOffset;
+        public virtual float GetCurrentBend() {
+            bendOffset = Mathf.Clamp(bendOffset, 0, 1);
+            return bendOffset+secondaryOffset;
         }
-    
+
 
         private void OnDrawGizmos() {
             if(tip == null)
@@ -307,21 +403,150 @@ namespace Autohand{
             Gizmos.DrawWireSphere(tip.transform.position, tipRadius);
         }
 
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.blue;
-            DrawSphereBetweenChild(transform);
-            void DrawSphereBetweenChild(Transform transform){
-                for (int i = 0; i < transform.childCount; i++)
-                {
-                    var childTransform = transform.GetChild(i);
-                    if (childTransform.TryGetComponent(out CapsuleCollider cap))
-                    {
-                        Gizmos.DrawWireSphere(Vector3.Lerp(transform.position, cap.bounds.center, 0.5f), tipRadius);
+
+        public bool UpdateDepricatedValues() {
+
+            try {
+                if(hand == null)
+                    hand = GetComponentInParent<Hand>();
+                if(hand == null)
+                    Debug.LogError("AUTO HAND: Missing hand reference, please assign the hand reference to the finger component", this);
+
+                //Find enum type
+                if(fingerType == FingerEnum.none) {
+                    int fingerIndex = -1;
+                    for(int i = 0; i < 5; i++) {
+                        string enumFingerNames = Enum.GetName(typeof(FingerEnum), (FingerEnum)i).ToLower();
+                        if(name.ToLower().Contains(enumFingerNames)) {
+                            fingerIndex = i;
+                            fingerType = (FingerEnum)fingerIndex;
+                            break;
+                        }
                     }
 
-                    DrawSphereBetweenChild(childTransform);
+                    if(fingerIndex == -1) {
+                        Debug.LogError("AUTO HAND: Could not find finger type in name, please set the finger type manually", this);
+                        return false;
+                    }
                 }
+
+
+                bool missingSetup = (knuckleJoint == null || middleJoint == null || distalJoint == null || tip == null);
+                //Set up finger joints if none
+                if(missingSetup && fingerType != FingerEnum.none) {
+                    //If it has just 4 points we assume it's knuck->middle->distle->tip it doesn't have any additional joints
+                    if(fingerJoints.Length == 3) {
+                        if(knuckleJoint == null)
+                            knuckleJoint = fingerJoints[0];
+                        if(middleJoint == null)
+                            middleJoint = fingerJoints[1];
+                        if(distalJoint == null)
+                            distalJoint = fingerJoints[2];
+                    }
+                    else {
+                        Debug.LogError("AUTO HAND: Could not find correct finger joint, unsure about automatic setup, place connected finger values manually", this);
+                        return false;
+                    }
+                }
+
+                missingSetup = (knuckleJoint == null || middleJoint == null || distalJoint == null || tip == null);
+                if(missingSetup) {
+                    Debug.LogError("AUTO HAND: Missing finger connections, please connect all the joint values of the finger component (If your finger has less than the required joints add the same joint to two inputs)", this);
+                    return false;
+                }
+
+                if(fingerJoints.Length > 0 && minGripPosPose.Length == fingerJoints.Length && maxGripPosPose.Length == fingerJoints.Length) {
+
+                    var knuckleJointIndex = -1;
+                    var middleJointIndex = -1;
+                    var distalJointIndex = -1;
+
+                    for(int i = 0; i < fingerJoints.Length; i++) {
+                        if(fingerJoints[i] == knuckleJoint)
+                            knuckleJointIndex = i;
+                        if(fingerJoints[i] == middleJoint)
+                            middleJointIndex = i;
+                        if(fingerJoints[i] == distalJoint)
+                            distalJointIndex = i;
+                    }
+
+                    var fingerPosesEnumCount = Enum.GetValues(typeof(FingerPoseEnum)).Length;
+                    if(poseData == null || poseData.Length != fingerPosesEnumCount) {
+                        poseData = new FingerPoseData[fingerPosesEnumCount];
+
+                    }
+
+                    var knuckleJointPosition = minGripPosPose[knuckleJointIndex];
+                    var middleJointPosition = minGripPosPose[middleJointIndex];
+                    var distalJointPosition = minGripPosPose[distalJointIndex];
+
+                    var knuckleJointRotation = minGripRotPose[knuckleJointIndex];
+                    var middleJointRotation = minGripRotPose[middleJointIndex];
+                    var distalJointRotation = minGripRotPose[distalJointIndex];
+
+                    var knuckleStartPosition = knuckleJoint.localPosition;
+                    var middleStartPosition = middleJoint.localPosition;
+                    var distalStartPosition = distalJoint.localPosition;
+
+                    var knuckleStartRotation = knuckleJoint.localRotation;
+                    var middleStartRotation = middleJoint.localRotation;
+                    var distalStartRotation = distalJoint.localRotation;
+
+                    knuckleJoint.localPosition = knuckleJointPosition;
+                    middleJoint.localPosition = middleJointPosition;
+                    distalJoint.localPosition = distalJointPosition;
+
+                    knuckleJoint.localRotation = knuckleJointRotation;
+                    middleJoint.localRotation = middleJointRotation;
+                    distalJoint.localRotation = distalJointRotation;
+
+                    poseData[(int)FingerPoseEnum.Open] = new FingerPoseData(hand, this);
+
+                    knuckleJointPosition = maxGripPosPose[knuckleJointIndex];
+                    middleJointPosition = maxGripPosPose[middleJointIndex];
+                    distalJointPosition = maxGripPosPose[distalJointIndex];
+
+                    knuckleJointRotation = maxGripRotPose[knuckleJointIndex];
+                    middleJointRotation = maxGripRotPose[middleJointIndex];
+                    distalJointRotation = maxGripRotPose[distalJointIndex];
+
+                    knuckleJoint.localPosition = knuckleJointPosition;
+                    middleJoint.localPosition = middleJointPosition;
+                    distalJoint.localPosition = distalJointPosition;
+
+                    knuckleJoint.localRotation = knuckleJointRotation;
+                    middleJoint.localRotation = middleJointRotation;
+                    distalJoint.localRotation = distalJointRotation;
+
+                    poseData[(int)FingerPoseEnum.Closed] = new FingerPoseData(hand, this);
+
+                    knuckleJoint.localPosition = knuckleStartPosition;
+                    middleJoint.localPosition = middleStartPosition;
+                    distalJoint.localPosition = distalStartPosition;
+
+                    knuckleJoint.localRotation = knuckleStartRotation;
+                    middleJoint.localRotation = middleStartRotation;
+                    distalJoint.localRotation = distalStartRotation;
+
+#if UNITY_EDITOR
+                    UnityEditor.EditorUtility.SetDirty(this);
+#endif
+
+                    Debug.LogWarning("AUTO HAND: Automatically updating finger joint data, recommend doing this manually to ensure correct setup", this);
+                }
+
+
+                for(int i = 0; i < poseData.Length; i++) {
+                    if(poseData[i].isSet)
+                        poseData[i].CalculateAdditionalValues(hand.transform.lossyScale);
+                }
+
+                return true;
+            }
+            catch(System.Exception e) {
+                Debug.LogWarning("AUTO HAND: Error updating finger values, please check the finger component for errors or manually redo the hand Open/Closed pose after setting all finger values", this);
+                Debug.LogWarning(e);
+                return false;
             }
         }
     }

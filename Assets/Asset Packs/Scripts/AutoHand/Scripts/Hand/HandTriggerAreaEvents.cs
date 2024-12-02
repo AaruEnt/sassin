@@ -4,8 +4,10 @@ using UnityEngine;
 using UnityEngine.Events;
 
 namespace Autohand{
+    public delegate void HandAreaEvent(Hand hand, HandTriggerAreaEvents area);
     public delegate void HandEvent(Hand hand);
 
+    [HelpURL("https://app.gitbook.com/o/v43F1UfKchmlV5VQCpro/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/extras/hand-touch-trigger")]
     public class HandTriggerAreaEvents : MonoBehaviour{
         [Header("Trigger Events Settings")]
         [Tooltip("Whether or not first hand to enter should take ownership and be the only one to call events")]
@@ -25,34 +27,18 @@ namespace Autohand{
         public UnityHandEvent HandUnsqueeze;
 
         //For Programmers <3
-        public HandEvent HandEnterEvent;
-        public HandEvent HandExitEvent;
-        public HandEvent HandGrabEvent;
-        public HandEvent HandReleaseEvent;
-        public HandEvent HandSqueezeEvent;
-        public HandEvent HandUnsqueezeEvent;
+        public HandAreaEvent HandEnterEvent;
+        public HandAreaEvent HandExitEvent;
+        public HandAreaEvent HandGrabEvent;
+        public HandAreaEvent HandReleaseEvent;
+        public HandAreaEvent HandSqueezeEvent;
+        public HandAreaEvent HandUnsqueezeEvent;
 
-        List<Hand> hands;
-        bool grabbing;
-        bool squeezing;
-
-        protected virtual void OnEnable() {
-            hands = new List<Hand>();
-            HandEnterEvent += (hand) => HandEnter?.Invoke(hand);
-            HandExitEvent += (hand) => HandExit?.Invoke(hand);
-            HandGrabEvent += (hand) => HandGrab?.Invoke(hand);
-            HandReleaseEvent += (hand) => HandRelease?.Invoke(hand);
-            HandSqueezeEvent += (hand) => HandSqueeze?.Invoke(hand);
-            HandUnsqueezeEvent += (hand) => HandUnsqueeze?.Invoke(hand);
-        }
+        protected List<Hand> hands = new List<Hand>();
+        protected bool grabbing;
+        protected bool squeezing;
 
         protected virtual void OnDisable() {
-            HandEnterEvent -= (hand) => HandEnter?.Invoke(hand);
-            HandExitEvent -= (hand) => HandExit?.Invoke(hand);
-            HandGrabEvent -= (hand) => HandGrab?.Invoke(hand);
-            HandReleaseEvent -= (hand) => HandRelease?.Invoke(hand);
-            HandSqueezeEvent -= (hand) => HandSqueeze?.Invoke(hand);
-            HandUnsqueezeEvent -= (hand) => HandUnsqueeze?.Invoke(hand);
             for (int i = hands.Count - 1; i >= 0; i--){
                 hands[i].RemoveHandTriggerArea(this);
             }
@@ -67,16 +53,21 @@ namespace Autohand{
             }
         }
 
+
         public virtual void Enter(Hand hand) {
             if (enabled == false || handType == HandType.none || (hand.left && handType == HandType.right) || (!hand.left && handType == HandType.left))
                 return;
 
             if(!hands.Contains(hand)) {
                 hands.Add(hand);
-                if(oneHanded && hands.Count == 1)
-                    HandEnterEvent?.Invoke(hand);
-                else
-                    HandEnterEvent?.Invoke(hand);
+                if(oneHanded && hands.Count == 1) {
+                    HandEnter?.Invoke(hand);
+                    HandEnterEvent?.Invoke(hand, this);
+                }
+                else {
+                    HandEnter?.Invoke(hand);
+                    HandEnterEvent?.Invoke(hand, this);
+                }
             }
         }
 
@@ -87,29 +78,38 @@ namespace Autohand{
             if(hands.Contains(hand)) {
                 if(oneHanded && hands[0] == hand){
                     HandExit?.Invoke(hand);
+                    HandExitEvent?.Invoke(hand, this);
 
                     if(grabbing && exitTriggerRelease){
-                        HandReleaseEvent?.Invoke(hand);
+                        HandRelease?.Invoke(hand);
+                        HandReleaseEvent?.Invoke(hand, this);
                         grabbing = false;
                     }
                     if(squeezing && exitTriggerUnsqueeze){
-                        HandUnsqueezeEvent?.Invoke(hand);
+                        HandUnsqueeze?.Invoke(hand);
+                        HandUnsqueezeEvent?.Invoke(hand, this);
                         squeezing = false;
                     }
 
                     //If there is another hand, it enters
-                    if(hands.Count > 1)
-                        HandEnterEvent?.Invoke(hands[1]);
+                    if(hands.Count > 1) {
+                        HandEnter?.Invoke(hands[1]);
+                        HandEnterEvent?.Invoke(hands[1], this);
+                    }
 
                 }
-                else if(!oneHanded){
-                    HandExitEvent?.Invoke(hand);
+                else if(!oneHanded) {
+                    HandExit?.Invoke(hand);
+                    HandExitEvent?.Invoke(hand, this);
+
                     if(grabbing && exitTriggerRelease){
-                        HandReleaseEvent?.Invoke(hand);
+                        HandRelease?.Invoke(hand);
+                        HandReleaseEvent?.Invoke(hand, this);
                         grabbing = false;
                     }
                     if(squeezing && exitTriggerUnsqueeze){
-                        HandUnsqueezeEvent?.Invoke(hand);
+                        HandUnsqueeze?.Invoke(hand);
+                        HandUnsqueezeEvent?.Invoke(hand, this);
                         squeezing = false;
                     }
 
@@ -128,11 +128,13 @@ namespace Autohand{
                 return;
 
             if(oneHanded && hands[0] == hand){
-                HandGrabEvent?.Invoke(hand);
+                HandGrab?.Invoke(hand);
+                HandGrabEvent?.Invoke(hand, this);
                 grabbing = true;
             }
             else if(!oneHanded){
-                HandGrabEvent?.Invoke(hand);
+                HandGrab?.Invoke(hand);
+                HandGrabEvent?.Invoke(hand, this);
                 grabbing = true;
             }
         }
@@ -145,11 +147,13 @@ namespace Autohand{
                 return;
 
             if(oneHanded && hands[0] == hand){
-                HandReleaseEvent?.Invoke(hand);
+                HandRelease?.Invoke(hand);
+                HandReleaseEvent?.Invoke(hand, this);
                 grabbing = false;
             }
             else if(!oneHanded){
-                HandReleaseEvent?.Invoke(hand);
+                HandRelease?.Invoke(hand);
+                HandReleaseEvent?.Invoke(hand, this);
                 grabbing = false;
             }
         }
@@ -163,12 +167,14 @@ namespace Autohand{
                 return;
 
             if(oneHanded && hands[0] == hand){
-                HandSqueezeEvent?.Invoke(hand);
+                HandSqueeze?.Invoke(hand);
+                HandSqueezeEvent?.Invoke(hand, this);
                 squeezing = true;
             }
             else if(!oneHanded){
                 squeezing = true;
-                HandSqueezeEvent?.Invoke(hand);
+                HandSqueeze?.Invoke(hand);
+                HandSqueezeEvent?.Invoke(hand, this);
             }
         }
 
@@ -180,12 +186,14 @@ namespace Autohand{
                 return;
 
             if(oneHanded && hands[0] == hand){
-                HandUnsqueezeEvent?.Invoke(hand);
+                HandUnsqueeze?.Invoke(hand);
+                HandUnsqueezeEvent?.Invoke(hand, this);
                 squeezing = false;
             }
             else if(!oneHanded){
                 squeezing = false;
-                HandUnsqueezeEvent?.Invoke(hand);
+                HandUnsqueeze?.Invoke(hand);
+                HandUnsqueezeEvent?.Invoke(hand, this);
             }
         }
 }

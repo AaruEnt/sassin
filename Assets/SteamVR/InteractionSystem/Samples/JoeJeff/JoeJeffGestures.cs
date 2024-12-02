@@ -9,6 +9,7 @@ namespace Valve.VR.InteractionSystem.Sample
 {
     public class JoeJeffGestures : MonoBehaviour
     {
+#if !UNITY_ANDROID
         private const float openFingerAmount = 0.1f;
         private const float closedFingerAmount = 0.9f;
         private const float closedThumbAmount = 0.4f;
@@ -64,5 +65,6 @@ namespace Valve.VR.InteractionSystem.Sample
 
             lastPeaceSignState = currentPeaceSignState;
         }
+#endif
     }
 }

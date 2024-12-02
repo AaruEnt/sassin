@@ -27,13 +27,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8834320319295017362}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &8834320319295017374
 CapsuleCollider:
@@ -43,8 +43,17 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8834320319295017362}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
+  serializedVersion: 2
   m_Radius: 0.2
   m_Height: 1.6
   m_Direction: 1
@@ -56,10 +65,21 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8834320319295017362}
-  serializedVersion: 2
+  serializedVersion: 4
   m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -84,14 +104,15 @@ MonoBehaviour:
   handRight: {fileID: 0}
   handLeft: {fileID: 0}
   useMovement: 1
-  maxMoveSpeed: 3
+  maxMoveSpeed: 2.3
   moveAcceleration: 10000
-  groundedDrag: 10000
-  snapTurning: 1
+  rotationType: 0
   snapTurnAngle: 30
-  smoothTurnSpeed: 50
+  smoothTurnSpeed: 180
+  bodyFollowsHead: 1
+  maxHeadDistance: 0.5
   showHeight: 1
-  heightSmoothSpeed: 30
+  heightSmoothSpeed: 10
   heightOffset: 0
   crouching: 0
   crouchHeight: 0.6
@@ -101,10 +122,12 @@ MonoBehaviour:
   headRadius: 0.15
   useGrounding: 1
   maxStepHeight: 0.3
-  maxStepAngle: 30
+  maxStepAngle: 45
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 1
+  groundedDrag: 10000
+  flyingDrag: 4
   allowClimbing: 1
   allowClimbingMovement: 1
   climbingStrength: {x: 20, y: 20, z: 20}
@@ -120,6 +143,10 @@ MonoBehaviour:
   platformingLayerMask:
     serializedVersion: 2
     m_Bits: 1
+  movementDeadzone: 0.2
+  turnDeadzone: 0.4
+  turnResetzone: 0.3
+  groundedOffset: 0.1
 --- !u!135 &8834320319295017372
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -128,8 +155,16 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8834320319295017362}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Radius: 0.25
   m_Center: {x: 0, y: 0, z: 0}

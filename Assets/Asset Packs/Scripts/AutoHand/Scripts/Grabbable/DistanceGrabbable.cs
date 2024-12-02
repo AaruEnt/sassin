@@ -8,7 +8,7 @@ namespace Autohand{
     }
 
     [RequireComponent(typeof(Grabbable))]
-    [HelpURL("https://earnestrobot.notion.site/Distance-Grabbing-19e4e8b14f00428295eca75fca752787")]
+    [HelpURL("https://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/grabbable/distance-grabbinghttps://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/grabbable/distance-grabbing")]
     public class DistanceGrabbable : MonoBehaviour{
         [AutoHeader("Distance Grabbable")]
         public bool ignoreMe;

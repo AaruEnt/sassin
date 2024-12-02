@@ -14,7 +14,8 @@ namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
 	public class ControllerButtonHints : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		public Material controllerMaterial;
 		public Material urpControllerMaterial;
 		public Material usingMaterial
@@ -871,5 +872,6 @@ namespace Valve.VR.InteractionSystem
 
 			return string.Empty;
 		}
+#endif
 	}
 }

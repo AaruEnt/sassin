@@ -15,7 +15,8 @@ namespace Valve.VR.InteractionSystem
 	// the player's hands, head, tracking origin, and guesses for various properties.
 	//-------------------------------------------------------------------------
 	public class Player : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		[Tooltip( "Virtual transform corresponding to the meatspace tracking origin. Devices are tracked relative to this." )]
 		public Transform trackingOriginTransform;
 
@@ -423,5 +424,6 @@ namespace Valve.VR.InteractionSystem
 		{
 			//Do something appropriate here
 		}
+#endif
 	}
 }

@@ -14,7 +14,24 @@ namespace Autohand.Demo{
         bool pointing;
         bool selecting;
 
+        private void Start() {
+            if(link == null) {
+                link = GetComponentInParent<XRHandControllerLink>();
+                if(link == null)
+                    Debug.LogError("No XRHandControllerLink connected - input will not work", this);
+            }
+
+            if(pointGrab == null) {
+                pointGrab = GetComponentInParent<HandDistanceGrabber>();
+                if(pointGrab == null)
+                    Debug.LogError("No HandDistanceGrabber connected - input will not work", this);
+            }
+        }
+
         void Update(){
+            if(link == null || pointGrab == null)
+                return;
+
             if (link.ButtonPressed(pointInput) && !pointing) {
                 pointing = true;
                 pointGrab.StartPointing();

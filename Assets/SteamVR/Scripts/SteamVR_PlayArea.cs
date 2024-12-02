@@ -7,13 +7,16 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections;
+#if !UNITY_ANDROID
 using Valve.VR;
+#endif
 
 namespace Valve.VR
 {
     [ExecuteInEditMode, RequireComponent(typeof(MeshRenderer), typeof(MeshFilter))]
     public class SteamVR_PlayArea : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public float borderThickness = 0.15f;
         public float wireframeHeight = 2.0f;
         public bool drawWireframeWhenSelectedOnly = false;
@@ -274,5 +277,6 @@ namespace Valve.VR
 
             BuildMesh();
         }
+#endif
     }
 }

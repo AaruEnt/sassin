@@ -3,12 +3,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if !UNITY_ANDROID
 using Valve.VR.InteractionSystem;
+#endif
 
 namespace Valve.VR.InteractionSystem.Sample
 {
     public class Planting : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public SteamVR_Action_Boolean plantAction;
 
         public Hand hand;
@@ -94,5 +97,6 @@ namespace Valve.VR.InteractionSystem.Sample
             if (rigidbody != null)
                 rigidbody.isKinematic = false;
         }
+#endif
     }
 }

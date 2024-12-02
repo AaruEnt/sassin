@@ -6,11 +6,7 @@ namespace Autohand {
     public class IgnoreHandPlayerCollision : MonoBehaviour {
         public List<Collider> colliders;
 
-        IEnumerable Start() {
-            yield return new WaitForFixedUpdate();
-            yield return new WaitForEndOfFrame();
-            yield return new WaitForFixedUpdate();
-            yield return new WaitForEndOfFrame();
+        void Start() {
             ActivateIgnoreCollision();
         }
 

@@ -5,12 +5,15 @@
 //=============================================================================
 
 using UnityEngine;
+#if !UNITY_ANDROID
 using Valve.VR;
+#endif
 
 namespace Valve.VR
 {
     public class SteamVR_TrackedObject : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public enum EIndex
         {
             None = -1,
@@ -108,5 +111,6 @@ namespace Valve.VR
             if (System.Enum.IsDefined(typeof(EIndex), index))
                 this.index = (EIndex)index;
         }
+#endif
     }
 }

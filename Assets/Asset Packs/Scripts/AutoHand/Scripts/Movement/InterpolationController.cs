@@ -15,7 +15,7 @@ namespace Autohand {
         public static InterpolationController _Instance;
         public static InterpolationController Instance {
             get {
-                if(_Instance == null && !FindObjectOfType<InterpolationController>()) {
+                if(_Instance == null && !AutoHandExtensions.CanFindObjectOfType<InterpolationController>()) {
                     _Instance = new GameObject() { name = "InterpolationTracker" }.AddComponent<InterpolationController>();
                     _Instance.transform.parent = AutoHandExtensions.transformParent;
                 }

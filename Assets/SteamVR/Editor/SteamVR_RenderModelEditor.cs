@@ -11,9 +11,12 @@ using System.Collections.Generic;
 
 namespace Valve.VR
 {
+#if !UNITY_ANDROID
     [CustomEditor(typeof(SteamVR_RenderModel)), CanEditMultipleObjects]
+#endif
     public class SteamVR_RenderModelEditor : Editor
     {
+#if !UNITY_ANDROID
         SerializedProperty script, index, modelOverride, shader, verbose, createComponents, updateDynamically;
 
         static string[] renderModelNames;
@@ -102,5 +105,6 @@ namespace Valve.VR
 
             serializedObject.ApplyModifiedProperties();
         }
+#endif
     }
 }

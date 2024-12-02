@@ -21,8 +21,8 @@ namespace Autohand.Demo {
             
             if(showSqueezeEvents) hand1.OnSqueezed += (hand, grabbable) => { Debug.Log(hand.name + " SQUEEZE EVENT", this); };
             if (showSqueezeEvents) hand1.OnUnsqueezed += (hand, grabbable) => { Debug.Log(hand.name + " UNSQUEEZE EVENT", this); };
-            if (showHighlightEvents) hand1.OnHighlight += (hand, grabbable) => { Debug.Log(hand.name + " HIGHLIGHT EVENT", this); };
-            if (showHighlightEvents) hand1.OnStopHighlight += (hand, grabbable) => { Debug.Log(hand.name + " UNHIGHLIGHT EVENT", this); };
+            if (showHighlightEvents) hand1.highlighter.OnHighlight += (hand, grabbable) => { Debug.Log(hand.name + " HIGHLIGHT EVENT", this); };
+            if (showHighlightEvents) hand1.highlighter.OnStopHighlight += (hand, grabbable) => { Debug.Log(hand.name + " UNHIGHLIGHT EVENT", this); };
         }
 
         private void OnDisable()
@@ -35,8 +35,8 @@ namespace Autohand.Demo {
             
             if (showSqueezeEvents) hand1.OnSqueezed -= (hand, grabbable) => { Debug.Log(hand.name + " SQUEEZE EVENT", this); };
             if (showSqueezeEvents) hand1.OnUnsqueezed -= (hand, grabbable) => { Debug.Log(hand.name + " UNSQUEEZE EVENT", this); };
-            if (showHighlightEvents) hand1.OnHighlight -= (hand, grabbable) => { Debug.Log(hand.name + " HIGHLIGHT EVENT", this); };
-            if (showHighlightEvents) hand1.OnStopHighlight -= (hand, grabbable) => { Debug.Log(hand.name + " UNHIGHLIGHT EVENT", this); };
+            if (showHighlightEvents) hand1.highlighter.OnHighlight -= (hand, grabbable) => { Debug.Log(hand.name + " HIGHLIGHT EVENT", this); };
+            if (showHighlightEvents) hand1.highlighter.OnStopHighlight -= (hand, grabbable) => { Debug.Log(hand.name + " UNHIGHLIGHT EVENT", this); };
         }
     }
 }

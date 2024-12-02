@@ -21,14 +21,20 @@ namespace Autohand
 
         public void SaveRightPose(HandPoseData right)
         {
-            rightPose = right;
+            rightPose = new HandPoseData(ref right);
             rightSaved = true;
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(this);
+#endif
         }
 
         public void SaveLeftPose(HandPoseData left)
         {
-            leftPose = left;
+            leftPose = new HandPoseData(ref left);
             leftSaved = true;
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(this);
+#endif
         }
     }
 }

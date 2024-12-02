@@ -2,10 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if !UNITY_ANDROID
 using Valve.VR;
+#endif
+using Photon.Pun;
 
 namespace Autohand.Demo{
-    public class SteamVRHandControllerLink : HandControllerLink {
+    public class SteamVRHandControllerLink
+
+#if !UNITY_ANDROID
+        : HandControllerLink 
+#else
+        : MonoBehaviour
+#endif
+    {
+
+#if !UNITY_ANDROID
         public SteamVR_Input_Sources handType;
         public SteamVR_Action_Single grabAxis;
         public SteamVR_Action_Boolean grabAction;
@@ -77,6 +89,8 @@ namespace Autohand.Demo{
             }
             catch { }
         }
+        
+#endif
     }
 }
 #endif

@@ -22,12 +22,15 @@ namespace Autohand {
         public UnityHandEvent OnUnpressed;
 
         bool pressed = false;
+        MeshRenderer buttonRenderer;
 
         private void Start() {
             if(startPress)
                 PressButton(null);
             else if(startUnpress)
                 ReleaseButton(null);
+
+            buttonRenderer = button.GetComponent<MeshRenderer>();
         }
 
         void OnEnable() {
@@ -58,8 +61,9 @@ namespace Autohand {
             if(!pressed)
                 button.localPosition += pressOffset;
             pressed = true;
-            OnPressed?.Invoke(hand);
-            button.GetComponent<MeshRenderer>().material.color = pressColor;
+            OnPressed?.Invoke(hand); 
+            if(buttonRenderer != null && buttonRenderer.material != null)
+                buttonRenderer.material.color = pressColor;
         }
 
         void ReleaseButton(Hand hand) {
@@ -67,7 +71,8 @@ namespace Autohand {
                 button.localPosition -= pressOffset;
             pressed = false; 
             OnUnpressed?.Invoke(hand);
-            button.GetComponent<MeshRenderer>().material.color = unpressColor;
+            if(buttonRenderer != null && buttonRenderer.material != null)
+                buttonRenderer.material.color = unpressColor;
         }
     }
 }

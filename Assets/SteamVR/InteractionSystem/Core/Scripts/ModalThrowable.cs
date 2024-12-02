@@ -12,6 +12,7 @@ namespace Valve.VR.InteractionSystem
 {
     public class ModalThrowable : Throwable
     {
+#if !UNITY_ANDROID
         [Tooltip("The local point which acts as a positional and rotational offset to use while held with a grip type grab")]
         public Transform gripOffset;
 
@@ -49,5 +50,6 @@ namespace Valve.VR.InteractionSystem
 
             base.HandAttachedUpdate(hand);
         }
+#endif
     }
 }

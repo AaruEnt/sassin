@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -9,11 +7,15 @@ namespace Autohand
 {
     [Serializable]
     public class UnityCanvasPointerEvent : UnityEvent<Vector3, GameObject> { }
+
+    [HelpURL("https://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/extras/ui-interaction"), DefaultExecutionOrder(10000)]
     public class HandCanvasPointer : MonoBehaviour
     {
         [Header("References")]
         public GameObject hitPointMarker;
         private LineRenderer lineRenderer;
+        public bool useSmoothing = true;
+        public float forwardPointerSmoothing = 25f;
 
 
         [Header("Ray settings")]
@@ -30,11 +32,16 @@ namespace Autohand
 
 
 
-        public GameObject _currTarget;
+        private GameObject _currTarget;
         public GameObject currTarget
         {
             get { return _currTarget; }
         }
+
+        private float _currDistance;
+
+
+        Vector3 currentSmoothForward;
 
 
         public RaycastHit lastHit { get; private set; }
@@ -44,6 +51,7 @@ namespace Autohand
         AutoInputModule inputModule = null;
         float lineSegements = 10f;
 
+        bool beingDestroyed = false;
         static Camera cam = null;
         public static Camera UICamera
         {
@@ -57,7 +65,7 @@ namespace Autohand
                     cam.orthographic = true;
                     cam.orthographicSize = 0.001f;
                     cam.cullingMask = 0;
-                    cam.nearClipPlane = 0.01f;
+                    cam.nearClipPlane = 0.001f;
                     cam.depth = 0f;
                     cam.allowHDR = false;
                     cam.enabled = false;
@@ -65,30 +73,41 @@ namespace Autohand
                     cam.transform.parent = AutoHandExtensions.transformParent;
 
 #if (UNITY_2020_3_OR_NEWER)
-                    var canvases = FindObjectsOfType<Canvas>(true);
+                    var canvases = AutoHandExtensions.CanFindObjectsOfType<Canvas>(true);
 #else
                     var canvases = FindObjectsOfType<Canvas>();
 #endif
-                    foreach (var canvas in canvases)
-                        if (canvas.renderMode == RenderMode.WorldSpace)
+                    foreach(var canvas in canvases) {
+                        if(canvas.renderMode == RenderMode.WorldSpace)
                             canvas.worldCamera = cam;
+                    }
+
                 }
                 return cam;
             }
         }
         int pointerIndex;
 
-        void OnEnable()
+        protected virtual void OnEnable()
         {
 
-            lineRenderer.positionCount = (int)lineSegements;
+            if(lineRenderer != null)
+                lineRenderer.positionCount = (int)lineSegements;
             if (inputModule.Instance != null)
                 pointerIndex = inputModule.Instance.AddPointer(this);
+            ShowRay(false);
         }
 
-        void OnDisable()
+        protected virtual void OnDisable()
         {
             if(inputModule) inputModule.Instance?.RemovePointer(this);
+        }
+
+        protected virtual void OnDestroy() {
+            beingDestroyed = true;
+            if(cam != null)
+                Destroy(cam.gameObject);
+            cam = null;
         }
 
         public void SetIndex(int index)
@@ -96,53 +115,40 @@ namespace Autohand
             pointerIndex = index;
         }
 
-        internal void Preprocess()
+        protected internal virtual void Preprocess()
         {
+            if(beingDestroyed) return;
+
+            UICamera.farClipPlane = raycastLength;
             UICamera.transform.position = transform.position;
-            UICamera.transform.forward = transform.forward;
+            UICamera.transform.forward = currentSmoothForward;
         }
 
-        public void Press()
-        {
+        public virtual void Press() {
             // Handle the UI events
             if(inputModule) inputModule.ProcessPress(pointerIndex);
 
             // Show the ray when they attemp to press
-            if (!autoShowTarget && hover) ShowRay(true);
+            if(!autoShowTarget && hover) ShowRay(true);
 
-            if (lastHit.collider != null)
-            {
-                // Fire the Unity event
-                StartSelect?.Invoke(lastHit.point, lastHit.transform.gameObject);
-            }
-            else
-            {
-                PointerEventData data = inputModule.GetData(pointerIndex);
-                float targetLength = data.pointerCurrentRaycast.distance == 0 ? raycastLength : data.pointerCurrentRaycast.distance;
-                StartSelect?.Invoke(transform.position + (transform.forward * targetLength), null);
+            PointerEventData data = inputModule.GetData(pointerIndex);
+            if(data != null && data.selectedObject != null) {
+                StartSelect?.Invoke(data.pointerCurrentRaycast.worldPosition, data.selectedObject);
             }
         }
 
-        public void Release()
+        public virtual void Release()
         {
             // Handle the UI events
             if(inputModule) inputModule.ProcessRelease(pointerIndex);
 
-            if (lastHit.collider != null)
-            {
-                // Fire the Unity event
-                StopSelect?.Invoke(lastHit.point, lastHit.transform.gameObject);
-            }
-            else
-            {
-                PointerEventData data = inputModule.GetData(pointerIndex);
-                float targetLength = data.pointerCurrentRaycast.distance == 0 ? raycastLength : data.pointerCurrentRaycast.distance;
-                StopSelect?.Invoke(transform.position + (transform.forward * targetLength), null);
-            }
-
+            PointerEventData data = inputModule.GetData(pointerIndex);
+            var selectedObject = data.selectedObject;
+            if(selectedObject != null) 
+                StopSelect?.Invoke(data.pointerCurrentRaycast.worldPosition, selectedObject);
         }
 
-        private void Awake()
+        protected virtual void Awake()
         {
             if (lineRenderer == null)
                 gameObject.CanGetComponent(out lineRenderer);
@@ -153,9 +159,9 @@ namespace Autohand
                 {
                     inputModule = inputMod;
                 }
-                else if (!(inputModule = FindObjectOfType<AutoInputModule>()))
+                else if (!(inputModule = AutoHandExtensions.CanFindObjectOfType<AutoInputModule>()))
                 {
-                    EventSystem system = FindObjectOfType<EventSystem>();
+                    EventSystem system = AutoHandExtensions.CanFindObjectOfType<EventSystem>();
                     if(system == null) {
                         system = new GameObject().AddComponent<EventSystem>();
                         system.name = "UI Input Event System";
@@ -166,32 +172,47 @@ namespace Autohand
             }
         }
 
-        private void Update()
+        protected virtual void LateUpdate()
         {
+            if(useSmoothing) {
+                var currentAngleDistance = Vector3.Angle(currentSmoothForward, transform.forward);
+                currentSmoothForward = Vector3.RotateTowards(currentSmoothForward, transform.forward, Time.deltaTime * forwardPointerSmoothing + Time.deltaTime * forwardPointerSmoothing * currentAngleDistance, 1000f);
+                currentSmoothForward.Normalize();
+            }
+            else
+                currentSmoothForward = transform.forward;
+
             UpdateLine();
         }
 
-        private void UpdateLine()
+        protected virtual void UpdateLine()
         {
+
             PointerEventData data = inputModule.GetData(pointerIndex);
-            float targetLength = data.pointerCurrentRaycast.distance == 0 ? raycastLength : data.pointerCurrentRaycast.distance;
+            float targetLength = data.pointerCurrentRaycast.gameObject == null ? raycastLength : data.pointerCurrentRaycast.distance;
 
-            if (targetLength > 0)
+            if(targetLength > 0) {
                 _currTarget = data.pointerCurrentRaycast.gameObject;
-            else
+                _currDistance = targetLength;
+            }
+            else {
                 _currTarget = null;
+            }
 
-            if (data.pointerCurrentRaycast.distance != 0 && !hover)
-            {
+            if (data.pointerCurrentRaycast.gameObject != null && !hover){
                 lastHit = CreateRaycast(targetLength);
-                Vector3 endPosition = transform.position + (transform.forward * targetLength);
+                Vector3 endPosition = transform.position + (currentSmoothForward * targetLength);
                 if (lastHit.collider) endPosition = lastHit.point;
 
 
-                if (lastHit.collider != null)
+                if(lastHit.collider != null) {
+                    currentSmoothForward = transform.forward;
                     StartPoint?.Invoke(lastHit.point, lastHit.transform.gameObject);
-                else
+                }
+                else {
+                    currentSmoothForward = transform.forward;
                     StartPoint?.Invoke(endPosition, null);
+                }
 
 
                 // Show the ray if autoShowTarget is on when they enter the canvas
@@ -199,10 +220,9 @@ namespace Autohand
 
                 hover = true;
             }
-            else if (data.pointerCurrentRaycast.distance == 0 && hover)
-            {
+            else if (data.pointerCurrentRaycast.gameObject == null && hover){
                 lastHit = CreateRaycast(targetLength);
-                Vector3 endPosition = transform.position + (transform.forward * targetLength);
+                Vector3 endPosition = transform.position + (currentSmoothForward * targetLength);
                 if (lastHit.collider) endPosition = lastHit.point;
 
                 if (lastHit.collider != null)
@@ -212,22 +232,20 @@ namespace Autohand
 
                 // Hide the ray when they leave the canvas
                 ShowRay(false);
-
                 hover = false;
             }
 
             if(hover) {
                 lastHit = CreateRaycast(targetLength);
 
-                Vector3 endPosition = transform.position + (transform.forward * targetLength);
-
-                if(lastHit.collider) endPosition = lastHit.point;
+                Vector3 endPosition = transform.position + (currentSmoothForward * targetLength);
 
                 //Handle the hitmarker
                 hitPointMarker.transform.position = endPosition;
                 hitPointMarker.transform.forward = data.pointerCurrentRaycast.worldNormal;
 
                 if(lastHit.collider) {
+                    endPosition = lastHit.point;
                     hitPointMarker.transform.forward = lastHit.collider.transform.forward;
                     hitPointMarker.transform.position = endPosition + hitPointMarker.transform.forward * 0.002f;
                 }
@@ -237,21 +255,24 @@ namespace Autohand
                     lineRenderer.SetPosition(i, Vector3.Lerp(transform.position, endPosition, i/ lineSegements));
                 }
             }
+
+
+
         }
 
-        private RaycastHit CreateRaycast(float dist)
-        {
+        protected virtual RaycastHit CreateRaycast(float dist){
             RaycastHit hit;
-            Ray ray = new Ray(transform.position, transform.forward);
+            Ray ray = new Ray(transform.position, currentSmoothForward);
             Physics.Raycast(ray, out hit, dist, UILayer);
 
             return hit;
         }
 
-        private void ShowRay(bool show)
-        {
-            hitPointMarker.SetActive(show);
-            lineRenderer.enabled = show;
+        protected virtual void ShowRay(bool show) {
+            if(hitPointMarker != null)
+                hitPointMarker.SetActive(show);
+            if(lineRenderer != null)
+                lineRenderer.enabled = show;
         }
 
     }

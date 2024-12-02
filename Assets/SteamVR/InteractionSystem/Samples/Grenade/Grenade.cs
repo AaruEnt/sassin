@@ -5,6 +5,7 @@ namespace Valve.VR.InteractionSystem.Sample
 {
     public class Grenade : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public GameObject explodePartPrefab;
         public int explodeCount = 10;
 
@@ -33,5 +34,6 @@ namespace Valve.VR.InteractionSystem.Sample
                 Destroy(this.gameObject);
             }
         }
+#endif
     }
 }

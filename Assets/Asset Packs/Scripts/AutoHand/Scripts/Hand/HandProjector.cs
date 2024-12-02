@@ -1,3 +1,4 @@
+
 using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
@@ -46,6 +47,8 @@ namespace Autohand {
 
         HandPoseData lastProjectionPose;
         HandPoseData newProjectionPose;
+        HandPoseData postGrabPose;
+
         Vector3 lastProjectionPosition;
         Quaternion lastProjectionRotation;
 
@@ -65,25 +68,29 @@ namespace Autohand {
 
             handProjection.enableMovement = false;
             handProjection.usingHighlight = false;
-            handProjection.disableIK = true;
+            handProjection.enableIK = false;
 
-            handProjection.followPositionStrength = 0;
-            handProjection.followRotationStrength = 0;
+            handProjection.handFollow.followPositionStrength = 0;
+            handProjection.handFollow.followRotationStrength = 0;
             handProjection.swayStrength = 0;
-            handProjection.disableIK = true;
             handProjection.usingHighlight = false;
             handProjection.usingPoseAreas = false;
             startMass = hand.body.mass;
             minGrabTime = hand.minGrabTime;
 
-            lastProjectionPosition = hand.transform.localPosition;
-            lastProjectionRotation = hand.transform.localRotation;
-            lastProjectionPose = hand.GetHandPose();
+            lastProjectionPosition = hand.transform.position;
+            lastProjectionRotation = hand.transform.rotation;
+            lastProjectionPose = new HandPoseData(hand);
+            newProjectionPose = new HandPoseData(hand);
+            postGrabPose = new HandPoseData(hand);
 
             hand.OnBeforeGrabbed += OnBeforeGrab;
             hand.OnGrabbed += OnGrab;
             hand.OnBeforeReleased += OnRelease;
             hand.OnTriggerGrab += OnTriggerGrab;
+
+            if(!hideHand)
+                handProjection.transform.parent = null;
         }
 
         void OnDisable() {
@@ -121,26 +128,20 @@ namespace Autohand {
         }
 
         void OnRelease(Hand hand, Grabbable grab) {
-            lastProjectionPose = hand.GetHandPose();
+            lastProjectionPose.CopyFromData(ref hand.handAnimator.currentHandPose);
             lastProjectionPose.SetFingerPose(handProjection);
-            lastProjectionPosition = hand.transform.localPosition;
-            lastProjectionRotation = hand.transform.localRotation;
+            lastProjectionPosition = hand.transform.position;
+            lastProjectionRotation = hand.transform.rotation;
             handProjection.transform.position = hand.transform.position;
             handProjection.transform.rotation = hand.transform.rotation;
             handProjection.body.position = handProjection.transform.position;
             handProjection.body.rotation = handProjection.transform.rotation;
-
-            if(hideHand) {
-                hand.minGrabTime = minGrabTime;
-                for(int i = 0; i < handProjection.fingers.Length; i++)
-                    handProjection.fingers[i].SetCurrentFingerBend(hand.fingers[i].GetLastHitBend());
-            }
         }
 
         void LateUpdate() {
             if(tryingGrab && hand.GetTriggerAxis() < 0.35f)
                 tryingGrab = false;
-            
+
 
             SetTarget(hand.lookingAtObj);
             ShowProjection(IsProjectionActive());
@@ -171,7 +172,7 @@ namespace Autohand {
             }
 
             if(show) {
-                var targetHit = hand.GetHighlightHit();
+                var targetHit = hand.highlighter.GetHighlightHit();
                 if(targetHit.collider != null) {
 
                     if(!hand.CanGrab(target)) {
@@ -187,9 +188,9 @@ namespace Autohand {
 
                     //Do new pose
                     GrabbablePose grabPose;
-                    handProjection.transform.localPosition = hand.transform.localPosition;
-                    handProjection.transform.localRotation = hand.transform.localRotation;
-                    if(grabPose = handProjection.GetGrabPose(targetHit.collider.transform, target)) {
+                    handProjection.transform.position = hand.transform.position;
+                    handProjection.transform.rotation = hand.transform.rotation;
+                    if(target.GetGrabPose(hand, out grabPose)) {
                         grabPose.SetHandPose(handProjection, true);
                     }
                     else {
@@ -197,17 +198,17 @@ namespace Autohand {
                         handProjection.body.position = handProjection.transform.position;
                         handProjection.AutoPose(targetHit, target);
                     }
-                    newProjectionPose = handProjection.GetHandPose();
+                    newProjectionPose.SavePose(handProjection);
                     Vector3 targetPos;
                     Quaternion targetRot;
 
                     if(useGrabTransition && (target.grabType == HandGrabType.GrabbableToHand || (target.grabType == HandGrabType.Default && hand.grabType == GrabType.GrabbableToHand))) {
-                        targetPos = hand.transform.localPosition;
-                        targetRot = hand.transform.localRotation;
+                        targetPos = hand.transform.position;
+                        targetRot = hand.transform.rotation;
                     }
                     else {
-                        targetPos = Vector3.Lerp(hand.transform.localPosition, handProjection.transform.localPosition, currAmount * grabDistanceMultiplyer);
-                        targetRot = Quaternion.Lerp(hand.transform.localRotation, handProjection.transform.localRotation, currAmount * grabDistanceMultiplyer);
+                        targetPos = Vector3.Lerp(hand.transform.position, handProjection.transform.position, currAmount * grabDistanceMultiplyer);
+                        targetRot = Quaternion.Lerp(hand.transform.rotation, handProjection.transform.rotation, currAmount * grabDistanceMultiplyer);
                     }
 
 
@@ -222,39 +223,41 @@ namespace Autohand {
 
 
                     //Interpolate Fingers
-                    var postGrabPose = HandPoseData.LerpPose(hand.GetHandPose(), newProjectionPose, Mathf.Clamp01(currAmount - 0.33f)*1.5f);
-                    HandPoseData.LerpPose(lastProjectionPose, postGrabPose, speed * Time.deltaTime).SetFingerPose(handProjection);
+                    postGrabPose.LerpPose(ref hand.handAnimator.currentHandPose, ref newProjectionPose, Mathf.Clamp01(currAmount - 0.1f) * 1.25f);
+                    lastProjectionPose.LerpPose(ref lastProjectionPose, ref postGrabPose, speed * Time.deltaTime);
+                    lastProjectionPose.SetFingerPose(handProjection);
 
-                    if(hand.GetTriggerAxis() > 0.1f || !hideHand) {
+                    if(hand.GetTriggerAxis() > 0.05f || !hideHand) {
                         //Interpolate Position
-                        handProjection.transform.localPosition = Vector3.Lerp(lastProjectionPosition, targetPos, newSpeed * Time.deltaTime);
-                        handProjection.transform.localRotation = Quaternion.Lerp(lastProjectionRotation, targetRot, newSpeed * Time.deltaTime);
+                        var distance = Vector3.Distance(lastProjectionPosition, targetPos);
+                        var angle = Quaternion.Angle(lastProjectionRotation, targetRot);
+                        handProjection.transform.position = Vector3.MoveTowards(lastProjectionPosition, targetPos, distance * Time.deltaTime * newSpeed );
+                        handProjection.transform.rotation = Quaternion.RotateTowards(lastProjectionRotation, targetRot, angle * newSpeed * Time.deltaTime );
                     }
-                    else{
-                        handProjection.transform.localPosition = hand.transform.localPosition;
-                        handProjection.transform.localRotation = hand.transform.localRotation;
-                        lastProjectionPose = hand.GetHandPose();
+                    else {
+                        handProjection.transform.position = hand.transform.position;
+                        handProjection.transform.rotation = hand.transform.rotation;
+                        lastProjectionPose.CopyFromData(ref hand.handAnimator.currentHandPose);
                         lastProjectionPose.SetFingerPose(handProjection);
                     }
                     handProjection.body.position = handProjection.transform.position;
                     handProjection.body.rotation = handProjection.transform.rotation;
 
-                    lastProjectionPosition = handProjection.transform.localPosition;
-                    lastProjectionRotation = handProjection.transform.localRotation;
-                    lastProjectionPose = handProjection.GetHandPose();
+                    lastProjectionPosition = handProjection.transform.position;
+                    lastProjectionRotation = handProjection.transform.rotation;
                 }
-                else if(!hand.IsGrabbing()){
-                    handProjection.transform.localPosition = hand.transform.localPosition;
-                    handProjection.transform.localRotation = hand.transform.localRotation;
-                    lastProjectionPosition = hand.transform.localPosition;
-                    lastProjectionRotation = hand.transform.localRotation;
-                    lastProjectionPose = hand.GetHandPose();
+                else if(!hand.IsGrabbing()) {
+                    handProjection.transform.position = hand.transform.position;
+                    handProjection.transform.rotation = hand.transform.rotation;
+                    lastProjectionPosition = hand.transform.position;
+                    lastProjectionRotation = hand.transform.rotation;
+                    lastProjectionPose.CopyFromData(ref hand.handAnimator.currentHandPose);
                     lastProjectionPose.SetFingerPose(handProjection);
                 }
             }
-            else if(useGrabTransition){
-                handProjection.transform.localPosition = hand.transform.localPosition;
-                handProjection.transform.localRotation = hand.transform.localRotation;
+            else if(useGrabTransition) {
+                handProjection.transform.position = hand.transform.position;
+                handProjection.transform.rotation = hand.transform.rotation;
             }
         }
 
@@ -266,8 +269,8 @@ namespace Autohand {
                 if(target != null) {
                     OnProjectionEnd(handProjection, target);
 
-                    lastProjectionPosition = hand.transform.localPosition;
-                    lastProjectionRotation = hand.transform.localRotation;
+                    lastProjectionPosition = hand.transform.position;
+                    lastProjectionRotation = hand.transform.rotation;
                     handProjection.transform.position = hand.transform.position;
                     handProjection.transform.rotation = hand.transform.rotation;
                     handProjection.body.position = handProjection.transform.position;

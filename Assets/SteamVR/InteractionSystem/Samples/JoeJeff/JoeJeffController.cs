@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+#if !UNITY_ANDROID
 using Valve.VR;
 using Valve.VR.InteractionSystem;
+#endif
 
 namespace Valve.VR.InteractionSystem.Sample
 {
     public class JoeJeffController : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public Transform Joystick;
         public float joyMove = 0.1f;
 
@@ -56,5 +59,6 @@ namespace Valve.VR.InteractionSystem.Sample
 
             character.Move(movement * 2, jump);
         }
+#endif
     }
 }

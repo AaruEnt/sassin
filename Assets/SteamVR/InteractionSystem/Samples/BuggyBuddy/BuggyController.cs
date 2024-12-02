@@ -9,6 +9,7 @@ namespace Valve.VR.InteractionSystem.Sample
 {
     public class BuggyController : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public Transform modelJoystick;
         public float joystickRot = 20;
 
@@ -171,5 +172,6 @@ namespace Valve.VR.InteractionSystem.Sample
                 }
             }
         }
+#endif
     }
 }

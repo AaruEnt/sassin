@@ -6,7 +6,7 @@ using NaughtyAttributes;
 
 namespace Autohand {
     [DefaultExecutionOrder(2)]
-    [HelpURL("https://earnestrobot.notion.site/Distance-Grabbing-19e4e8b14f00428295eca75fca752787")]
+    [HelpURL("https://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/grabbable/distance-grabbing")]
     public class HandDistanceGrabber : MonoBehaviour {
         [Header("Hands")]
         [Tooltip("The primaryHand used to trigger pulling or flicking")]
@@ -16,6 +16,8 @@ namespace Autohand {
 
         [Header("Pointing Options")]
         public Transform forwardPointer;
+        public bool useSmoothing = true;
+        public float forwardSmoothingSpeed = 5f;
         public LineRenderer line;
         [Space]
         public float maxRange = 5;
@@ -87,6 +89,8 @@ namespace Autohand {
         Coroutine catchAssistRoutine;
         private DistanceGrabbable catchAsistGrabbable;
         private CatchAssistData catchAssistData;
+
+        Vector3 currentSmoothForward;
 
         GameObject hitPoint {
             get {
@@ -166,8 +170,18 @@ namespace Autohand {
 
 
         void CheckDistanceGrabbable() {
+
+            if(useSmoothing) {
+                var currentAngleDistance = Vector3.Angle(currentSmoothForward, forwardPointer.forward);
+                currentSmoothForward = Vector3.RotateTowards(currentSmoothForward, forwardPointer.forward, Time.deltaTime * forwardSmoothingSpeed + Time.deltaTime * forwardSmoothingSpeed * currentAngleDistance, 1000f);
+                currentSmoothForward.Normalize();
+            }
+            else
+                currentSmoothForward = forwardPointer.forward;
+
             if(!pulling && pointing && primaryHand.holdingObj == null) {
-                bool didHit = Physics.SphereCast(forwardPointer.position, 0.03f, forwardPointer.forward, out hit, maxRange, layers);
+
+                bool didHit = Physics.SphereCast(forwardPointer.position, 0.03f, currentSmoothForward, out hit, maxRange, layers);
                 DistanceGrabbable hitGrabbable;
                 GrabbableChild hitGrabbableChild;
                 if(didHit) {
@@ -201,7 +215,7 @@ namespace Autohand {
                     }
                     else {
                         line.positionCount = 2;
-                        line.SetPositions(new Vector3[] { forwardPointer.position, forwardPointer.position + forwardPointer.forward * maxRange });
+                        line.SetPositions(new Vector3[] { forwardPointer.position, forwardPointer.position + currentSmoothForward * maxRange });
                     }
                 }
             }
@@ -223,6 +237,7 @@ namespace Autohand {
 
         public virtual void StartPointing() {
             pointing = true;
+            currentSmoothForward = forwardPointer.forward;
             StartPoint?.Invoke(primaryHand);
         }
 
@@ -270,7 +285,7 @@ namespace Autohand {
                     hitPoint.transform.parent = selectionHit.transform;
                 }
                 selectingDistanceGrabbable = targetingDistanceGrabbable;
-                selectedEstimatedRadius = Vector3.Distance(hitPoint.transform.position, selectingDistanceGrabbable.transform.position);
+                selectedEstimatedRadius = Vector3.Distance(hitPoint.transform.position, selectingDistanceGrabbable.grabbable.body.transform.position);
                 selectingDistanceGrabbable.grabbable.Unhighlight(primaryHand, GetTargetedMaterial(selectingDistanceGrabbable));
                 selectingDistanceGrabbable.grabbable.Highlight(primaryHand, GetSelectedMaterial(selectingDistanceGrabbable));
                 selectingDistanceGrabbable?.StartSelecting?.Invoke(primaryHand, selectingDistanceGrabbable.grabbable);

@@ -11,7 +11,8 @@ namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
 	public class Arrow : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		public ParticleSystem glintParticle;
 		public Rigidbody arrowHeadRB;
 		public Rigidbody shaftRB;
@@ -273,5 +274,6 @@ namespace Valve.VR.InteractionSystem
 				Destroy( scaleParentObject );
 			}
 		}
+#endif
 	}
 }

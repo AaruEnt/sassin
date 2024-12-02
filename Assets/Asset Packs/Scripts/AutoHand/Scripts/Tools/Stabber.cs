@@ -6,6 +6,7 @@ using UnityEngine.Events;
 namespace Autohand {
     public delegate void StabEvent(Stabber stabber, Stabbable stab);
 
+    [HelpURL("https://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/extras/stabbing")]
     public class Stabber : MonoBehaviour {
         [Tooltip("Can be left empty/null")]
         public Grabbable grabbable;
@@ -39,23 +40,24 @@ namespace Autohand {
         public StabEvent StartStabEvent;
         public StabEvent EndStabEvent;
 
+        public List<Stabbable> stabbed { get; private set; }
+        public List<ConfigurableJoint> stabbedJoints { get; private set; }
 
-        List<Stabbable> stabbed;
-        List<ConfigurableJoint> stabbedJoints;
-        /// <summary>Helps prevent stabbable from being smashed through objects</summary>
+
+
+        /// <summary>Helps prevent stabbable from being triggered accidently from the wrong angle</summary>
         Dictionary<Stabbable, int> stabbedFrames;
-        Collider[] resultsNonAlloc;
-
-        const int STABFRAMES = 3;
+        const int STABFRAMES = 2;
+        int frames;
 
         Vector3 startPos;
         Quaternion startRot;
 
         Vector3 lastPos;
         Quaternion lastRot;
-        int frames;
+        Collider[] resultsNonAlloc;
 
-        Dictionary<Transform, Transform> originalParents = new Dictionary<Transform, Transform>();
+        Transform prereleaseParent;
 
         void Start() {
             stabbedFrames = new Dictionary<Stabbable, int>();
@@ -65,17 +67,14 @@ namespace Autohand {
             if(stabbableLayers == 0)
                 stabbableLayers = LayerMask.GetMask(Hand.grabbableLayers);
 
-            StartStabEvent += (stabber, stabbable) => { StartStab?.Invoke(); };
-            EndStabEvent += (stabber, stabbable) => { EndStab?.Invoke(); };
+            if(grabbable == null)
+                gameObject.HasGrabbable(out grabbable);
 
             startPos = transform.position;
             startRot = transform.rotation;
 
-            gameObject.CanGetComponent(out grabbable);
-
             StartCoroutine(StartWait());
         }
-
 
         //This will keep the stabbables in place for the start stab
         IEnumerator StartWait() {
@@ -176,7 +175,6 @@ namespace Autohand {
             if(stabbedFrames[stab] < STABFRAMES)
                 return;
 
-
             stabbed.Add(stab);
             var joint = gameObject.AddComponent<ConfigurableJoint>();
             joint.secondaryAxis = axis;
@@ -206,21 +204,20 @@ namespace Autohand {
 
             Rigidbody jointBody;
             joint.CanGetComponent(out jointBody);
+
+            //resets the joint / wakes the body
             jointBody.detectCollisions = false;
             jointBody.detectCollisions = true;
-
             stab.body.WakeUp();
             jointBody.WakeUp();
 
-            stabbedJoints.Add(joint);
-            stab.OnStab(this);
-            StartStabEvent?.Invoke(this, stab);
             if(stab.parentOnStab && grabbable) {
                 grabbable.AddJointedBody(stab.body);
             }
-            else if(grabbable) {
-                grabbable.ignoreParent = true;
-            }
+            stabbedJoints.Add(joint);
+            stab.OnStab(this);
+            StartStabEvent?.Invoke(this, stab);
+            StartStab?.Invoke();
         }
 
         protected virtual void OnStabbableExit(Stabbable stab) {
@@ -229,15 +226,13 @@ namespace Autohand {
             var joint = stabbedJoints[removeIndex];
             stabbedJoints.RemoveAt(removeIndex);
             Destroy(joint);
-            stab.OnEndStab(this);
-            stabbedFrames.Remove(stab);
-            EndStabEvent?.Invoke(this, stab);
             if(stab.parentOnStab && grabbable) {
                 grabbable.RemoveJointedBody(stab.body);
             }
-            else if(grabbable) {
-                grabbable.ignoreParent = false;
-            }
+            stab.OnEndStab(this);
+            stabbedFrames.Remove(stab);
+            EndStabEvent?.Invoke(this, stab);
+            EndStab?.Invoke();
         }
 
         public List<Stabbable> GetStabbed() {

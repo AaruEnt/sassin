@@ -11,7 +11,8 @@ namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
 	public class BalloonHapticBump : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		public GameObject physParent;
 
 		//-------------------------------------------------
@@ -27,5 +28,6 @@ namespace Valve.VR.InteractionSystem
 				}
 			}
 		}
+#endif
 	}
 }

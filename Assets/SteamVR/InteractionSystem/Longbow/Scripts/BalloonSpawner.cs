@@ -11,7 +11,8 @@ namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
 	public class BalloonSpawner : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		public float minSpawnTime = 5f;
 		public float maxSpawnTime = 15f;
 		private float nextSpawnTime;
@@ -117,5 +118,6 @@ namespace Valve.VR.InteractionSystem
 			// Copy of SpawnBalloon using int because we can't pass in enums through the event system
 			SpawnBalloon( (Balloon.BalloonColor)color );
 		}
+#endif
 	}
 }

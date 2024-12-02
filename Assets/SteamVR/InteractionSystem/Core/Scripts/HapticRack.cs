@@ -13,7 +13,8 @@ namespace Valve.VR.InteractionSystem
 	//-------------------------------------------------------------------------
 	[RequireComponent( typeof( Interactable ) )]
 	public class HapticRack : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		[Tooltip( "The linear mapping driving the haptic rack" )]
 		public LinearMapping linearMapping;
 
@@ -79,5 +80,6 @@ namespace Valve.VR.InteractionSystem
 				onPulse.Invoke();
 			}
 		}
+#endif
 	}
 }

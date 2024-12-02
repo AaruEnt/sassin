@@ -7,11 +7,14 @@
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+#if !UNITY_ANDROID
 using Valve.VR;
 
 [CustomEditor(typeof(SteamVR_Camera)), CanEditMultipleObjects]
+#endif
 public class SteamVR_Editor : Editor
 {
+#if !UNITY_ANDROID
     int bannerHeight = 150;
     Texture logo;
 
@@ -124,4 +127,5 @@ public class SteamVR_Editor : Editor
         }, "steamvr.unitypackage", ExportPackageOptions.Recurse);
         EditorApplication.Exit(0);
     }
+#endif
 }

@@ -1,6 +1,7 @@
 using Autohand.Demo;
 using System.Collections;
 using System.Collections.Generic;
+#if !UNITY_ANDROID
 using UnityEditor;
 using UnityEngine;
 
@@ -34,3 +35,4 @@ namespace Autohand {
         }
     }
 }
+#endif

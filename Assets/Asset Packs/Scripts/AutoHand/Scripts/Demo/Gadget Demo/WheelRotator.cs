@@ -11,6 +11,7 @@ namespace Autohand.Demo{
         
 
         void Update(){
+
             if(useLocal)
                 move.localRotation *= Quaternion.Euler(angle*Time.deltaTime*GetValue());
             else

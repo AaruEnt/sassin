@@ -5,13 +5,16 @@
 //=============================================================================
 
 using UnityEngine;
+#if !UNITY_ANDROID
 using Valve.VR;
+#endif
 
 namespace Valve.VR
 {
     [ExecuteInEditMode, RequireComponent(typeof(MeshRenderer), typeof(MeshFilter))]
     public class SteamVR_Frustum : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public SteamVR_TrackedObject.EIndex index;
 
         public float fovLeft = 45, fovRight = 45, fovTop = 45, fovBottom = 45, nearZ = 0.5f, farZ = 2.5f;
@@ -142,8 +145,9 @@ namespace Valve.VR
             SteamVR_Events.DeviceConnected.Remove(OnDeviceConnected);
             GetComponent<MeshFilter>().mesh = null;
         }
+#endif
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !UNITY_ANDROID
         void Update()
         {
             if (!Application.isPlaying)

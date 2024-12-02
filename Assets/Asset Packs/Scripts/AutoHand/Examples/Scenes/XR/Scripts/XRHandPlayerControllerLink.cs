@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Autohand.Demo {
-public class XRHandPlayerControllerLink : MonoBehaviour{
+
+    [HelpURL("https://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/controller-input")]
+    public class XRHandPlayerControllerLink : MonoBehaviour{
         public XRHandControllerLink moveController;
         public XRHandControllerLink turnController;
         public AutoHandPlayer player;

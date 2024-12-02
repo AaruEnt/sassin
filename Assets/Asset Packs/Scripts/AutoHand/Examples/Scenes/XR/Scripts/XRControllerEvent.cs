@@ -11,8 +11,19 @@ namespace Autohand.Demo {
         public UnityEvent Pressed;
         public UnityEvent Released;
         bool pressed = false;
-        private void Update()
+
+        protected virtual void Start() {
+            if (link == null) {
+                link = GetComponentInParent<XRHandControllerLink>();
+                if (link == null)
+                    Debug.LogError("No XRHandControllerLink connected - input will not work", this);
+            }
+        }
+
+        protected virtual void Update()
         {
+            if (link == null)
+                return;
 
             if (link.ButtonPressed(button) && !pressed)
             {

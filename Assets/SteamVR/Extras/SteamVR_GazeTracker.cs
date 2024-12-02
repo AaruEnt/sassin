@@ -6,6 +6,7 @@ namespace Valve.VR.Extras
 {
     public class SteamVR_GazeTracker : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public bool isInGaze = false;
         public event GazeEventHandler GazeOn;
         public event GazeEventHandler GazeOff;
@@ -73,11 +74,15 @@ namespace Valve.VR.Extras
             }
 
         }
+#endif
     }
+
+#if !UNITY_ANDROID
     public struct GazeEventArgs
     {
         public float distance;
     }
 
     public delegate void GazeEventHandler(object sender, GazeEventArgs gazeEventArgs);
+#endif
 }

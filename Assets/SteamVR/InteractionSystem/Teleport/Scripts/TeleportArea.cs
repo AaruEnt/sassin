@@ -12,8 +12,14 @@ using UnityEditor;
 namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
-	public class TeleportArea : TeleportMarkerBase
+	public class TeleportArea :
+#if !UNITY_ANDROID
+TeleportMarkerBase
+#else
+		MonoBehaviour
+#endif
 	{
+#if !UNITY_ANDROID
 		//Public properties
 		public Bounds meshBounds { get; private set; }
 
@@ -163,10 +169,11 @@ namespace Valve.VR.InteractionSystem
 				}
 			}
 		}
-	}
+#endif
+    }
 
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !UNITY_ANDROID
 	//-------------------------------------------------------------------------
 	[CustomEditor( typeof( TeleportArea ) )]
 	public class TeleportAreaEditor : Editor

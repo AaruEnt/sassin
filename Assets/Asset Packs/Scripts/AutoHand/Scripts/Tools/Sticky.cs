@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.Events;
 
 namespace Autohand{
-    [RequireComponent(typeof(Rigidbody))]
     public class Sticky : MonoBehaviour{
         [Header("Sticky Settings")]
+        public Rigidbody body;
         [Tooltip("How strong the joint is between the stickable and this")]
         public float stickStrength = 1;
         [Tooltip("Multiplyer for required stick speed to activate")]
@@ -17,7 +17,6 @@ namespace Autohand{
         [Header("Event")]
         public UnityEvent OnStick;
 
-        Rigidbody body;
         List<Stickable> stickers;
         List<Joint> joints;
 
@@ -59,7 +58,16 @@ namespace Autohand{
         }
 
         public void ForceRelease(Stickable stuck) {
-            Destroy(joints[stickers.IndexOf(stuck)]);
+            var jointIndex = stickers.IndexOf(stuck);
+            if(jointIndex == -1)
+                return;
+
+            if(!joints[jointIndex]) {
+                joints.RemoveAt(jointIndex);
+                stickers[jointIndex].EndStick?.Invoke();
+                stickers.RemoveAt(jointIndex);
+            }
+            Destroy(joints[jointIndex]);
         }
 
         void OnJointBreak(float breakForce) {

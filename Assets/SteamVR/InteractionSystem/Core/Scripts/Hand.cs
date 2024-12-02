@@ -20,6 +20,7 @@ namespace Valve.VR.InteractionSystem
     //-------------------------------------------------------------------------
     public class Hand : MonoBehaviour
     {
+#if !UNITY_ANDROID
         // The flags used to determine how an object is attached to the hand.
         [Flags]
         public enum AttachmentFlags
@@ -1678,6 +1679,7 @@ namespace Valve.VR.InteractionSystem
         {
             return trackedObject.GetDeviceIndex();
         }
+#endif
     }
 
 

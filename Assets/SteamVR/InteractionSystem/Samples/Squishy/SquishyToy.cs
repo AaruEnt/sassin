@@ -1,13 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if !UNITY_ANDROID
 using Valve.VR;
 using Valve.VR.InteractionSystem;
+#endif
 
 namespace Valve.VR.InteractionSystem.Sample
 {
     public class SquishyToy : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public Interactable interactable;
         public new SkinnedMeshRenderer renderer;
 
@@ -57,5 +60,6 @@ namespace Valve.VR.InteractionSystem.Sample
                 }
             }
         }
+#endif
     }
 }

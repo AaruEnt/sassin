@@ -14,8 +14,9 @@ namespace Autohand {
     public class UnityMagneticEvent : UnityEvent<MagneticSource, MagneticBody> { }
 
     [Serializable]
-    [RequireComponent(typeof(Rigidbody))]
+    [HelpURL("https://app.gitbook.com/s/5zKO0EvOjzUDeT2aiFk3/auto-hand/extras/magnetic-forces")]
     public class MagneticSource : MonoBehaviour {
+        public Rigidbody body;
         public MagnetEffect magneticEffect;
         public float strength = 10f;
         public float radius = 4f;
@@ -25,23 +26,25 @@ namespace Autohand {
         public UnityMagneticEvent magneticEnter;
         public UnityMagneticEvent magneticExit;
 
-        Rigidbody body;
         List<MagneticBody> magneticBodies = new List<MagneticBody>();
         float radiusScale;
         private void Start() {
-            body = GetComponent<Rigidbody>();
+            if(body == null)
+                body = GetComponent<Rigidbody>();
             radiusScale = transform.lossyScale.x < transform.lossyScale.y ? transform.lossyScale.x : transform.lossyScale.y;
             radiusScale = radiusScale < transform.lossyScale.z ? radiusScale : transform.lossyScale.z;
         }
 
         private void FixedUpdate() {
             foreach(var magneticBody in magneticBodies) {
-                var distance = Vector3.Distance(transform.position, magneticBody.transform.position);
+                var position = transform.position;
+                var otherPosition = magneticBody.transform.position;
+                var distance = Vector3.Distance(position, otherPosition);
                 if(distance < radius * radiusScale) {
                     var distanceValue = distance / (radius * radiusScale + 0.0001f);
                     var distanceMulti = forceDistanceCurce.Evaluate(distanceValue) * magneticBody.strengthMultiplyer * strength;
                     distanceMulti *= magneticEffect == MagnetEffect.Repulsive ? -1 : 1;
-                    magneticBody.body.AddForce((transform.position - magneticBody.transform.position).normalized * distanceMulti, forceMode);
+                    magneticBody.body.AddForce((position - otherPosition).normalized * distanceMulti, forceMode);
                 }
             }
         }

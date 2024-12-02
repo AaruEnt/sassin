@@ -13,6 +13,7 @@ namespace Valve.VR.InteractionSystem.Sample
 	[RequireComponent( typeof( Interactable ) )]
 	public class InteractableExample : MonoBehaviour
     {
+#if !UNITY_ANDROID
         private TextMesh generalText;
         private TextMesh hoveringText;
         private Vector3 oldPosition;
@@ -145,5 +146,6 @@ namespace Valve.VR.InteractionSystem.Sample
 		private void OnHandFocusLost( Hand hand )
 		{
 		}
+#endif
 	}
 }

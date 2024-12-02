@@ -13,7 +13,8 @@ namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
 	public class InteractableDebug : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
         [System.NonSerialized]
         public Hand attachedToHand;
 
@@ -197,5 +198,6 @@ namespace Valve.VR.InteractionSystem
                 renderers[rendererIndex].material.color = newColor;
             }
         }
+#endif
     }
 }

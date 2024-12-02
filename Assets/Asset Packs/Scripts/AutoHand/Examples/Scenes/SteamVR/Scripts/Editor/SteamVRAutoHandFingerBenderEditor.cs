@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+#if !UNITY_ANDROID
 namespace Autohand {
     [CustomEditor(typeof(SteamVRAutoHandFingerBender))]
     public class SteamVRAutoHandFingerBenderEditor : Editor{
@@ -34,3 +35,4 @@ namespace Autohand {
         }
     }
 }
+#endif

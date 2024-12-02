@@ -44,6 +44,7 @@ public class SettingsMenuInit : MonoBehaviour
         {
             sfxVolume.value = PlayerPrefs.GetFloat(sfxVolumeName);
         }
+#if !UNITY_ANDROID
         if (PlayerPrefs.HasKey("Snap"))
         {
             bool s = PlayerPrefs.GetInt("Snap") == 1 ? true : false;
@@ -51,6 +52,7 @@ public class SettingsMenuInit : MonoBehaviour
             SnapParentToggle(s);
             snapSmooth.isOn = s;
         }
+#endif
         if (PlayerPrefs.HasKey("SnapAngle"))
         {
             player.snapTurnAngle = PlayerPrefs.GetInt("SnapAngle");

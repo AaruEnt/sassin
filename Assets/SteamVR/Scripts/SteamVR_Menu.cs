@@ -11,6 +11,7 @@ namespace Valve.VR
 {
     public class SteamVR_Menu : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public Texture cursor, background, logo;
         public float logoHeight, menuOffset;
 
@@ -317,5 +318,6 @@ namespace Valve.VR
             Cursor.visible = savedCursorVisible;
             Cursor.lockState = savedCursorLockState;
         }
+#endif
     }
 }

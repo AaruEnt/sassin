@@ -13,6 +13,9 @@ namespace Autohand
         AutoInputModule _instance;
         private bool _isDestroyed = false;
 
+        /// <summary>Returns the current pointer being checked when triggering input events, should only be used during built in UI input events</summary>
+        public HandCanvasPointer currentPointer { get; private set; }
+
         public AutoInputModule Instance
         {
             get
@@ -22,7 +25,7 @@ namespace Autohand
 
                 if (_instance == null)
                 {
-                    if (!(_instance = FindObjectOfType<AutoInputModule>()))
+                    if (!(_instance = AutoHandExtensions.CanFindObjectOfType<AutoInputModule>()))
                     {
                         _instance = new GameObject().AddComponent<AutoInputModule>();
                         _instance.transform.parent = AutoHandExtensions.transformParent;
@@ -33,7 +36,7 @@ namespace Autohand
                     EventSystem[] system = null;
                     BaseInputModule[] inputModule;
 
-                    inputModule = FindObjectsOfType<BaseInputModule>();
+                    inputModule = AutoHandExtensions.CanFindObjectsOfType<BaseInputModule>();
                     if (inputModule.Length > 1)
                     {
                         for (int i = inputModule.Length - 1; i >= 0; i--)
@@ -44,7 +47,7 @@ namespace Autohand
                         }
                     }
 
-                    system = FindObjectsOfType<EventSystem>();
+                    system = AutoHandExtensions.CanFindObjectsOfType<EventSystem>();
                     if (system.Length > 1)
                     {
                         for (int i = system.Length - 1; i >= 0; i--)
@@ -91,6 +94,10 @@ namespace Autohand
 
         public void RemovePointer(HandCanvasPointer pointer)
         {
+            int pIndex = pointers.IndexOf(pointer);
+            ProcessRelease(pIndex);
+            ProcessExit(pIndex);
+
             if (pointers.Contains(pointer))
                 pointers.Remove(pointer);
             foreach (var point in pointers)
@@ -115,6 +122,7 @@ namespace Autohand
                 {
                     if (pointers[index] != null && pointers[index].enabled)
                     {
+                        currentPointer = pointers[index];
                         pointers[index].Preprocess();
                         // Hooks in to Unity's event system to handle hovering
                         eventSystem.RaycastAll(eventDatas[index], m_RaycastResultCache);
@@ -160,6 +168,11 @@ namespace Autohand
             eventDatas[index].pointerDrag = null;
 
             eventDatas[index].pointerCurrentRaycast.Clear();
+        }
+
+        public void ProcessExit(int index) {
+            GameObject pointerRelease = ExecuteEvents.GetEventHandler<IPointerExitHandler>(eventDatas[index].pointerCurrentRaycast.gameObject);
+            ExecuteEvents.Execute(pointerRelease, eventDatas[index], ExecuteEvents.pointerExitHandler);
         }
 
         public PointerEventData GetData(int index) { return eventDatas[index]; }

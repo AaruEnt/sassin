@@ -78,7 +78,7 @@ namespace Autohand.Demo {
 
         }
         
-        public void Explode() {
+        void Explode() {
             var hits = Physics.OverlapSphere(grenade.transform.position, explosionRadius);
             foreach(var hit in hits) {
                 if(AutoHandPlayer.Instance.body == hit.attachedRigidbody) {
@@ -94,8 +94,7 @@ namespace Autohand.Demo {
                 }
             }
             explosionEvent?.Invoke();
-            if (explosionEffect)
-                GameObject.Instantiate(explosionEffect, grenade.transform.position, grenade.transform.rotation);
+            GameObject.Instantiate(explosionEffect, grenade.transform.position, grenade.transform.rotation);
             GameObject.Destroy(grenade.gameObject);
 
         }

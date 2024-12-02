@@ -6,8 +6,7 @@ namespace Autohand{
     [RequireComponent(typeof(ConfigurableJoint))]
     public class PhysicsGadgetConfigurableLimitReader : MonoBehaviour{
         public bool invertValue = false;
-        [Tooltip("For objects slightly off center. " +
-            "\nThe minimum abs value required to return a value nonzero value\n " +
+        [Tooltip("The minimum abs value required to return a value nonzero value\n " +
             "- if playRange is 0.1, you have to move the gadget 10% to get a result")]
         public float playRange = 0.025f;
         protected ConfigurableJoint joint;
@@ -36,6 +35,9 @@ namespace Autohand{
             value = Vector3.Distance(axisPos, currPos)/joint.linearLimit.limit;
 
             if(!positive) value *= -1;
+
+            if(float.IsNaN(value))
+                value = 0;
 
             if (Mathf.Abs(value) < playRange)
                 value = 0;

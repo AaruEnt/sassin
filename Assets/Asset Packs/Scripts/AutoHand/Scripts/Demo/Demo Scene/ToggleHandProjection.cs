@@ -8,11 +8,7 @@ namespace Autohand.Demo
     {
         public void DisableGripProjection()
         {
-#if (UNITY_2020_3_OR_NEWER)
-            var projections = FindObjectsOfType<HandProjector>(true);
-#else
-            var projections = FindObjectsOfType<HandProjector>();
-#endif
+            var projections = AutoHandExtensions.CanFindObjectsOfType<HandProjector>(true);
 
             foreach (var projection in projections)
             {
@@ -24,11 +20,7 @@ namespace Autohand.Demo
 
         public void EnableGripProjection()
         {
-#if (UNITY_2020_3_OR_NEWER)
-            var projections = FindObjectsOfType<HandProjector>(true);
-#else
-            var projections = FindObjectsOfType<HandProjector>();
-#endif
+            var projections = AutoHandExtensions.CanFindObjectsOfType<HandProjector>(true);
             foreach (var projection in projections)
             {
                 projection.gameObject.SetActive(true);
@@ -39,11 +31,7 @@ namespace Autohand.Demo
 
         public void DisableHighlightProjection()
         {
-#if (UNITY_2020_3_OR_NEWER)
-            var projections = FindObjectsOfType<HandProjector>(true);
-#else
-            var projections = FindObjectsOfType<HandProjector>();
-#endif
+            var projections = AutoHandExtensions.CanFindObjectsOfType<HandProjector>(true);
             foreach (var projection in projections)
             {
                 projection.gameObject.SetActive(false);
@@ -54,11 +42,8 @@ namespace Autohand.Demo
 
         public void EnableHighlightProjection()
         {
-#if (UNITY_2020_3_OR_NEWER)
-            var projections = FindObjectsOfType<HandProjector>(true);
-#else
-            var projections = FindObjectsOfType<HandProjector>();
-#endif
+            var projections = AutoHandExtensions.CanFindObjectsOfType<HandProjector>(true);
+
             foreach (var projection in projections)
             {
                 projection.gameObject.SetActive(true);

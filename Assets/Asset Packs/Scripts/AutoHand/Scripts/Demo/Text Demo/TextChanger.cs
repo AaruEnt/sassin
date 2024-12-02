@@ -44,7 +44,7 @@ namespace Autohand.Demo{
             //}
 
             yield return new WaitForFixedUpdate();
-            text.text = "";
+            //text.text = "";
         }
 
         private void OnDestroy() {

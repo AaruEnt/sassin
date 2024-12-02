@@ -12,7 +12,8 @@ namespace Valve.VR.InteractionSystem
 	//-------------------------------------------------------------------------
 	[RequireComponent( typeof( Interactable ) )]
 	public class LinearDrive : MonoBehaviour
-	{
+    {
+#if !UNITY_ANDROID
 		public Transform startPosition;
 		public Transform endPosition;
 		public LinearMapping linearMapping;
@@ -143,5 +144,6 @@ namespace Valve.VR.InteractionSystem
 				}
 			}
 		}
+#endif
 	}
 }

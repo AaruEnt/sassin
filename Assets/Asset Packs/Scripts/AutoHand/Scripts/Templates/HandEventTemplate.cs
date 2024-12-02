@@ -17,8 +17,8 @@ public class HandEventTemplate : MonoBehaviour{
         hand.OnHandTriggerStart += OnHandTriggerStart;
         hand.OnHandTriggerStop += OnHandTriggerStop;
 
-        hand.OnHighlight += OnHighlight;
-        hand.OnStopHighlight += OnStopHighlight;
+        hand.highlighter.OnHighlight += OnHighlight;
+        hand.highlighter.OnStopHighlight += OnStopHighlight;
 
         hand.OnSqueezed += OnSqueezed;
         hand.OnUnsqueezed += OnUnsqueezed;
@@ -37,8 +37,8 @@ public class HandEventTemplate : MonoBehaviour{
         hand.OnGrabJointBreak -= OnGrabJointBreak;
 
 
-        hand.OnHighlight -= OnHighlight;
-        hand.OnStopHighlight -= OnStopHighlight;
+        hand.highlighter.OnHighlight -= OnHighlight;
+        hand.highlighter.OnStopHighlight -= OnStopHighlight;
 
         hand.OnSqueezed -= OnSqueezed;
         hand.OnUnsqueezed -= OnUnsqueezed;

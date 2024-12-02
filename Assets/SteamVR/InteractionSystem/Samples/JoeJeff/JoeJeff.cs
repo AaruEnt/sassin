@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
+#if !UNITY_ANDROID
 using Valve.VR.InteractionSystem;
+#endif
 
 namespace Valve.VR.InteractionSystem.Sample
 {
     public class JoeJeff : MonoBehaviour
     {
+#if !UNITY_ANDROID
         public float animationSpeed;
 
         public float jumpVelocity;
@@ -208,5 +211,6 @@ namespace Valve.VR.InteractionSystem.Sample
             velocity.y = jumpVelocity;
             rigidbody.velocity = velocity;
         }
+#endif
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Autohand.Demo {
     public class ToggleAutoMoveFlying : MonoBehaviour {
         public void ToggleFlying() {
-            var player = FindObjectOfType<AutoHandPlayer>();
+            var player = AutoHandExtensions.CanFindObjectOfType<AutoHandPlayer>();
             player.useGrounding = !player.useGrounding;
         }
     }
