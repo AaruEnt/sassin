@@ -12,17 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 4
+  version: 7
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Spitter_Internals_Mat
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_ShaderKeywords: 
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -30,6 +33,7 @@ Material:
   stringTagMap:
     RenderType: Opaque
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -145,10 +149,13 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _AlphaClip: 0
+    - _AlphaToMask: 0
     - _Bias: 0
     - _Blend: 0
+    - _BlendModePreserveSpecular: 1
     - _BlurStrength: 1
     - _BumpBias: 2
     - _BumpScale: 1
@@ -166,6 +173,7 @@ Material:
     - _DiffuseScatteringContraction2: 8
     - _DisplaceAmount: 0.4
     - _DstBlend: 0
+    - _DstBlendAlpha: 0
     - _EdgeLength: 5
     - _EdgeSize: 0.2
     - _EnableIndependentPuddleMaskTiling: 0
@@ -213,6 +221,7 @@ Material:
     - _Specular: 0.046
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _SrcBlendAlpha: 1
     - _Surface: 0
     - _UVSec: 0
     - _UVs: 0
@@ -223,7 +232,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 0.27941176, g: 0.069852926, b: 0.069852926, a: 0.903}
-    - _Color: {r: 0.2794118, g: 0.06985295, b: 0.06985295, a: 0.903}
+    - _Color: {r: 0.27941173, g: 0.0698529, b: 0.0698529, a: 0.903}
     - _Color2: {r: 0.72794116, g: 0.72794116, b: 0.72794116, a: 1}
     - _DiffuseScatteringCol: {r: 0, g: 0, b: 0, a: 1}
     - _DiffuseScatteringCol2: {r: 0, g: 0, b: 0, a: 1}

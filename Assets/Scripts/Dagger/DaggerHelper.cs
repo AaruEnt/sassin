@@ -34,6 +34,8 @@ public class DaggerHelper : MonoBehaviour
         {
             transform.parent = followObjTMP;
         }
+        if (transform.parent == followObjTMP && !g.IsHeld())
+            transform.parent = null;
         if (player.body.velocity.magnitude >= 5f)
             g.throwPower = 3f;
         else

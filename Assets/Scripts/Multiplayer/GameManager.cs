@@ -8,8 +8,6 @@ using Photon.Pun;
 using Photon.Realtime;
 #if !UNITY_ANDROID
 using Valve.VR;
-#else
-using UnityEngine.XR.Interaction.Toolkit;
 #endif
 using UnityEngine.Events;
 using NaughtyAttributes;

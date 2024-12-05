@@ -7,8 +7,6 @@ using UnityEngine.Rendering.Universal;
 using Autohand;
 #if !UNITY_ANDROID
 using Valve.VR;
-#else
-using UnityEngine.XR.Interaction.Toolkit;
 #endif
 
 public class Drunkenness : MonoBehaviour

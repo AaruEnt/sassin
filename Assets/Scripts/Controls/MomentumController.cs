@@ -5,8 +5,6 @@ using NaughtyAttributes;
 using UnityEngine.InputSystem;
 #if !UNITY_ANDROID
 using Valve.VR;
-#else
-using UnityEngine.XR.Interaction.Toolkit;
 #endif
 
 namespace Autohand {
@@ -111,7 +109,10 @@ namespace Autohand {
 #if !UNITY_ANDROID
             moveClick.onStateDown += ToggleSprintState;
 #else
-            moveClick.reference.ToInputAction().started += ToggleSprintState;
+            if (moveAction.action != null) moveAction.action.Enable();
+            if (moveClick.action != null) moveClick.action.Enable();
+            moveClick.action.started += ToggleSprintState;
+            moveAction.action.performed += SetMoveAxis;
 #endif
         }
 
@@ -121,8 +122,13 @@ namespace Autohand {
             moveClick.onStateDown -= ToggleSprintState;
 #else
 
-            moveClick.reference.ToInputAction().started -= ToggleSprintState;
+            moveClick.action.started -= ToggleSprintState;
 #endif
+        }
+
+        private void SetMoveAxis(InputAction.CallbackContext a)
+        {
+            moveAxis = a.ReadValue<Vector2>();
         }
 
 #if !UNITY_ANDROID
@@ -135,13 +141,12 @@ namespace Autohand {
         public void ToggleSprintState(InputAction.CallbackContext context)
         {
             sprintState = !sprintState;
-            UnityEngine.Debug.Log("Sprinting: " + sprintState);
+            //UnityEngine.Debug.Log("Sprinting: " + sprintState);
         }
 #endif
         // Update is called once per frame
         void FixedUpdate()
         {
-
 #if !UNITY_ANDROID
             if (moveClick.state || (sprintAsToggle && sprintState))
             {
@@ -155,7 +160,7 @@ namespace Autohand {
                 isSprinting = false;
             }
 #else
-            if (moveClick.reference.action.IsPressed() || (sprintAsToggle && sprintState))
+            if (moveClick.action.IsPressed() || (sprintAsToggle && sprintState))
             {
                 if (counter >= 600)
                     maxSpeedScale = maxSpeedBonus + sprintSpeedBonus;
@@ -206,7 +211,7 @@ namespace Autohand {
 #if !UNITY_ANDROID
                 moveAxis = moveAction.axis;
 #else
-                moveAxis = moveAction.reference.action.ReadValue<Vector2>();
+                //moveAxis = moveAction.action.ReadValue<Vector2>();
 #endif
                 // one or both axis are registering input
                 if ((Mathf.Abs(moveAxis.x) > deadzone) || (Mathf.Abs(moveAxis.y) > deadzone))
@@ -301,8 +306,10 @@ namespace Autohand {
                 counter = counter < 0 ? 0 : counter - climbMomentumLoss;
             }
             strBuilder += counter.ToString() + '\n';
+            //UnityEngine.Debug.LogFormat("Momentum: {0}, buttonPressed: {1}, axis: {2}", counter, moveClick.action.IsPressed(), moveAction.action.ReadValue<Vector2>());
             if (txt)
                 txt.text = strBuilder;
+            moveAxis = Vector2.zero;
         }
 
 

@@ -6,6 +6,7 @@ using Autohand;
 using NaughtyAttributes;
 using System.Diagnostics;
 using Photon.Pun;
+using UnityEngine.InputSystem;
 
 public class PrimaryButton : MonoBehaviourPunCallbacks
 {
@@ -55,6 +56,7 @@ public class PrimaryButton : MonoBehaviourPunCallbacks
     [HideIf("jumpOnPress")]
     [SerializeField, Tooltip("The additional force applied while sliding")]
     private float slideForce = 10f;
+    public InputActionProperty primaryButton;
 
 
     private bool isSliding = false;
@@ -112,7 +114,7 @@ public class PrimaryButton : MonoBehaviourPunCallbacks
             jumpCD -= Time.deltaTime;
     }
 
-    public void OnPrimaryButton() {
+    public void OnPrimaryButton(InputAction.CallbackContext context) {
         if (jumpOnPress) {
             Jump();
         } else {
@@ -159,6 +161,12 @@ public class PrimaryButton : MonoBehaviourPunCallbacks
                 rb.AddForce(new Vector3(0, blendJumpHeight / 4, 0) + (playerFacingTransform.transform.forward * -wallJumpForce) + (playerFacingTransform.transform.forward * wallJumpForce), ForceMode.Impulse);
             }
         }
+    }
+
+    public override void OnEnable()
+    {
+        primaryButton.action.performed += OnPrimaryButton;
+        base.OnEnable();
     }
 
     private void Slide() {
