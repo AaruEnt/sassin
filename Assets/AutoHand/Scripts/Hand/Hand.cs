@@ -66,7 +66,9 @@ namespace Autohand {
         [AutoLine]
         public bool ignoreMe1;
 
-
+        // bullshit assembly shit means i have to do some stuff manually
+        public Transform ct;
+        public Grabbable dagger;
 
 
 
@@ -248,21 +250,38 @@ namespace Autohand {
 
         /// <summary>Function for controller trigger fully pressed -> Grabs whatever is directly in front of and closest to the hands palm</summary>
         public virtual void Grab(GrabType grabType) {
+            UnityEngine.Debug.Log("In grab");
             OnTriggerGrab?.Invoke(this, null);
             foreach(var triggerArea in triggerEventAreas) {
                 triggerArea.Grab(this);
             }
             if(usingHighlight && !grabbing && holdingObj == null && highlighter.currentHighlightTarget != null) {
-                
+
                 grabType = GetGrabType(highlighter.currentHighlightTarget);
                 grabRoutine = StartCoroutine(GrabObject(highlighter.GetHighlightHit(), highlighter.currentHighlightTarget, grabType));
             }
-            else if(!grabbing && holdingObj == null) {
+            else if(!grabbing && holdingObj == null)
+            {
+                UnityEngine.Debug.Log("In nohighlight");
                 highlighter.UpdateHighlight(true, true);
                 if(highlighter.currentHighlightTarget != null) {
 
                     grabType = GetGrabType(highlighter.currentHighlightTarget);
                     grabRoutine = StartCoroutine(GrabObject(highlighter.GetHighlightHit(), highlighter.currentHighlightTarget, grabType));
+                    
+                }
+                else
+                {
+                    Vector3 distance = (ct.transform.position - palmTransform.position);
+                    UnityEngine.Debug.Log(distance);
+                    if ((!left && Vector3.Angle(-palmTransform.right, distance) <= 50f) || (left && Vector3.Angle(palmTransform.right, distance) <= 50f))
+                    {
+                        var drb = dagger.transform.GetComponent<Rigidbody>();
+                        drb.velocity = Vector3.zero;
+                        drb.angularVelocity = Vector3.zero;
+                        dagger.transform.position = palmTransform.position;
+                        ForceGrab(dagger);
+                    }
                 }
 
                 highlighter.ClearHighlights();
