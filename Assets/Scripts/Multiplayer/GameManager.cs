@@ -6,9 +6,10 @@ using UnityEngine.SceneManagement;
 
 using Photon.Pun;
 using Photon.Realtime;
-using System.Diagnostics;
-using static System.Net.Mime.MediaTypeNames;
 using Valve.VR;
+using UnityEngine.Events;
+
+using NaughtyAttributes;
 
 namespace Com.Aaru.Sassin
 {
@@ -24,9 +25,14 @@ namespace Com.Aaru.Sassin
         public GameObject PlayerUiPrefab;
 
         public static GameManager Instance;
+        public UnityEvent OnPlayerJoinRoom;
+
+        [Button]
+        public void ManualLeaveRoom() { LeaveRoom(); }
 
         #endregion
 
+        private string MODE_PROP_KEY = "mod";
         #region Photon Callbacks
 
         /// <summary>
@@ -43,6 +49,7 @@ namespace Com.Aaru.Sassin
 
         public void LeaveRoom()
         {
+            Camera.main.GetComponent<FadeTest>()?.FadeOut();
             PhotonNetwork.LeaveRoom();
         }
 
@@ -89,7 +96,9 @@ namespace Com.Aaru.Sassin
                 return;
             }
             UnityEngine.Debug.LogFormat("PhotonNetwork : Loading Level : {0}", PhotonNetwork.CurrentRoom.PlayerCount);
-            PhotonNetwork.LoadLevel("Room for " + PhotonNetwork.CurrentRoom.PlayerCount);
+            OnPlayerJoinRoom.Invoke();
+            //PhotonNetwork.LoadLevel("Room for " + PhotonNetwork.CurrentRoom.PlayerCount);
+            //PhotonNetwork.LoadLevel(Launcher.sceneConnectTo);
         }
 
         #if UNITY_5_4_OR_NEWER
@@ -127,17 +136,46 @@ namespace Com.Aaru.Sassin
             }
         }
 
+        public override void OnMasterClientSwitched(Player player)
+        {
+
+            var gmm = GetComponent<GamemodeManager>();
+            switch (PhotonNetwork.CurrentRoom.CustomProperties[MODE_PROP_KEY])
+            {
+                case "":
+                    if (gmm)
+                        gmm.SetGamemode();
+                    break;
+                case "None":
+                    if (gmm)
+                        gmm.SetGamemode();
+                    break;
+                case "Arena":
+                    if (gmm)
+                        gmm.SetGamemode();
+                    break;
+                case "Scout":
+                    PhotonNetwork.LeaveRoom(); break;
+                case "Gather/Invasion":
+                    PhotonNetwork.LeaveRoom();
+                    break;
+                default:
+                    PhotonNetwork.LeaveRoom(); break;
+            }
+        }
+
+
         #endregion
 
         #region MonoBehavior Callbacks
 
-        #if !UNITY_5_4_OR_NEWER
+#if !UNITY_5_4_OR_NEWER
         /// <summary>See CalledOnLevelWasLoaded. Outdated in Unity 5.4.</summary>
         void OnLevelWasLoaded(int level)
         {
             this.CalledOnLevelWasLoaded(level);
         }
-        #endif
+#endif
 
         void CalledOnLevelWasLoaded(int level)
         {

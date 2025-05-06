@@ -13,6 +13,7 @@ public class Paper : MonoBehaviour
     public int tearingLayer;
     private float timer = 0f;
     public AudioSource tearSound;
+    public bool startStabbed = false;
 
     void Update()
     {
@@ -36,6 +37,21 @@ public class Paper : MonoBehaviour
             tearSound.Play();
             stabbedBy = null;
         }
+        else
+        {
+            Joint j = gameObject.GetComponent<Joint>();
+            if (j != null)
+            {
+                Destroy(j);
+            }
+            if (startStabbed)
+            {
+            gameObject.layer = tearingLayer;
+            timer = 0.5f;
+            tearSound.Play();
+            }
+        }
+        startStabbed = false;
     }
 
     public void SetStabbedBy(StabManager s, GameObject t)

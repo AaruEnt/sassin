@@ -11,6 +11,7 @@ public class LoadingScene : MonoBehaviour
 {
     private float t = 0f;
     public float minTime = 4f;
+    public int sceneLoadOverride = -1;
     private bool faded = false;
 
     [Button]
@@ -26,7 +27,12 @@ public class LoadingScene : MonoBehaviour
             if (PlayerPrefs.HasKey("BeatTutorial") && PlayerPrefs.GetInt("BeatTutorial") == 1)
                 LoadingData.sceneToLoad = 1;
             else
-                LoadingData.sceneToLoad = 2;
+                LoadingData.sceneToLoad = 5;
+
+            if (sceneLoadOverride != -1)
+            {
+                LoadingData.sceneToLoad = sceneLoadOverride;
+            }
         }
 
         StartCoroutine(LoadSceneAsync());

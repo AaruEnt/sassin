@@ -11,6 +11,11 @@ public class FadeTest : MonoBehaviour
 
     public Color customColor;
 
+    private void Start()
+    {
+        FadeIn();
+    }
+
     public void FadeIn()
     {
         SteamVR_Fade.View(Color.black, 0f);

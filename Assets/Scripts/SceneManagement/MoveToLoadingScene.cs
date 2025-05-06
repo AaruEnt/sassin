@@ -16,8 +16,12 @@ public class MoveToLoadingScene : MonoBehaviour
 
     IEnumerator RealLoadScene(int nextScene)
     {
-        yield return new WaitForSeconds(1f);
         LoadingData.sceneToLoad = nextScene;
+        yield return new WaitForSeconds(1f);
         SceneManager.LoadScene(loadingSceneBuildNumber);
+    }
+
+    public void TempTutorialHelper() {
+        PlayerPrefs.SetInt("BeatTutorial", 1);
     }
 }

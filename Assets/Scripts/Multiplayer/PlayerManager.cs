@@ -11,7 +11,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks
     public float maxHealth;
     internal Stats s;
     // Start is called before the first frame update
-    void Awaket()
+    void Awake()
     {
         if (photonView.IsMine)
         {

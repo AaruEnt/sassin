@@ -10,9 +10,14 @@ namespace JointVR
     {
         public PlusStabEvent OnStabbedEvent;
         public PlusStabEvent OnUnStabbedEvent;
+        public bool forceUnstabOnStab = false;
 
         internal void OnStabEnter(StabManager m, GameObject target)
         {
+            if (forceUnstabOnStab)
+            {
+                m.UnstabAll();
+            }
             OnStabbedEvent.Invoke(m, target);
         }
 

@@ -232,18 +232,6 @@
             },
             {
                "inputs" : {
-                  "click" : {
-                     "output" : "/actions/default/in/sprint"
-                  },
-                  "touch" : {
-                     "output" : "/actions/default/in/thumbsticktouch"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/left/input/joystick"
-            },
-            {
-               "inputs" : {
                   "touch" : {
                      "output" : "/actions/default/in/thumbsticktouch"
                   }
@@ -289,6 +277,21 @@
                },
                "mode" : "button",
                "path" : "/user/hand/left/input/y"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/sprint"
+                  },
+                  "position" : {
+                     "output" : "/actions/default/in/move"
+                  },
+                  "touch" : {
+                     "output" : "/actions/default/in/thumbsticktouch"
+                  }
+               },
+               "mode" : "joystick",
+               "path" : "/user/hand/left/input/joystick"
             }
          ]
       },
@@ -329,7 +332,7 @@
    "controller_type" : "oculus_touch",
    "description" : "",
    "interaction_profile" : "",
-   "name" : "Official Sassin bindings for Oculus Touch controllers",
+   "name" : "Saved [Testing] Sassin configuration for Oculus Touch Controller",
    "options" : {},
    "simulated_actions" : []
 }

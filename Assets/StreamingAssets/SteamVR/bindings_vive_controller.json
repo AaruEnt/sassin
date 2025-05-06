@@ -179,15 +179,6 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/default/in/sprint"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/left/input/trackpad"
-            },
-            {
-               "inputs" : {
-                  "click" : {
                      "output" : "/actions/default/in/jumpbutton"
                   },
                   "touch" : {
@@ -211,6 +202,21 @@
                   "sub_mode" : "touch"
                },
                "path" : "/user/hand/right/input/trackpad"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/sprint"
+                  },
+                  "position" : {
+                     "output" : "/actions/default/in/move"
+                  },
+                  "touch" : {
+                     "output" : "/actions/default/in/thumbsticktouch"
+                  }
+               },
+               "mode" : "trackpad",
+               "path" : "/user/hand/left/input/trackpad"
             }
          ]
       },

@@ -10,7 +10,7 @@ using NaughtyAttributes;
 using Autohand;
 using Photon.Pun;
 using Photon.Realtime;
-using System.Diagnostics;
+using Autohand.Demo;
 
 public class Stats : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -49,7 +49,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     private float respawnTimer = 5f;
 
     [SerializeField, ShowIf("moveToSpawnOnDeath")]
-    private GameObject trackedObjects;
+    internal GameObject trackedObjects;
 
     [SerializeField, ShowIf("moveToSpawnOnDeath")]
     private GameObject respawnBarrier;
@@ -83,6 +83,8 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     private Vector3 _startPos;
 
     private float timer = 0f;
+    private bool iFrames = false;
+    private float iFrameTimer = 0f;
 
     #region IPunObservable implementation
 
@@ -124,6 +126,13 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         }
         if (stabCD > 0)
             stabCD -= Time.deltaTime;
+        if (iFrameTimer > 0)
+            iFrameTimer -= Time.deltaTime;
+        else
+        {
+            iFrameTimer = 0f;
+            iFrames = false;
+        }
     }
 
     void Awake()
@@ -132,13 +141,24 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     // When damage is received
-    internal void OnDamageReceived(float damage)
+    internal void OnDamageReceived(float damage, int helper = 0)
     {
+        if (iFrames)
+            return;
         OnTakeDamage.Invoke();
         if (damage > 0)
             health -= damage;
         if (health <= 0)
-            OnKill();
+            OnKill(helper);
+        iFrames = true;
+        iFrameTimer = 6f;
+    }
+
+    internal void AddIFrames(float time)
+    {
+        iFrameTimer += time;
+        if (iFrameTimer > 0)
+            iFrames = true;
     }
 
     // When damage is healed
@@ -151,7 +171,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     // When health reaches 0 or less
-    void OnKill()
+    void OnKill(int helper = 0)
     {
         // Invoke the OnDeath event before anything is destroyed
         OnDeath.Invoke();
@@ -167,17 +187,30 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         else if (moveToCheckpointOnDeath)
         {
-            transform.position = lastCheckpoint;
-            trackedObjects.transform.position = lastCheckpoint;
+            if (helper == 0)
+            {
+                transform.position = lastCheckpoint;
+                trackedObjects.transform.position = lastCheckpoint;
+            }
+            if (helper == 1)
+            {
+                player.handLeft.GetComponent<SteamVRHandControllerLink>().enabled = false;
+                player.handRight.GetComponent<SteamVRHandControllerLink>().enabled = false;
+                player.handRight.ForceReleaseGrab();
+                player.handLeft.ForceReleaseGrab();
+            }
             var profile = volume?.profile;
             if (!profile)
-                throw new System.NullReferenceException(nameof(UnityEngine.Rendering.VolumeProfile));
-            ColorAdjustments CA;
-            if (profile.TryGet<ColorAdjustments>(out CA))
+                UnityEngine.Debug.LogWarning("Volume not found on object " + this.gameObject.name);
+            else
             {
-                VolumeParameter<float> sat = new VolumeParameter<float>();
-                sat.value = -100f;
-                CA.saturation.SetValue(sat);
+                ColorAdjustments CA;
+                if (profile.TryGet<ColorAdjustments>(out CA))
+                {
+                    VolumeParameter<float> sat = new VolumeParameter<float>();
+                    sat.value = -100f;
+                    CA.saturation.SetValue(sat);
+                }
             }
             player.useMovement = false;
             timer = 0f;
@@ -185,19 +218,32 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         }
         else if (moveToSpawnOnDeath)
         {
-            transform.position = _startPos;
-            trackedObjects.transform.position = _trackedObjectsStartPos;
+            if (helper == 0)
+            {
+                transform.position = _startPos;
+                trackedObjects.transform.position = _trackedObjectsStartPos;
+            }
+            if (helper == 1)
+            {
+                player.handLeft.GetComponent<SteamVRHandPlayerLink>().enabled = false;
+                player.handRight.GetComponent<SteamVRHandPlayerLink>().enabled = false;
+                player.handRight.ForceReleaseGrab();
+                player.handLeft.ForceReleaseGrab();
+            }
             if ((photonView && photonView.IsMine) || !PhotonNetwork.IsConnected)
             {
                 var profile = volume?.profile;
                 if (!profile)
-                    throw new System.NullReferenceException(nameof(UnityEngine.Rendering.VolumeProfile));
-                ColorAdjustments CA;
-                if (profile.TryGet<ColorAdjustments>(out CA))
+                    UnityEngine.Debug.LogWarning("Volume not found on object " + this.gameObject.name);
+                else
                 {
-                    VolumeParameter<float> sat = new VolumeParameter<float>();
-                    sat.value = -100f;
-                    CA.saturation.SetValue(sat);
+                    ColorAdjustments CA;
+                    if (profile.TryGet<ColorAdjustments>(out CA))
+                    {
+                        VolumeParameter<float> sat = new VolumeParameter<float>();
+                        sat.value = -100f;
+                        CA.saturation.SetValue(sat);
+                    }
                 }
             }
             player.useMovement = false;
@@ -259,6 +305,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
 
         if (col.gameObject.tag == "Effect" || col.body.gameObject.tag == "Effect" || (col.gameObject.tag == "Enemy" && gameObject.tag != "Enemy"))
         { // Includes spells and weapons that deal damage, heal, or create some form of effect
+            UnityEngine.Debug.LogFormat("Hit: {0}", col.gameObject.name);
             Collider hitCol = col.contacts[0].thisCollider;
             WeakPoint w = hitCol.gameObject.GetComponent<WeakPoint>();
 
@@ -287,7 +334,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
                 Weapon we = col.body.gameObject.GetComponent<Weapon>();
                 Rigidbody velRB = col.body as Rigidbody;
                 float vel = 1f;
-                if (velRB)
+                if (velRB && !velRB.isKinematic && !we.speedOverride)
                 {
                     vel = velRB.velocity.magnitude;
                 }
@@ -315,6 +362,27 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
             if (tmp.HasValue)
                 lastCheckpoint = (Vector3)tmp;
         }
+        if (col.gameObject.transform.root.CompareTag("Effect"))
+        {
+
+            if ((currCollisions.Contains(col.attachedRigidbody.gameObject)) || stabCD > 0)
+            {
+                return;
+            }
+
+            if (weakpointDamageOnly)
+            {
+                return;
+            }
+
+            currCollisions.Add(col.attachedRigidbody.gameObject);
+
+            NetworkSpell s = col.attachedRigidbody.gameObject.GetComponent<NetworkSpell>();
+            if (s)
+            {
+                OnDamageReceived(s.damage);
+            }
+        }
     }
 
     internal void OnCollisionExit(Collision col)
@@ -324,6 +392,14 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         if (currCollisions.Contains(col.body.gameObject))
             currCollisions.Remove(col.body.gameObject);
         stabCD = 0.25f;
+    }
+
+    internal void OnTriggerExit(Collider col)
+    {
+        if (col.attachedRigidbody as Rigidbody == null)
+            return;
+        if (col.attachedRigidbody.gameObject.CompareTag("Effect") && currCollisions.Contains(col.attachedRigidbody.gameObject))
+            currCollisions.Remove(col.attachedRigidbody.gameObject);
     }
 
     internal void OnCollisionStay(Collision col)
@@ -343,6 +419,11 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
     public void DebugKill()
     {
         OnDamageReceived(health);
+    }
+
+    public void DebugKill(int delayTeleport = 0)
+    {
+        OnDamageReceived(health, delayTeleport);
     }
 
     public IEnumerator Respawn()
@@ -395,5 +476,7 @@ public class Stats : MonoBehaviourPunCallbacks, IPunObservable
         if (respawnBarrier)
             respawnBarrier.SetActive(false);
         health = maxHealth;
+        player.handLeft.GetComponent<SteamVRHandControllerLink>().enabled = true;
+        player.handRight.GetComponent<SteamVRHandControllerLink>().enabled = true;
     }
 }

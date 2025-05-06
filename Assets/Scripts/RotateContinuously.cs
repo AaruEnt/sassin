@@ -19,7 +19,7 @@ public class RotateContinuously : MonoBehaviour
     [SerializeField, Tooltip("Speed of rotation")]
     private float rotSpeed = 1f;
 
-    private Vector3 rotVector;
+    internal Vector3 rotVector;
 
     // Creates the rotation vector from the <axis>Rot variables
     void Start()

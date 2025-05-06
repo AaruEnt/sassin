@@ -18,6 +18,7 @@ namespace JointVR
         [SerializeField] public List<Stabber> stabbers = new List<Stabber>();
         [SerializeField] public List<Rigidbody> ignoreStab = new List<Rigidbody>();
         [Tag] public string ignoreStabTag;
+        [SerializeField]
         private Rigidbody rb;
 
         internal Transform maintainParent;
@@ -30,6 +31,9 @@ namespace JointVR
         public GameObject models;
 
         private DaggerHelper dh;
+
+        public bool isStabbing = false;
+        public GameObject enableWhileStabbing;
 
         
         // Start is called before the first frame update
@@ -64,6 +68,16 @@ namespace JointVR
         {
             if (maintainParent)
                 transform.parent = maintainParent;
+            isStabbing = false;
+            foreach (Stabber stab in stabbers)
+            {
+                if (stab.isStabbing && stab.kinematicStab)
+                    isStabbing = true;
+            }
+            if (enableWhileStabbing)
+            {
+                enableWhileStabbing.SetActive(isStabbing);
+            }
         }
 
         bool AttemptStab(Stabber stabber, Collider hitCollider, Vector3 relativeVelocity)

@@ -1,0 +1,46 @@
+{
+  "name": "se.omnifinity.omnideck",
+  "version": "2.0.3-alpha",
+  "displayName": "Omnideck",
+  "description": "The Omnideck API package",
+  "unity": "2022.3",
+  "documentationUrl": "https://github.com/Omnifinity/Unity-Omnideck-API/blob/main/Documentation~/omnideck.md",
+  "changelogUrl": "https://github.com/Omnifinity/Unity-Omnideck-API/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/Omnifinity/Unity-Omnideck-API/blob/main/LICENSE",
+  "dependencies": {
+    "com.unity.xr.interaction.toolkit": "2.5.2",
+    "com.unity.xr.openxr": "1.8.1",
+    "com.unity.modules.xr": "1.0.0"
+  },
+  "keywords": [
+    "omnifinity",
+    "omnideck",
+    "omnitrack",
+    "locomotion",
+    "smooth locomotion",
+    "free locomotion",
+    "treadmill"
+  ],
+  "author": {
+    "name": "Omnifinity",
+    "email": "peter.thor@omnifinity.se",
+    "url": "https://www.omnifinity.se"
+  },
+  "samples": [
+    {
+      "displayName": "Omnideck XRI toolkit",
+      "description": "Sample for combining the Omnideck API with the Unity XR Interaction Toolkit. Supports hand controller and object interactions out of the box and object collision. Note: You should import the XRI Sample Starter Assets to install the XRI scripts and prefabs for the example to work.",
+      "path": "Samples~/SamplesOmnideckXRI"
+    },
+    {
+      "displayName": "Omnideck Character Controller",
+      "description": "Simple sample for implementing the Omnideck API Using a Unity Character Controller. Support object collisions.",
+      "path": "Samples~/SamplesCharacterController"
+    },
+    {
+      "displayName": "Omnideck Vector3",
+      "description": "Simple samples for implementing the Omnideck API with a Vector3. Basically free flying.",
+      "path": "Samples~/SamplesVector3"
+    }
+  ]
+}

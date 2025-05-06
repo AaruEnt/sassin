@@ -4,8 +4,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 
-using System.Collections;
-using System.Diagnostics;
+using NaughtyAttributes;
 
 namespace Com.Aaru.Sassin
 {
@@ -21,6 +20,9 @@ namespace Com.Aaru.Sassin
         // Store the PlayerPref Key to avoid typos
         const string playerNamePrefKey = "PlayerName";
 
+        [Button]
+        public void DebugTestRandomName() { UnityEngine.Debug.Log(Randomizer.GenerateRandomUsername()); }
+
         #endregion
 
         #region MonoBehaviour CallBacks
@@ -31,13 +33,17 @@ namespace Com.Aaru.Sassin
         void Start()
         {
 
-            string defaultName = string.Empty;
+            string defaultName = Randomizer.GenerateRandomUsername();
             _inputField = this.GetComponent<InputField>();
             if (_inputField != null)
             {
                 if (PlayerPrefs.HasKey(playerNamePrefKey))
                 {
                     defaultName = PlayerPrefs.GetString(playerNamePrefKey);
+                    _inputField.text = defaultName;
+                } else
+                {
+                    PlayerPrefs.SetString(playerNamePrefKey, defaultName);
                     _inputField.text = defaultName;
                 }
             }
@@ -65,7 +71,6 @@ namespace Com.Aaru.Sassin
 
             PlayerPrefs.SetString(playerNamePrefKey, value);
         }
-
         #endregion
     }
 }
